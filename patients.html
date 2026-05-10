@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Integration Flow Viewer</title>
+<style>
+  :root { color-scheme: light; }
+  * { box-sizing: border-box; }
+  body { font-family: system-ui, -apple-system, "Segoe UI", sans-serif; margin: 0; background: #f7f8fa; color: #1a1a1a; display: flex; min-height: 100vh; }
+
+  /* ── Sidebar ── */
+  .sidebar { width: 248px; min-width: 248px; background: #1e293b; color: #e2e8f0; display: flex; flex-direction: column; }
+  .sidebar-header { padding: 18px 16px 14px; border-bottom: 1px solid #334155; }
+  .sidebar-header h1 { margin: 0; font-size: 14px; font-weight: 700; color: white; line-height: 1.3; }
+  .sidebar-header p { margin: 4px 0 0; font-size: 11px; color: #94a3b8; }
+  .nav-section { margin-top: 8px; }
+  .nav-section-label { padding: 10px 16px 4px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #475569; }
+  .nav-category-header { display: flex; align-items: center; gap: 8px; padding: 8px 16px; cursor: pointer; font-size: 12px; font-weight: 600; color: #94a3b8; user-select: none; }
+  .nav-category-header:hover { color: #e2e8f0; }
+  .nav-category-header .caret { font-size: 9px; transition: transform 140ms; display: inline-block; }
+  .nav-category.open .nav-category-header .caret { transform: rotate(90deg); }
+  .nav-items { display: none; }
+  .nav-category.open .nav-items { display: block; }
+  .nav-item { display: flex; align-items: center; padding: 7px 14px 7px 30px; font-size: 12px; color: #94a3b8; cursor: pointer; border-left: 2px solid transparent; transition: color 120ms, background 120ms; }
+  .nav-item:hover { color: #e2e8f0; background: rgba(255,255,255,0.05); }
+  .nav-item.active { color: white; background: rgba(37,99,235,0.22); border-left-color: #3b82f6; }
+  .nav-item.disabled { color: #475569; cursor: default; font-style: italic; }
+  .nav-badge { font-size: 10px; background: #334155; color: #64748b; border-radius: 3px; padding: 1px 5px; margin-left: auto; }
+  .nav-item.active .nav-badge { background: rgba(37,99,235,0.35); color: #93c5fd; }
+
+  /* ── Main ── */
+  .main { flex: 1; display: flex; flex-direction: column; min-width: 0; padding: 22px 24px 24px; }
+  .page-header { margin-bottom: 16px; }
+  .breadcrumb { font-size: 11px; color: #94a3b8; margin-bottom: 3px; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600; }
+  .page-header h2 { margin: 0; font-size: 19px; font-weight: 700; }
+  .page-header p.subtitle { margin: 5px 0 0; color: #555; font-size: 13px; }
+
+  /* ── Layout ── */
+  .layout { display: grid; grid-template-columns: 1fr 30%; gap: 20px; align-items: start; }
+  @media (max-width: 960px) { .layout { grid-template-columns: 1fr; } }
+  .panel { background: white; border-radius: 8px; padding: 18px 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+  .panel h2 { margin: 0 0 12px; font-size: 15px; color: #333; font-weight: 600; }
+
+  /* ── Zoom ── */
+  .zoom-controls { display: flex; gap: 6px; align-items: center; margin: 0 0 10px; }
+  .zoom-controls button { padding: 4px 10px; border: 1px solid #d1d5db; background: white; border-radius: 4px; cursor: pointer; font-size: 13px; line-height: 1; min-width: 30px; }
+  .zoom-controls button:hover { border-color: #2563eb; color: #2563eb; }
+  #zoom-level { font-size: 12px; color: #555; min-width: 44px; text-align: center; font-variant-numeric: tabular-nums; }
+  .zoom-hint { margin-left: auto; font-size: 11px; color: #94a3b8; }
+
+  /* ── Diagram ── */
+  .diagram { overflow: auto; max-height: 70vh; border: 1px solid #eef2f7; border-radius: 6px; }
+  .diagram svg { max-width: none; display: block; }
+  .diagram text.messageText { cursor: pointer; transition: fill 120ms; }
+  .diagram text.messageText:hover { fill: #2563eb !important; }
+  .diagram text.messageText.active { fill: #2563eb !important; font-weight: 700; }
+  .diagram .step-hitzone { fill: transparent; cursor: pointer; transition: fill 120ms; }
+  .diagram .step-hitzone:hover { fill: rgba(37,99,235,0.07); }
+  .diagram .step-hitzone.active { fill: rgba(37,99,235,0.10); }
+
+  /* ── Preview ── */
+  .preview-panel .placeholder { color: #888; font-style: italic; text-align: center; padding: 40px 20px; }
+  .image-viewer { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; }
+  .image-viewer .ui-mock { max-width: 100%; border: 1px solid #e5e7eb; border-radius: 6px; background: white; }
+  #viewer-side.has-step { cursor: zoom-in; padding: 6px; border-radius: 6px; transition: background 120ms; }
+  #viewer-side.has-step:hover { background: #f1f5f9; }
+  #viewer-side .enlarge-hint { font-size: 11px; color: #94a3b8; margin-top: 2px; }
+  .step-label { font-weight: 600; font-size: 14px; color: #2563eb; margin-top: 4px; text-align: center; }
+  .step-desc { color: #555; font-size: 13px; text-align: center; max-width: 95%; line-height: 1.4; }
+  .step-list-wrapper { display: flex; align-items: center; gap: 12px; margin-top: 14px; flex-wrap: wrap; }
+  .step-list-label { font-size: 13px; font-weight: 600; color: #475569; }
+  .step-list { list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: 10px; }
+  .step-list button { width: 32px; height: 32px; padding: 0; border: none; background: #1f2937; color: white; border-radius: 50%; cursor: pointer; font-size: 13px; font-weight: 600; display: inline-flex; align-items: center; justify-content: center; transition: transform 120ms, background 120ms, box-shadow 120ms; }
+  .step-list button:hover { background: #2563eb; transform: scale(1.1); }
+  .step-list button.active { background: #2563eb; box-shadow: 0 0 0 3px rgba(37,99,235,0.3); }
+
+  /* ── Modal ── */
+  .modal-overlay { position: fixed; inset: 0; background: rgba(15,23,42,0.55); display: none; align-items: center; justify-content: center; z-index: 1000; }
+  .modal-overlay.open { display: flex; }
+  .modal { background: white; border-radius: 10px; padding: 28px 30px 24px; width: 60vw; min-width: 480px; max-width: 95vw; max-height: 92vh; overflow: auto; box-shadow: 0 25px 60px rgba(0,0,0,0.3); position: relative; }
+  .modal .ui-mock { width: 100%; max-width: 720px; }
+  .modal-close { position: absolute; top: 8px; right: 12px; background: none; border: none; font-size: 24px; line-height: 1; cursor: pointer; color: #64748b; padding: 4px 8px; border-radius: 4px; }
+  .modal-close:hover { color: #1e293b; background: #f1f5f9; }
+  @media (max-width: 1100px) { .modal { width: 80vw; } }
+  @media (max-width: 700px) { .modal { width: 95vw; min-width: 0; padding: 20px; } }
+</style>
+</head>
+<body>
+
+<nav class="sidebar">
+  <div class="sidebar-header">
+    <h1>Integration Flow Viewer</h1>
+    <p>Sequence Diagram → App Network</p>
+  </div>
+  <div class="nav-section">
+    <div class="nav-section-label">Integrations</div>
+
+    <div class="nav-category open" id="cat-patient">
+      <div class="nav-category-header" onclick="toggleCategory('cat-patient')">
+        <span class="caret">&#9658;</span>&nbsp;Patient
+      </div>
+      <div class="nav-items">
+        <div class="nav-item active" data-page="patient-info" onclick="navigateTo('patient-info')">
+          01 · Patient Info <span class="nav-badge">7</span>
+        </div>
+        <div class="nav-item" data-page="patient-contact" onclick="navigateTo('patient-contact')">
+          02 · Patient Contact List <span class="nav-badge">7</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="nav-category open" id="cat-appointment">
+      <div class="nav-category-header" onclick="toggleCategory('cat-appointment')">
+        <span class="caret">&#9658;</span>&nbsp;Appointment
+      </div>
+      <div class="nav-items">
+        <div class="nav-item" data-page="appointment-create" onclick="navigateTo('appointment-create')">
+          05 · Appointment Create <span class="nav-badge">13</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="nav-category" id="cat-worklist">
+      <div class="nav-category-header" onclick="toggleCategory('cat-worklist')">
+        <span class="caret">&#9658;</span>&nbsp;Worklist
+      </div>
+      <div class="nav-items">
+        <div class="nav-item disabled">Coming soon&hellip;</div>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<div class="main">
+  <div class="page-header">
+    <div class="breadcrumb" id="breadcrumb">Patient</div>
+    <h2 id="page-title"></h2>
+    <p class="subtitle">Click any message in the diagram (or a step button) to open a preview popup for that step.</p>
+  </div>
+
+  <div class="layout">
+    <div class="panel">
+      <h2>Sequence Diagram</h2>
+      <div class="zoom-controls">
+        <button id="zoom-out" title="Zoom out">&#8722;</button>
+        <span id="zoom-level">100%</span>
+        <button id="zoom-in" title="Zoom in">+</button>
+        <button id="zoom-reset" title="Reset zoom">Reset</button>
+        <span class="zoom-hint">Ctrl/&#8984; + scroll to zoom</span>
+      </div>
+      <div class="diagram" id="diagram"></div>
+      <div class="step-list-wrapper">
+        <span class="step-list-label">Steps</span>
+        <ul class="step-list" id="step-list"></ul>
+      </div>
+    </div>
+
+    <div class="panel preview-panel">
+      <h2>Preview</h2>
+      <div class="image-viewer" id="viewer-side">
+        <div class="placeholder">Click a message in the diagram to preview the step.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-step-title">
+  <div class="modal">
+    <button class="modal-close" id="modal-close" aria-label="Close">&#215;</button>
+    <div class="image-viewer" id="viewer-modal"></div>
+  </div>
+</div>
+
+<script type="module">
+import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+mermaid.initialize({ startOnLoad: false, theme: 'default', securityLevel: 'loose' });
+
+const svgWrap = (inner) =>
+  `<svg viewBox="0 0 480 320" xmlns="http://www.w3.org/2000/svg" class="ui-mock" preserveAspectRatio="xMidYMid meet">${inner}</svg>`;
+
+// ─── PAGE DATA ────────────────────────────────────────────────────────────────
+
+const pages = {
+
+  // ── 01 Patient Info ──────────────────────────────────────────────────────────
+  'patient-info': {
+    title: 'Integration 01_Patient_Info — International Patient Demographic',
+    breadcrumb: 'Patient',
+    mermaid: `
+sequenceDiagram
+    autonumber
+    participant PDVS as PDVS
+    participant MU as MuleSoft API
+    participant TC as TrakCare
+    participant SF as Salesforce
+
+    Note over PDVS,SF: Integration 01_Patient_Info — International Patient Demographic
+    PDVS->>MU: Call patient create / update API
+    Note over PDVS,MU: bh-patients-api
+
+    MU->>TC: Create / Update International<br/>Patient to TrakCare
+    MU->>SF: Create / Update International<br/>Patient to Salesforce
+
+    alt Request Successful
+        SF-->>MU: Request successful
+        MU->>MU: Log success
+    else Error
+        SF-->>MU: Error body
+        MU->>MU: Log error
+    end`,
+    steps: [
+      {
+        title: 'Step 1 · PDVS calls patient create / update API',
+        desc: 'PDVS sends a POST to the MuleSoft bh-patients-api with the international patient payload.',
+        ui: svgWrap(`
+          <rect width="480" height="320" fill="#f0f4f8"/>
+          <rect x="40" y="40" width="400" height="240" rx="6" fill="white" stroke="#cbd5e1"/>
+          <rect x="40" y="40" width="400" height="34" fill="#1e293b"/>
+          <text x="56" y="62" font-family="ui-monospace,monospace" font-size="12" fill="#86efac">POST</text>
+          <text x="100" y="62" font-family="ui-monospace,monospace" font-size="12" fill="white">/bh-patients-api/v1/patients</text>
+          <text x="56" y="98" font-family="ui-monospace,monospace" font-size="11" fill="#64748b">Host: mulesoft.api</text>
+          <text x="56" y="116" font-family="ui-monospace,monospace" font-size="11" fill="#64748b">Content-Type: application/json</text>
+          <line x1="56" y1="128" x2="424" y2="128" stroke="#e2e8f0"/>
+          <text x="56" y="150" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">{</text>
+          <text x="76" y="170" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">"mrn": "INT-00482",</text>
+          <text x="76" y="190" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">"firstName": "Aiko",</text>
+          <text x="76" y="210" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">"lastName": "Tanaka",</text>
+          <text x="76" y="230" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">"country": "JP",</text>
+          <text x="76" y="250" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">"action": "create"</text>
+          <text x="56" y="270" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">}</text>`)
+      },
+      {
+        title: 'Step 2 · MuleSoft creates / updates patient in TrakCare',
+        desc: 'MuleSoft maps the payload to the TrakCare patient schema and forwards it.',
+        ui: svgWrap(`
+          <rect width="480" height="320" fill="#f0f4f8"/>
+          <rect x="40" y="40" width="400" height="240" rx="6" fill="white" stroke="#cbd5e1"/>
+          <rect x="40" y="40" width="400" height="34" fill="#7c3aed"/>
+          <text x="56" y="62" font-family="system-ui" font-size="13" font-weight="600" fill="white">TrakCare · Patient Registration</text>
+          <text x="60" y="100" font-family="system-ui" font-size="11" fill="#64748b">MRN</text>
+          <rect x="60" y="108" width="160" height="26" rx="3" fill="#f8fafc" stroke="#cbd5e1"/>
+          <text x="68" y="125" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">INT-00482</text>
+          <text x="240" y="100" font-family="system-ui" font-size="11" fill="#64748b">Country</text>
+          <rect x="240" y="108" width="160" height="26" rx="3" fill="#f8fafc" stroke="#cbd5e1"/>
+          <text x="248" y="125" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">JP — Japan</text>
+          <text x="60" y="160" font-family="system-ui" font-size="11" fill="#64748b">First name</text>
+          <rect x="60" y="168" width="160" height="26" rx="3" fill="#f8fafc" stroke="#cbd5e1"/>
+          <text x="68" y="185" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">Aiko</text>
+          <text x="240" y="160" font-family="system-ui" font-size="11" fill="#64748b">Last name</text>
+          <rect x="240" y="168" width="160" height="26" rx="3" fill="#f8fafc" stroke="#cbd5e1"/>
+          <text x="248" y="185" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">Tanaka</text>
+          <rect x="60" y="226" width="120" height="32" rx="4" fill="#7c3aed"/>
+          <text x="120" y="247" text-anchor="middle" font-family="system-ui" font-size="12" font-weight="600" fill="white">Save patient</text>
+          <text x="200" y="246" font-family="system-ui" font-size="11" fill="#64748b">Action: create</text>`)
+      },
+      {
+        title: 'Step 3 · MuleSoft creates / updates patient in Salesforce',
+        desc: 'Same payload pushed to the Salesforce International Patient object.',
+        ui: svgWrap(`
+          <rect width="480" height="320" fill="#f0f4f8"/>
+          <rect x="40" y="40" width="400" height="240" rx="6" fill="white" stroke="#cbd5e1"/>
+          <rect x="40" y="40" width="400" height="34" fill="#0ea5e9"/>
+          <text x="56" y="62" font-family="system-ui" font-size="13" font-weight="600" fill="white">Salesforce · International Patient</text>
+          <text x="60" y="100" font-family="system-ui" font-size="11" fill="#64748b">Patient ID</text>
+          <rect x="60" y="108" width="160" height="26" rx="3" fill="#f8fafc" stroke="#cbd5e1"/>
+          <text x="68" y="125" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">INT-00482</text>
+          <text x="240" y="100" font-family="system-ui" font-size="11" fill="#64748b">Status</text>
+          <rect x="240" y="108" width="160" height="26" rx="3" fill="#dcfce7" stroke="#86efac"/>
+          <text x="248" y="125" font-family="ui-monospace,monospace" font-size="12" fill="#15803d">Upserting…</text>
+          <text x="60" y="160" font-family="system-ui" font-size="11" fill="#64748b">Name</text>
+          <rect x="60" y="168" width="340" height="26" rx="3" fill="#f8fafc" stroke="#cbd5e1"/>
+          <text x="68" y="185" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">Aiko Tanaka</text>
+          <text x="60" y="220" font-family="system-ui" font-size="11" fill="#64748b">Country</text>
+          <rect x="60" y="228" width="160" height="26" rx="3" fill="#f8fafc" stroke="#cbd5e1"/>
+          <text x="68" y="245" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">Japan</text>`)
+      },
+      {
+        title: 'Step 4 · Salesforce returns success',
+        desc: 'Salesforce acknowledges the upsert with 200 OK and the new record id.',
+        ui: svgWrap(`
+          <rect width="480" height="320" fill="#f0f4f8"/>
+          <rect x="40" y="40" width="400" height="240" rx="6" fill="white" stroke="#cbd5e1"/>
+          <text x="60" y="74" font-family="system-ui" font-size="14" font-weight="600" fill="#16a34a">200 OK</text>
+          <text x="60" y="94" font-family="ui-monospace,monospace" font-size="11" fill="#64748b">Content-Type: application/json</text>
+          <line x1="40" y1="108" x2="440" y2="108" stroke="#e2e8f0"/>
+          <text x="60" y="134" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">{</text>
+          <text x="80" y="156" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">"success": true,</text>
+          <text x="80" y="178" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">"id": "a0X5g00000XyZab",</text>
+          <text x="80" y="200" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">"created": false,</text>
+          <text x="80" y="222" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">"errors": []</text>
+          <text x="60" y="244" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">}</text>`)
+      },
+      {
+        title: 'Step 5 · MuleSoft logs success',
+        desc: 'Success log entry written for the patient upsert.',
+        ui: svgWrap(`
+          <rect width="480" height="320" fill="#0f172a"/>
+          <text x="20" y="38" font-family="ui-monospace,monospace" font-size="12" fill="#94a3b8">mulesoft:bh-patients-api · log stream</text>
+          <line x1="20" y1="50" x2="460" y2="50" stroke="#1e293b"/>
+          <text x="20" y="80" font-family="ui-monospace,monospace" font-size="11" fill="#64748b">2026-05-09T09:14:22.481Z</text>
+          <text x="20" y="100" font-family="ui-monospace,monospace" font-size="11" fill="#86efac">[INFO ] patient.upsert.success</text>
+          <text x="20" y="124" font-family="ui-monospace,monospace" font-size="11" fill="#cbd5e1">  correlationId : 7d3f-2a91-bb04</text>
+          <text x="20" y="142" font-family="ui-monospace,monospace" font-size="11" fill="#cbd5e1">  mrn           : INT-00482</text>
+          <text x="20" y="160" font-family="ui-monospace,monospace" font-size="11" fill="#cbd5e1">  trakcare      : ok</text>
+          <text x="20" y="178" font-family="ui-monospace,monospace" font-size="11" fill="#cbd5e1">  salesforce    : ok (a0X5g00000XyZab)</text>
+          <text x="20" y="196" font-family="ui-monospace,monospace" font-size="11" fill="#cbd5e1">  durationMs    : 412</text>
+          <rect x="20" y="208" width="6" height="14" fill="#86efac"><animate attributeName="opacity" values="1;0;1" dur="1s" repeatCount="indefinite"/></rect>`)
+      },
+      {
+        title: 'Step 6 · Salesforce returns error',
+        desc: 'Salesforce responds with an error body — request did not persist.',
+        ui: svgWrap(`
+          <rect width="480" height="320" fill="#f0f4f8"/>
+          <rect x="40" y="40" width="400" height="240" rx="6" fill="white" stroke="#fecaca"/>
+          <text x="60" y="74" font-family="system-ui" font-size="14" font-weight="600" fill="#dc2626">400 Bad Request</text>
+          <text x="60" y="94" font-family="ui-monospace,monospace" font-size="11" fill="#64748b">Content-Type: application/json</text>
+          <line x1="40" y1="108" x2="440" y2="108" stroke="#fee2e2"/>
+          <text x="60" y="134" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">{</text>
+          <text x="80" y="156" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">"success": false,</text>
+          <text x="80" y="178" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">"errors": [{</text>
+          <text x="100" y="200" font-family="ui-monospace,monospace" font-size="11" fill="#dc2626">"statusCode": "REQUIRED_FIELD_MISSING",</text>
+          <text x="100" y="220" font-family="ui-monospace,monospace" font-size="11" fill="#dc2626">"message": "Country__c is required",</text>
+          <text x="100" y="240" font-family="ui-monospace,monospace" font-size="11" fill="#dc2626">"fields": ["Country__c"]</text>
+          <text x="80" y="260" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">}]</text>
+          <text x="60" y="276" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">}</text>`)
+      },
+      {
+        title: 'Step 7 · MuleSoft logs error',
+        desc: 'Error log entry captured with the Salesforce error body for triage.',
+        ui: svgWrap(`
+          <rect width="480" height="320" fill="#0f172a"/>
+          <text x="20" y="38" font-family="ui-monospace,monospace" font-size="12" fill="#94a3b8">mulesoft:bh-patients-api · log stream</text>
+          <line x1="20" y1="50" x2="460" y2="50" stroke="#1e293b"/>
+          <text x="20" y="80" font-family="ui-monospace,monospace" font-size="11" fill="#64748b">2026-05-09T09:14:22.612Z</text>
+          <text x="20" y="100" font-family="ui-monospace,monospace" font-size="11" fill="#fca5a5">[ERROR] patient.upsert.failed</text>
+          <text x="20" y="124" font-family="ui-monospace,monospace" font-size="11" fill="#cbd5e1">  correlationId : 7d3f-2a91-bb04</text>
+          <text x="20" y="142" font-family="ui-monospace,monospace" font-size="11" fill="#cbd5e1">  mrn           : INT-00482</text>
+          <text x="20" y="160" font-family="ui-monospace,monospace" font-size="11" fill="#cbd5e1">  target        : salesforce</text>
+          <text x="20" y="178" font-family="ui-monospace,monospace" font-size="11" fill="#fca5a5">  status        : 400 REQUIRED_FIELD_MISSING</text>
+          <text x="20" y="196" font-family="ui-monospace,monospace" font-size="11" fill="#fca5a5">  message       : Country__c is required</text>
+          <text x="20" y="214" font-family="ui-monospace,monospace" font-size="11" fill="#cbd5e1">  durationMs    : 388</text>
+          <rect x="20" y="226" width="6" height="14" fill="#fca5a5"><animate attributeName="opacity" values="1;0;1" dur="1s" repeatCount="indefinite"/></rect>`)
+      }
+    ]
+  },
+
+  // ── 02 Patient Contact List ──────────────────────────────────────────────────
+  'patient-contact': {
+    title: 'Integration 02_Patient_Contact_List — International Patient Demographic',
+    breadcrumb: 'Patient',
+    mermaid: `
+sequenceDiagram
+    autonumber
+    participant U as User
+    participant TC as TrakCare
+    participant MU as MuleSoft API
+    participant SF as Salesforce
+
+    Note over U,SF: Integration 02_Patient_Contact_List — International Patient Demographic
+    U->>TC: Create / Update International<br/>Patient's contact list in TrakCare
+    TC->>MU: Webhook event: Create / Update International<br/>Patient's contact in TrakCare
+    MU->>SF: Create / Update IPS patient's contact list
+
+    alt Request Successful
+        SF-->>MU: Request successful
+        MU->>MU: Log success
+    else Error
+        SF-->>MU: Error body
+        MU->>MU: Log error
+    end`,
+    steps: [
+      {
+        title: "Step 1 · User creates / updates contact list in TrakCare",
+        desc: "A user adds or edits an international patient's contact list (emergency contacts, next of kin) inside the TrakCare portal.",
+        ui: svgWrap(`
+          <rect width="480" height="320" fill="#f0f4f8"/>
+          <rect x="40" y="30" width="400" height="268" rx="6" fill="white" stroke="#cbd5e1"/>
+          <rect x="40" y="30" width="400" height="34" fill="#7c3aed"/>
+          <text x="56" y="52" font-family="system-ui" font-size="13" font-weight="600" fill="white">TrakCare · Contact List</text>
+          <text x="60" y="88" font-family="system-ui" font-size="11" fill="#64748b">Patient MRN</text>
+          <rect x="60" y="96" width="160" height="26" rx="3" fill="#f8fafc" stroke="#cbd5e1"/>
+          <text x="68" y="113" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">INT-00482</text>
+          <text x="240" y="88" font-family="system-ui" font-size="11" fill="#64748b">Relationship</text>
+          <rect x="240" y="96" width="160" height="26" rx="3" fill="#f8fafc" stroke="#cbd5e1"/>
+          <text x="248" y="113" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">Spouse</text>
+          <text x="60" y="148" font-family="system-ui" font-size="11" fill="#64748b">Contact Name</text>
+          <rect x="60" y="156" width="340" height="26" rx="3" fill="#f8fafc" stroke="#cbd5e1"/>
+          <text x="68" y="173" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">Kenji Tanaka</text>
+          <text x="60" y="204" font-family="system-ui" font-size="11" fill="#64748b">Phone</text>
+          <rect x="60" y="212" width="160" height="26" rx="3" fill="#f8fafc" stroke="#cbd5e1"/>
+          <text x="68" y="229" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">+81-3-5555-0123</text>
+          <text x="240" y="204" font-family="system-ui" font-size="11" fill="#64748b">Priority</text>
+          <rect x="240" y="212" width="160" height="26" rx="3" fill="#f8fafc" stroke="#cbd5e1"/>
+          <text x="248" y="229" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">1 (Primary)</text>
+          <rect x="60" y="258" width="130" height="28" rx="4" fill="#7c3aed"/>
+          <text x="125" y="277" text-anchor="middle" font-family="system-ui" font-size="12" font-weight="600" fill="white">Save contact</text>`)
+      },
+      {
+        title: 'Step 2 · TrakCare fires webhook to MuleSoft',
+        desc: 'TrakCare emits a webhook event notifying MuleSoft API of the new or updated contact record.',
+        ui: svgWrap(`
+          <rect width="480" height="320" fill="#f0f4f8"/>
+          <rect x="40" y="40" width="400" height="240" rx="6" fill="white" stroke="#cbd5e1"/>
+          <rect x="40" y="40" width="400" height="34" fill="#1e293b"/>
+          <text x="56" y="62" font-family="ui-monospace,monospace" font-size="12" fill="#fbbf24">POST</text>
+          <text x="104" y="62" font-family="ui-monospace,monospace" font-size="11" fill="white">/webhooks/patient-contact</text>
+          <text x="56" y="96" font-family="ui-monospace,monospace" font-size="11" fill="#64748b">X-Event-Type: patient.contact.updated</text>
+          <text x="56" y="114" font-family="ui-monospace,monospace" font-size="11" fill="#64748b">Content-Type: application/json</text>
+          <line x1="56" y1="126" x2="424" y2="126" stroke="#e2e8f0"/>
+          <text x="56" y="148" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">{</text>
+          <text x="76" y="168" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">"event": "contact.updated",</text>
+          <text x="76" y="188" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">"mrn": "INT-00482",</text>
+          <text x="76" y="208" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">"contactId": "CTX-8821",</text>
+          <text x="76" y="228" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">"relationship": "Spouse",</text>
+          <text x="76" y="248" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">"name": "Kenji Tanaka"</text>
+          <text x="56" y="268" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">}</text>`)
+      },
+      {
+        title: "Step 3 · MuleSoft creates / updates IPS patient's contact list in Salesforce",
+        desc: 'MuleSoft transforms the TrakCare contact payload and upserts it into the Salesforce IPS Contact object.',
+        ui: svgWrap(`
+          <rect width="480" height="320" fill="#f0f4f8"/>
+          <rect x="40" y="30" width="400" height="268" rx="6" fill="white" stroke="#cbd5e1"/>
+          <rect x="40" y="30" width="400" height="34" fill="#0ea5e9"/>
+          <text x="56" y="52" font-family="system-ui" font-size="13" font-weight="600" fill="white">Salesforce · IPS Contact List</text>
+          <text x="60" y="88" font-family="system-ui" font-size="11" fill="#64748b">Patient ID</text>
+          <rect x="60" y="96" width="160" height="26" rx="3" fill="#f8fafc" stroke="#cbd5e1"/>
+          <text x="68" y="113" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">INT-00482</text>
+          <text x="240" y="88" font-family="system-ui" font-size="11" fill="#64748b">Contact ID</text>
+          <rect x="240" y="96" width="160" height="26" rx="3" fill="#f8fafc" stroke="#cbd5e1"/>
+          <text x="248" y="113" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">CTX-8821</text>
+          <text x="60" y="148" font-family="system-ui" font-size="11" fill="#64748b">Contact Name</text>
+          <rect x="60" y="156" width="340" height="26" rx="3" fill="#f8fafc" stroke="#cbd5e1"/>
+          <text x="68" y="173" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">Kenji Tanaka</text>
+          <text x="60" y="204" font-family="system-ui" font-size="11" fill="#64748b">Relationship</text>
+          <rect x="60" y="212" width="160" height="26" rx="3" fill="#f8fafc" stroke="#cbd5e1"/>
+          <text x="68" y="229" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">Spouse</text>
+          <text x="240" y="204" font-family="system-ui" font-size="11" fill="#64748b">Status</text>
+          <rect x="240" y="212" width="160" height="26" rx="3" fill="#dcfce7" stroke="#86efac"/>
+          <text x="248" y="229" font-family="ui-monospace,monospace" font-size="12" fill="#15803d">Upserting…</text>`)
+      },
+      {
+        title: 'Step 4 · Salesforce returns success',
+        desc: 'Salesforce confirms the IPS contact upsert with 200 OK and returns the new record identifier.',
+        ui: svgWrap(`
+          <rect width="480" height="320" fill="#f0f4f8"/>
+          <rect x="40" y="40" width="400" height="240" rx="6" fill="white" stroke="#cbd5e1"/>
+          <text x="60" y="74" font-family="system-ui" font-size="14" font-weight="600" fill="#16a34a">200 OK</text>
+          <text x="60" y="94" font-family="ui-monospace,monospace" font-size="11" fill="#64748b">Content-Type: application/json</text>
+          <line x1="40" y1="108" x2="440" y2="108" stroke="#e2e8f0"/>
+          <text x="60" y="134" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">{</text>
+          <text x="80" y="156" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">"success": true,</text>
+          <text x="80" y="178" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">"id": "b2C7h00001KtMnp",</text>
+          <text x="80" y="200" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">"created": true,</text>
+          <text x="80" y="222" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">"errors": []</text>
+          <text x="60" y="244" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">}</text>`)
+      },
+      {
+        title: 'Step 5 · MuleSoft logs success',
+        desc: 'A success log entry is written capturing MRN, contact ID, and the Salesforce record id.',
+        ui: svgWrap(`
+          <rect width="480" height="320" fill="#0f172a"/>
+          <text x="20" y="38" font-family="ui-monospace,monospace" font-size="12" fill="#94a3b8">mulesoft:patient-contact-api · log stream</text>
+          <line x1="20" y1="50" x2="460" y2="50" stroke="#1e293b"/>
+          <text x="20" y="80" font-family="ui-monospace,monospace" font-size="11" fill="#64748b">2026-05-09T11:22:05.313Z</text>
+          <text x="20" y="100" font-family="ui-monospace,monospace" font-size="11" fill="#86efac">[INFO ] contact.upsert.success</text>
+          <text x="20" y="124" font-family="ui-monospace,monospace" font-size="11" fill="#cbd5e1">  correlationId : 9f1c-4d82-cc17</text>
+          <text x="20" y="142" font-family="ui-monospace,monospace" font-size="11" fill="#cbd5e1">  mrn           : INT-00482</text>
+          <text x="20" y="160" font-family="ui-monospace,monospace" font-size="11" fill="#cbd5e1">  contactId     : CTX-8821</text>
+          <text x="20" y="178" font-family="ui-monospace,monospace" font-size="11" fill="#cbd5e1">  salesforce    : ok (b2C7h00001KtMnp)</text>
+          <text x="20" y="196" font-family="ui-monospace,monospace" font-size="11" fill="#cbd5e1">  durationMs    : 287</text>
+          <rect x="20" y="208" width="6" height="14" fill="#86efac"><animate attributeName="opacity" values="1;0;1" dur="1s" repeatCount="indefinite"/></rect>`)
+      },
+      {
+        title: 'Step 6 · Salesforce returns error',
+        desc: 'Salesforce rejects the contact upsert and returns an error body indicating the missing field.',
+        ui: svgWrap(`
+          <rect width="480" height="320" fill="#f0f4f8"/>
+          <rect x="40" y="40" width="400" height="240" rx="6" fill="white" stroke="#fecaca"/>
+          <text x="60" y="74" font-family="system-ui" font-size="14" font-weight="600" fill="#dc2626">400 Bad Request</text>
+          <text x="60" y="94" font-family="ui-monospace,monospace" font-size="11" fill="#64748b">Content-Type: application/json</text>
+          <line x1="40" y1="108" x2="440" y2="108" stroke="#fee2e2"/>
+          <text x="60" y="134" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">{</text>
+          <text x="80" y="156" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">"success": false,</text>
+          <text x="80" y="178" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">"errors": [{</text>
+          <text x="100" y="200" font-family="ui-monospace,monospace" font-size="11" fill="#dc2626">"statusCode": "REQUIRED_FIELD_MISSING",</text>
+          <text x="100" y="220" font-family="ui-monospace,monospace" font-size="11" fill="#dc2626">"message": "Phone__c is required",</text>
+          <text x="100" y="240" font-family="ui-monospace,monospace" font-size="11" fill="#dc2626">"fields": ["Phone__c"]</text>
+          <text x="80" y="260" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">}]</text>
+          <text x="60" y="276" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">}</text>`)
+      },
+      {
+        title: 'Step 7 · MuleSoft logs error',
+        desc: 'Error log entry captured with Salesforce error details and the original contact ID for triage.',
+        ui: svgWrap(`
+          <rect width="480" height="320" fill="#0f172a"/>
+          <text x="20" y="38" font-family="ui-monospace,monospace" font-size="12" fill="#94a3b8">mulesoft:patient-contact-api · log stream</text>
+          <line x1="20" y1="50" x2="460" y2="50" stroke="#1e293b"/>
+          <text x="20" y="80" font-family="ui-monospace,monospace" font-size="11" fill="#64748b">2026-05-09T11:22:05.448Z</text>
+          <text x="20" y="100" font-family="ui-monospace,monospace" font-size="11" fill="#fca5a5">[ERROR] contact.upsert.failed</text>
+          <text x="20" y="124" font-family="ui-monospace,monospace" font-size="11" fill="#cbd5e1">  correlationId : 9f1c-4d82-cc17</text>
+          <text x="20" y="142" font-family="ui-monospace,monospace" font-size="11" fill="#cbd5e1">  mrn           : INT-00482</text>
+          <text x="20" y="160" font-family="ui-monospace,monospace" font-size="11" fill="#cbd5e1">  contactId     : CTX-8821</text>
+          <text x="20" y="178" font-family="ui-monospace,monospace" font-size="11" fill="#fca5a5">  status        : 400 REQUIRED_FIELD_MISSING</text>
+          <text x="20" y="196" font-family="ui-monospace,monospace" font-size="11" fill="#fca5a5">  message       : Phone__c is required</text>
+          <text x="20" y="214" font-family="ui-monospace,monospace" font-size="11" fill="#cbd5e1">  durationMs    : 261</text>
+          <rect x="20" y="226" width="6" height="14" fill="#fca5a5"><animate attributeName="opacity" values="1;0;1" dur="1s" repeatCount="indefinite"/></rect>`)
+      }
+    ]
+  }
+};
+
+// ─── STATE ────────────────────────────────────────────────────────────────────
+
+let currentPageId = null;
+let currentStep = -1;
+let orderedMessageTexts = [];
+let orderedHitzones = [];
+let zoom = 0.7;
+let baseWidth = 0;
+let diagramCounter = 0;
+const ZOOM_MIN = 0.4, ZOOM_MAX = 3, ZOOM_STEP = 0.15;
+
+const diagramEl  = document.getElementById('diagram');
+const zoomLevelEl = document.getElementById('zoom-level');
+const viewerSide  = document.getElementById('viewer-side');
+const viewerModal = document.getElementById('viewer-modal');
+const stepList    = document.getElementById('step-list');
+const modalOverlay = document.getElementById('modal-overlay');
+
+// ─── NAVIGATION (exposed to inline onclick) ───────────────────────────────────
+
+window.toggleCategory = (id) => document.getElementById(id).classList.toggle('open');
+
+window.navigateTo = (pageId) => {
+  if (pageId === currentPageId) return;
+  document.querySelectorAll('.nav-item[data-page]').forEach(el =>
+    el.classList.toggle('active', el.dataset.page === pageId));
+  loadPage(pageId);
+};
+
+// ─── PAGE LOADER ──────────────────────────────────────────────────────────────
+
+async function loadPage(pageId) {
+  const page = pages[pageId];
+  if (!page) return;
+  currentPageId = pageId;
+  currentStep = -1;
+  orderedMessageTexts = [];
+  orderedHitzones = [];
+
+  document.getElementById('breadcrumb').textContent = page.breadcrumb;
+  document.getElementById('page-title').textContent = page.title;
+
+  viewerSide.innerHTML = '<div class="placeholder">Click a message in the diagram to preview the step.</div>';
+  viewerSide.classList.remove('has-step');
+
+  stepList.innerHTML = '';
+  page.steps.forEach((s, i) => {
+    const li  = document.createElement('li');
+    const btn = document.createElement('button');
+    btn.textContent = String(i + 1);
+    btn.title = s.title;
+    btn.setAttribute('aria-label', s.title);
+    btn.addEventListener('click', () => showStep(i));
+    li.appendChild(btn);
+    stepList.appendChild(li);
+  });
+
+  zoom = 0.7;
+  await renderDiagram(page.mermaid);
+}
+
+// ─── STEP DISPLAY ─────────────────────────────────────────────────────────────
+
+function showStep(i) {
+  const step = pages[currentPageId].steps[i];
+  currentStep = i;
+  viewerSide.innerHTML = `
+    ${step.ui}
+    <div class="step-label" id="modal-step-title">${step.title}</div>
+    <div class="step-desc">${step.desc}</div>
+    <div class="enlarge-hint">Click to enlarge</div>`;
+  viewerSide.classList.add('has-step');
+  stepList.querySelectorAll('button').forEach((b, idx) => b.classList.toggle('active', idx === i));
+  orderedMessageTexts.forEach((t, idx) => t.classList.toggle('active', idx === i));
+  orderedHitzones.forEach((r, idx) => r.classList.toggle('active', idx === i));
+}
+
+function showInModal(i) {
+  const step = pages[currentPageId].steps[i];
+  viewerModal.innerHTML = `
+    ${step.ui}
+    <div class="step-label">${step.title}</div>
+    <div class="step-desc">${step.desc}</div>`;
+  modalOverlay.classList.add('open');
+}
+
+viewerSide.addEventListener('click', () => { if (currentStep >= 0) showInModal(currentStep); });
+document.getElementById('modal-close').addEventListener('click', () => modalOverlay.classList.remove('open'));
+modalOverlay.addEventListener('click', (e) => { if (e.target === modalOverlay) modalOverlay.classList.remove('open'); });
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') modalOverlay.classList.remove('open'); });
+
+// ─── ZOOM ─────────────────────────────────────────────────────────────────────
+
+function applyZoom() {
+  const svgEl = diagramEl.querySelector('svg');
+  if (!svgEl || !baseWidth) return;
+  svgEl.style.width  = `${baseWidth * zoom}px`;
+  svgEl.style.height = 'auto';
+  zoomLevelEl.textContent = `${Math.round(zoom * 100)}%`;
+}
+
+function setZoom(next, anchor) {
+  const clamped = Math.max(ZOOM_MIN, Math.min(ZOOM_MAX, next));
+  if (clamped === zoom) return;
+  const prev = zoom;
+  const { scrollLeft, scrollTop, clientWidth, clientHeight } = diagramEl;
+  const ax = anchor ? anchor.x : clientWidth  / 2;
+  const ay = anchor ? anchor.y : clientHeight / 2;
+  zoom = clamped;
+  applyZoom();
+  diagramEl.scrollLeft = (scrollLeft + ax) * (clamped / prev) - ax;
+  diagramEl.scrollTop  = (scrollTop  + ay) * (clamped / prev) - ay;
+}
+
+document.getElementById('zoom-in').addEventListener('click', () => setZoom(zoom + ZOOM_STEP));
+document.getElementById('zoom-out').addEventListener('click', () => setZoom(zoom - ZOOM_STEP));
+document.getElementById('zoom-reset').addEventListener('click', () => setZoom(1));
+diagramEl.addEventListener('wheel', (e) => {
+  if (!e.ctrlKey && !e.metaKey) return;
+  e.preventDefault();
+  const r = diagramEl.getBoundingClientRect();
+  setZoom(zoom + (e.deltaY < 0 ? ZOOM_STEP : -ZOOM_STEP), { x: e.clientX - r.left, y: e.clientY - r.top });
+}, { passive: false });
+
+// ─── DIAGRAM RENDER ───────────────────────────────────────────────────────────
+
+async function renderDiagram(src) {
+  const id = `seqDiagram_${++diagramCounter}`;
+  const { svg } = await mermaid.render(id, src);
+  diagramEl.innerHTML = svg;
+
+  const svgEl = diagramEl.querySelector('svg');
+  baseWidth = svgEl.getBoundingClientRect().width || svgEl.viewBox.baseVal.width || 800;
+  applyZoom();
+
+  const page = pages[currentPageId];
+  const n = page.steps.length;
+
+  // ── A. Autonumber circle elements: text nodes whose content is exactly "1".."n".
+  //      These are the definitive Y-position anchor for each step — they are the
+  //      visible numbered circles, one per arrow, with no ambiguity.
+  const seqByIndex = new Array(n).fill(null);
+  svgEl.querySelectorAll('text').forEach(t => {
+    const txt = t.textContent.trim();
+    const idx = parseInt(txt, 10) - 1; // convert to 0-based
+    if (idx >= 0 && idx < n && txt === String(idx + 1)) {
+      seqByIndex[idx] = t;
+    }
+  });
+
+  // ── B. Message text labels for visual blue-highlight on selection.
+  //      Filter out alt/else condition texts (e.g. "[Request Successful]", "[Error]")
+  //      which share the same messageText class in Mermaid 11 and would shift indices.
+  const messageTexts = [...svgEl.querySelectorAll('text.messageText')]
+    .filter(t => !t.textContent.trim().startsWith('['))
+    .sort((a, b) => a.getBBox().y - b.getBBox().y)
+    .slice(0, n);
+  orderedMessageTexts = messageTexts;
+  messageTexts.forEach((t, i) => t.addEventListener('click', () => showStep(i)));
+
+  // ── C. Arrow line/path elements — additional click targets on the line itself.
+  [...svgEl.querySelectorAll('line.messageLine0,line.messageLine1,path.messageLine0,path.messageLine1')]
+    .sort((a, b) => a.getBBox().y - b.getBBox().y)
+    .slice(0, n)
+    .forEach((l, i) => { l.style.cursor = 'pointer'; l.addEventListener('click', () => showStep(i)); });
+
+  // ── D. Hitzones anchored on autonumber Y positions (falls back to messageText).
+  //      Using the numbered circle's Y means the hover band is centered exactly
+  //      on the visible sequence number, not on the floating text above the arrow.
+  const ns = 'http://www.w3.org/2000/svg';
+  const vb = svgEl.viewBox.baseVal;
+  const fullWidth = (vb && vb.width) ? vb.width : svgEl.getBBox().width;
+
+  const anchorYs = seqByIndex.map((el, i) => {
+    const node = el || messageTexts[i];
+    if (!node) return 0;
+    const b = node.getBBox();
+    return b.y + b.height / 2;
+  });
+
+  orderedHitzones = anchorYs.map((yc, i) => {
+    const y0 = i === 0 ? Math.max(0, yc - 32) : (anchorYs[i - 1] + anchorYs[i]) / 2;
+    const y1 = i === n - 1 ? yc + 32 : (anchorYs[i] + anchorYs[i + 1]) / 2;
+    const rect = document.createElementNS(ns, 'rect');
+    rect.setAttribute('x', '0');
+    rect.setAttribute('y', String(y0));
+    rect.setAttribute('width', String(fullWidth));
+    rect.setAttribute('height', String(Math.max(1, y1 - y0)));
+    rect.classList.add('step-hitzone');
+    rect.addEventListener('click', () => showStep(i));
+    svgEl.insertBefore(rect, svgEl.firstChild);
+    return rect;
+  });
+}
+
+// ─── INIT ─────────────────────────────────────────────────────────────────────
+loadPage('patient-info');
+</script>
+</body>
+</html>
