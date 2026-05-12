@@ -127,7 +127,10 @@
       </div>
       <div class="nav-items">
         <div class="nav-item" data-page="appointment-create" onclick="navigateTo('appointment-create')">
-          05 · Appointment Create <span class="nav-badge">9</span>
+          07 · Appointment Create <span class="nav-badge">9</span>
+        </div>
+        <div class="nav-item" data-page="appointment-get" onclick="navigateTo('appointment-get')">
+          08 · Get Appointment <span class="nav-badge">9</span>
         </div>
         <div class="nav-item" data-page="appointment-cancel" onclick="navigateTo('appointment-cancel')">
           06 · Appointment Cancel <span class="nav-badge">9</span>
@@ -2368,7 +2371,7 @@ sequenceDiagram
 
   // ── 05 Appointment Create ────────────────────────────────────────────────────
   'appointment-create': {
-    title: 'Integration 05_Appointment_Create — Appointment',
+    title: 'Integration 07_Appointment_Create — Appointment',
     breadcrumb: 'Appointment',
     mermaid: `
 sequenceDiagram
@@ -2378,7 +2381,7 @@ sequenceDiagram
     participant MU as MuleSoft API
     participant TC as TrakCare
 
-    Note over U,TC: Integration 05_Appointment_Create — Appointment
+    Note over U,TC: Integration 07_Appointment_Create — Appointment
     U->>SF: Fill Appointment Details on Salesforce
     SF->>MU: Appointment Create Request
     MU->>TC: POST /api/v1/booking
@@ -2397,181 +2400,692 @@ sequenceDiagram
         title: 'Step 1 · User fills appointment details on Salesforce',
         desc: 'The user enters and submits the appointment details through the Salesforce interface. This is the initial trigger for the integration.',
         ui: svgWrap(`
-          <rect width="480" height="320" fill="#f0f4f8"/>
-          <rect x="40" y="26" width="400" height="270" rx="6" fill="white" stroke="#cbd5e1"/>
-          <rect x="40" y="26" width="400" height="34" fill="#0ea5e9"/>
-          <text x="56" y="48" font-family="system-ui" font-size="13" font-weight="600" fill="white">Salesforce · New Appointment</text>
-          <text x="60" y="84" font-family="system-ui" font-size="11" fill="#64748b">Patient MRN</text>
-          <rect x="60" y="92" width="160" height="26" rx="3" fill="#f8fafc" stroke="#cbd5e1"/>
-          <text x="68" y="109" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">INT-00482</text>
-          <text x="240" y="84" font-family="system-ui" font-size="11" fill="#64748b">Doctor</text>
-          <rect x="240" y="92" width="160" height="26" rx="3" fill="#f8fafc" stroke="#cbd5e1"/>
-          <text x="248" y="109" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">Dr. Somporn K.</text>
-          <text x="60" y="142" font-family="system-ui" font-size="11" fill="#64748b">Appointment Date</text>
-          <rect x="60" y="150" width="160" height="26" rx="3" fill="#f8fafc" stroke="#cbd5e1"/>
-          <text x="68" y="167" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">2026-05-20</text>
-          <text x="240" y="142" font-family="system-ui" font-size="11" fill="#64748b">Time</text>
-          <rect x="240" y="150" width="160" height="26" rx="3" fill="#f8fafc" stroke="#cbd5e1"/>
-          <text x="248" y="167" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">10:00 AM</text>
-          <text x="60" y="200" font-family="system-ui" font-size="11" fill="#64748b">Location / Department</text>
-          <rect x="60" y="208" width="340" height="26" rx="3" fill="#f8fafc" stroke="#cbd5e1"/>
-          <text x="68" y="225" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">Outpatient · Floor 3</text>
-          <rect x="60" y="254" width="130" height="28" rx="4" fill="#0ea5e9"/>
-          <text x="125" y="273" text-anchor="middle" font-family="system-ui" font-size="12" font-weight="600" fill="white">Book Appointment</text>`)
+          <rect width="480" height="320" fill="#f5f5f5"/>
+          <!-- Person Client header -->
+          <rect x="0" y="0" width="480" height="42" fill="white" stroke="#e5e7eb" stroke-width="0.5"/>
+          <rect x="8" y="8" width="24" height="24" rx="4" fill="#1a7f8e"/>
+          <text x="20" y="24" text-anchor="middle" font-family="system-ui" font-size="9" fill="white">⬛</text>
+          <text x="38" y="16" font-family="system-ui" font-size="8" fill="#888">Person Client</text>
+          <text x="38" y="29" font-family="system-ui" font-size="12" font-weight="700" fill="#1e293b">Prof. Sunny Last</text>
+          <!-- Meta row -->
+          <rect x="0" y="42" width="480" height="20" fill="white" stroke="#e5e7eb" stroke-width="0.5"/>
+          <text x="8" y="55" font-family="system-ui" font-size="8" fill="#888">Hospital Number (HN)</text>
+          <text x="120" y="55" font-family="system-ui" font-size="8" fill="#888">Birthdate</text>
+          <text x="200" y="55" font-family="system-ui" font-size="8" fill="#888">Age</text>
+          <text x="240" y="55" font-family="system-ui" font-size="8" fill="#888">Gender</text>
+          <text x="290" y="55" font-family="system-ui" font-size="8" fill="#888">Country</text>
+          <text x="360" y="55" font-family="system-ui" font-size="8" fill="#888">Email</text>
+          <!-- Meta values row -->
+          <rect x="0" y="62" width="480" height="18" fill="white" stroke="#e5e7eb" stroke-width="0.5"/>
+          <text x="8" y="74" font-family="system-ui" font-size="8" fill="#1e293b">212224236248</text>
+          <text x="360" y="74" font-family="system-ui" font-size="8" fill="#1a7f8e">rose001@gmail.com</text>
+          <!-- Tabs -->
+          <rect x="0" y="80" width="480" height="22" fill="white" stroke="#e5e7eb" stroke-width="0.5"/>
+          <text x="12" y="95" font-family="system-ui" font-size="9" fill="#888">Details</text>
+          <text x="60" y="95" font-family="system-ui" font-size="9" fill="#888">Related</text>
+          <text x="104" y="95" font-family="system-ui" font-size="9" fill="#888">Appointment List</text>
+          <text x="182" y="95" font-family="system-ui" font-size="9" font-weight="700" fill="#1a7f8e">Book Appointment</text>
+          <line x1="182" y1="101" x2="258" y2="101" stroke="#1a7f8e" stroke-width="2"/>
+          <!-- Content area -->
+          <rect x="0" y="102" width="480" height="218" fill="white"/>
+          <text x="12" y="118" font-family="system-ui" font-size="10" font-weight="700" fill="#1e293b">Appointment Booking</text>
+          <!-- Stepper -->
+          <rect x="12" y="124" width="220" height="20" rx="10" fill="#1e5c32"/>
+          <text x="122" y="138" text-anchor="middle" font-family="system-ui" font-size="9" fill="white">Schedule Grid (Search)</text>
+          <rect x="236" y="124" width="220" height="20" rx="10" fill="#e5e7eb"/>
+          <text x="346" y="138" text-anchor="middle" font-family="system-ui" font-size="9" fill="#888">Review and Book</text>
+          <!-- Form row 1 -->
+          <text x="12" y="162" font-family="system-ui" font-size="8" fill="#888">Hospital</text>
+          <text x="244" y="162" font-family="system-ui" font-size="8" fill="#888">Location</text>
+          <rect x="12" y="166" width="224" height="18" rx="3" fill="white" stroke="#ddd"/>
+          <text x="20" y="179" font-family="system-ui" font-size="8" fill="#1e293b">Bumrungrad International Hospital</text>
+          <rect x="244" y="166" width="224" height="18" rx="3" fill="white" stroke="#ddd"/>
+          <text x="252" y="179" font-family="system-ui" font-size="8" fill="#888">-- None --</text>
+          <!-- Form row 2 -->
+          <text x="12" y="196" font-family="system-ui" font-size="8" fill="#888">Specialty</text>
+          <text x="244" y="196" font-family="system-ui" font-size="8" fill="#888">Sub Specialty</text>
+          <rect x="12" y="200" width="224" height="18" rx="3" fill="white" stroke="#ddd"/>
+          <text x="20" y="213" font-family="system-ui" font-size="8" fill="#bbb">Select Option</text>
+          <text x="228" y="213" font-family="system-ui" font-size="9" fill="#888">▼</text>
+          <rect x="244" y="200" width="224" height="18" rx="3" fill="white" stroke="#ddd"/>
+          <text x="252" y="213" font-family="system-ui" font-size="8" fill="#bbb">Select Option</text>
+          <text x="460" y="213" font-family="system-ui" font-size="9" fill="#888">▼</text>
+          <!-- Form row 3 -->
+          <text x="12" y="230" font-family="system-ui" font-size="8" fill="#888">Resource</text>
+          <text x="244" y="230" font-family="system-ui" font-size="8" fill="#888">Date</text>
+          <rect x="12" y="234" width="224" height="18" rx="3" fill="white" stroke="#ddd"/>
+          <text x="20" y="247" font-family="system-ui" font-size="8" fill="#bbb">Select Option</text>
+          <text x="228" y="247" font-family="system-ui" font-size="9" fill="#888">▼</text>
+          <rect x="244" y="234" width="224" height="18" rx="3" fill="white" stroke="#ddd"/>
+          <text x="252" y="247" font-family="system-ui" font-size="8" fill="#1e293b">10/05/2026</text>
+          <text x="460" y="247" font-family="system-ui" font-size="9" fill="#888">📅</text>
+          <!-- Buttons -->
+          <rect x="174" y="280" width="60" height="20" rx="3" fill="white" stroke="#ddd"/>
+          <text x="204" y="294" text-anchor="middle" font-family="system-ui" font-size="9" fill="#555">Reset</text>
+          <rect x="242" y="280" width="52" height="20" rx="3" fill="#1e5c32"/>
+          <text x="268" y="294" text-anchor="middle" font-family="system-ui" font-size="9" fill="white">Find</text>`)
       },
       {
         title: 'Step 2 · Salesforce sends appointment create request to MuleSoft',
         desc: 'Salesforce forwards the appointment creation request payload to the MuleSoft API, carrying the appointment details needed to create the booking in TrakCare.',
         ui: svgWrap(`
           <rect width="480" height="320" fill="#f0f4f8"/>
-          <rect x="40" y="40" width="400" height="240" rx="6" fill="white" stroke="#cbd5e1"/>
-          <rect x="40" y="40" width="400" height="34" fill="#1e293b"/>
-          <text x="56" y="62" font-family="ui-monospace,monospace" font-size="12" fill="#86efac">POST</text>
-          <text x="100" y="62" font-family="ui-monospace,monospace" font-size="12" fill="white">/bh-appointments-api/v1/appointments</text>
-          <text x="56" y="96" font-family="ui-monospace,monospace" font-size="11" fill="#64748b">Host: mulesoft.api</text>
-          <text x="56" y="114" font-family="ui-monospace,monospace" font-size="11" fill="#64748b">Content-Type: application/json</text>
-          <line x1="56" y1="126" x2="424" y2="126" stroke="#e2e8f0"/>
-          <text x="56" y="148" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">{</text>
-          <text x="76" y="168" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">"sfRecordId": "a1B9z00000LmKpq",</text>
-          <text x="76" y="188" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">"mrn": "INT-00482",</text>
-          <text x="76" y="208" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">"doctor": "Dr. Somporn K.",</text>
-          <text x="76" y="228" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">"date": "2026-05-20",</text>
-          <text x="76" y="248" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">"time": "10:00"</text>
-          <text x="56" y="268" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">}</text>`)
+          <rect x="20" y="20" width="440" height="280" rx="6" fill="white" stroke="#cbd5e1"/>
+          <rect x="20" y="20" width="440" height="32" fill="#1e293b"/>
+          <text x="36" y="40" font-family="ui-monospace,monospace" font-size="11" fill="#86efac">POST</text>
+          <text x="80" y="40" font-family="ui-monospace,monospace" font-size="10" fill="white">/bh-appointments-api/v1/appointments</text>
+          <text x="36" y="68" font-family="ui-monospace,monospace" font-size="9" fill="#64748b">Content-Type: application/json</text>
+          <line x1="36" y1="78" x2="444" y2="78" stroke="#e2e8f0"/>
+          <text x="36" y="96" font-family="ui-monospace,monospace" font-size="10" fill="#1e293b">{</text>
+          <text x="52" y="112" font-family="ui-monospace,monospace" font-size="10" fill="#64748b">"hn":</text>
+          <text x="110" y="112" font-family="ui-monospace,monospace" font-size="10" fill="#1e293b">"212224236248",</text>
+          <text x="52" y="128" font-family="ui-monospace,monospace" font-size="10" fill="#64748b">"locationCode":</text>
+          <text x="160" y="128" font-family="ui-monospace,monospace" font-size="10" fill="#1e293b">"BIH-CC-17A",</text>
+          <text x="52" y="144" font-family="ui-monospace,monospace" font-size="10" fill="#64748b">"resource":</text>
+          <text x="140" y="144" font-family="ui-monospace,monospace" font-size="10" fill="#1e293b">"DR-THITWAN",</text>
+          <text x="52" y="160" font-family="ui-monospace,monospace" font-size="10" fill="#64748b">"slotId":</text>
+          <text x="120" y="160" font-family="ui-monospace,monospace" font-size="10" fill="#1e293b">"SL-20260418-1400",</text>
+          <text x="52" y="176" font-family="ui-monospace,monospace" font-size="10" fill="#64748b">"appointmentDate":</text>
+          <text x="196" y="176" font-family="ui-monospace,monospace" font-size="10" fill="#1e293b">"18/04/2026",</text>
+          <text x="52" y="192" font-family="ui-monospace,monospace" font-size="10" fill="#64748b">"appointmentTime":</text>
+          <text x="204" y="192" font-family="ui-monospace,monospace" font-size="10" fill="#1e293b">"14:00",</text>
+          <text x="52" y="208" font-family="ui-monospace,monospace" font-size="10" fill="#64748b">"caseId":</text>
+          <text x="126" y="208" font-family="ui-monospace,monospace" font-size="10" fill="#1e293b">"19115305",</text>
+          <text x="52" y="224" font-family="ui-monospace,monospace" font-size="10" fill="#64748b">"appointmentStatus":</text>
+          <text x="220" y="224" font-family="ui-monospace,monospace" font-size="10" fill="#1e293b">"Booked"</text>
+          <text x="36" y="244" font-family="ui-monospace,monospace" font-size="10" fill="#1e293b">}</text>`)
       },
       {
         title: 'Step 3 · MuleSoft calls TrakCare booking API',
         desc: 'MuleSoft sends the appointment creation request to TrakCare via POST /api/v1/booking to create the appointment record in the hospital system.',
         ui: svgWrap(`
-          <rect width="480" height="320" fill="#f0f4f8"/>
-          <rect x="40" y="40" width="400" height="240" rx="6" fill="white" stroke="#cbd5e1"/>
-          <rect x="40" y="40" width="400" height="34" fill="#7c3aed"/>
-          <text x="56" y="62" font-family="ui-monospace,monospace" font-size="12" fill="#c4b5fd">POST</text>
-          <text x="100" y="62" font-family="ui-monospace,monospace" font-size="12" fill="white">/api/v1/booking</text>
-          <text x="56" y="96" font-family="ui-monospace,monospace" font-size="11" fill="#64748b">Host: trakcare.hospital.internal</text>
-          <text x="56" y="114" font-family="ui-monospace,monospace" font-size="11" fill="#64748b">Authorization: Bearer &lt;token&gt;</text>
-          <line x1="56" y1="126" x2="424" y2="126" stroke="#e2e8f0"/>
-          <text x="56" y="148" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">{</text>
-          <text x="76" y="168" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">"bookingType": "OPD",</text>
-          <text x="76" y="188" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">"patientRef": "INT-00482",</text>
-          <text x="76" y="208" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">"slotDateTime": "20260520T1000",</text>
-          <text x="76" y="228" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">"clinician": "SK001"</text>
-          <text x="56" y="248" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">}</text>`)
+          <rect width="480" height="320" fill="#f0f0f0"/>
+          <rect x="0" y="0" width="480" height="22" fill="#1e5c32"/>
+          <text x="240" y="14" text-anchor="middle" font-family="system-ui" font-size="9" fill="white">TrakCare · Appointment Create Request</text>
+          <rect x="10" y="30" width="460" height="270" rx="4" fill="white" stroke="#ddd"/>
+          <rect x="10" y="30" width="460" height="24" fill="#1e5c32"/>
+          <text x="24" y="46" font-family="ui-monospace,monospace" font-size="10" fill="#86efac">POST</text>
+          <text x="64" y="46" font-family="ui-monospace,monospace" font-size="10" fill="white">/api/v1/booking</text>
+          <text x="24" y="70" font-family="ui-monospace,monospace" font-size="9" fill="#64748b">Authorization: Bearer &lt;token&gt;</text>
+          <line x1="24" y1="80" x2="454" y2="80" stroke="#e2e8f0"/>
+          <text x="24" y="98" font-family="ui-monospace,monospace" font-size="10" fill="#1e293b">{</text>
+          <text x="40" y="114" font-family="ui-monospace,monospace" font-size="10" fill="#64748b">"hn":</text>
+          <text x="98" y="114" font-family="ui-monospace,monospace" font-size="10" fill="#1e293b">"212224236248",</text>
+          <text x="40" y="130" font-family="ui-monospace,monospace" font-size="10" fill="#64748b">"locationCode":</text>
+          <text x="148" y="130" font-family="ui-monospace,monospace" font-size="10" fill="#1e293b">"BIH-CC-17A",</text>
+          <text x="40" y="146" font-family="ui-monospace,monospace" font-size="10" fill="#64748b">"resourceCode":</text>
+          <text x="152" y="146" font-family="ui-monospace,monospace" font-size="10" fill="#1e293b">"DR-THITWAN",</text>
+          <text x="40" y="162" font-family="ui-monospace,monospace" font-size="10" fill="#64748b">"slotId":</text>
+          <text x="106" y="162" font-family="ui-monospace,monospace" font-size="10" fill="#1e293b">"SL-20260418-1400",</text>
+          <text x="40" y="178" font-family="ui-monospace,monospace" font-size="10" fill="#64748b">"appointmentDate":</text>
+          <text x="184" y="178" font-family="ui-monospace,monospace" font-size="10" fill="#1e293b">"18/04/2026",</text>
+          <text x="40" y="194" font-family="ui-monospace,monospace" font-size="10" fill="#64748b">"appointmentTime":</text>
+          <text x="192" y="194" font-family="ui-monospace,monospace" font-size="10" fill="#1e293b">"14:00"</text>
+          <text x="24" y="212" font-family="ui-monospace,monospace" font-size="10" fill="#1e293b">}</text>`)
       },
       {
         title: 'Step 4 · TrakCare returns success',
         desc: 'TrakCare processes the booking request and returns a success response — including the confirmed appointment details such as appointment ID, date, time, and doctor — back to MuleSoft.',
         ui: svgWrap(`
-          <rect width="480" height="320" fill="#f0f4f8"/>
-          <rect x="40" y="40" width="400" height="240" rx="6" fill="white" stroke="#cbd5e1"/>
-          <text x="60" y="74" font-family="system-ui" font-size="14" font-weight="600" fill="#16a34a">200 OK</text>
-          <text x="60" y="94" font-family="ui-monospace,monospace" font-size="11" fill="#64748b">Content-Type: application/json</text>
-          <line x1="40" y1="108" x2="440" y2="108" stroke="#e2e8f0"/>
-          <text x="60" y="134" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">{</text>
-          <text x="80" y="156" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">"status": "confirmed",</text>
-          <text x="80" y="178" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">"bookingId": "BK-20260509-0047",</text>
-          <text x="80" y="200" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">"slotDateTime": "20260520T1000",</text>
-          <text x="80" y="222" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">"clinician": "SK001",</text>
-          <text x="80" y="244" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">"errors": []</text>
-          <text x="60" y="264" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">}</text>`)
+          <rect width="480" height="320" fill="#f0f0f0"/>
+          <rect x="0" y="0" width="480" height="16" fill="#1e5c32"/>
+          <text x="4" y="11" font-family="system-ui" font-size="8" fill="white">TC_Appointment_Detail</text>
+          <!-- Left panel -->
+          <rect x="4" y="20" width="240" height="80" rx="2" fill="white" stroke="#e5a000" stroke-width="1"/>
+          <text x="8" y="32" font-family="system-ui" font-size="7" font-weight="700" fill="#1a7f8e">Appointment General Details</text>
+          <text x="8" y="44" font-family="system-ui" font-size="7" fill="#555">Appointment Date</text>
+          <text x="110" y="44" font-family="system-ui" font-size="7" fill="#1e293b">18/04/2026  14:00</text>
+          <text x="8" y="54" font-family="system-ui" font-size="7" fill="#555">Location Description</text>
+          <text x="110" y="54" font-family="system-ui" font-size="7" fill="#1e293b">Children Center (Building A 17A)</text>
+          <text x="8" y="64" font-family="system-ui" font-size="7" fill="#555">Resource</text>
+          <text x="110" y="64" font-family="system-ui" font-size="7" fill="#1e293b">Dr. Thitwan Simasathien</text>
+          <text x="8" y="74" font-family="system-ui" font-size="7" fill="#555">Service</text>
+          <text x="110" y="74" font-family="system-ui" font-size="7" fill="#1e293b">Follow up</text>
+          <text x="8" y="84" font-family="system-ui" font-size="7" fill="#555">Appointment Status</text>
+          <text x="110" y="84" font-family="system-ui" font-size="7" fill="#15803d">Booked</text>
+          <!-- Appointment Progress -->
+          <rect x="4" y="104" width="240" height="96" rx="2" fill="white" stroke="#e5a000" stroke-width="1"/>
+          <text x="8" y="116" font-family="system-ui" font-size="7" font-weight="700" fill="#1a7f8e">Appointment Progress</text>
+          <text x="8" y="126" font-family="system-ui" font-size="7" fill="#555">Confirmed Appointment</text>
+          <rect x="110" y="120" width="10" height="10" rx="1" fill="#1a7f8e"/>
+          <text x="112" y="128" font-family="system-ui" font-size="6" fill="white">✓</text>
+          <text x="8" y="140" font-family="system-ui" font-size="7" fill="#555">Appt Confirmed Date</text>
+          <text x="110" y="140" font-family="system-ui" font-size="7" fill="#1e293b">15/04/2026</text>
+          <text x="8" y="152" font-family="system-ui" font-size="7" fill="#555">Arrival Date</text>
+          <text x="110" y="152" font-family="system-ui" font-size="7" fill="#1e293b">10/04/2026</text>
+          <text x="8" y="164" font-family="system-ui" font-size="7" fill="#555">End Time</text>
+          <text x="110" y="164" font-family="system-ui" font-size="7" fill="#1e293b">14:30</text>
+          <!-- Right panel -->
+          <rect x="248" y="20" width="228" height="80" rx="2" fill="white" stroke="#e5a000" stroke-width="1"/>
+          <text x="252" y="32" font-family="system-ui" font-size="7" font-weight="700" fill="#1a7f8e">Patient Letter and Notes</text>
+          <text x="252" y="44" font-family="system-ui" font-size="7" fill="#555">Notes</text>
+          <rect x="252" y="48" width="218" height="22" rx="2" fill="#f8fafc" stroke="#ddd"/>
+          <text x="252" y="68" font-family="system-ui" font-size="7" fill="#555">Patient Letter Notes</text>
+          <rect x="252" y="72" width="218" height="20" rx="2" fill="#f8fafc" stroke="#ddd"/>
+          <!-- Interpreter and Other -->
+          <rect x="248" y="104" width="228" height="40" rx="2" fill="white" stroke="#ddd"/>
+          <text x="252" y="116" font-family="system-ui" font-size="7" font-weight="700" fill="#1a7f8e">Interpreter and Transport</text>
+          <text x="252" y="128" font-family="system-ui" font-size="7" fill="#555">Is Interpreter Required</text>
+          <rect x="354" y="122" width="10" height="10" rx="1" fill="white" stroke="#ddd"/>
+          <rect x="248" y="148" width="228" height="50" rx="2" fill="white" stroke="#ddd"/>
+          <text x="252" y="160" font-family="system-ui" font-size="7" font-weight="700" fill="#1a7f8e">Other Details</text>
+          <text x="252" y="172" font-family="system-ui" font-size="7" fill="#555">SaleForce Case No.</text>
+          <rect x="332" y="166" width="136" height="12" rx="2" fill="#f8fafc" stroke="#ddd"/>
+          <text x="252" y="188" font-family="system-ui" font-size="7" fill="#555">Consultation Category</text>
+          <!-- Audit Trail -->
+          <rect x="4" y="204" width="472" height="108" rx="2" fill="white" stroke="#e5a000" stroke-width="1"/>
+          <text x="8" y="216" font-family="system-ui" font-size="7" font-weight="700" fill="#1a7f8e">∨ Audit Trail</text>
+          <text x="8" y="228" font-family="system-ui" font-size="7" fill="#555">Booked By</text>
+          <text x="100" y="228" font-family="system-ui" font-size="7" fill="#1e293b">Wanlapa Jamjang</text>
+          <text x="248" y="228" font-family="system-ui" font-size="7" fill="#555">Update User</text>
+          <text x="320" y="228" font-family="system-ui" font-size="7" fill="#1e293b">Wanlapa Jamjang</text>
+          <text x="8" y="240" font-family="system-ui" font-size="7" fill="#555">Booked Date</text>
+          <text x="100" y="240" font-family="system-ui" font-size="7" fill="#1e293b">12/04/2026  12:43</text>
+          <text x="248" y="240" font-family="system-ui" font-size="7" fill="#555">Update Date</text>
+          <text x="320" y="240" font-family="system-ui" font-size="7" fill="#1e293b">12/04/2026  12:43</text>
+          <text x="8" y="252" font-family="system-ui" font-size="7" fill="#555">Reason for Overbooking</text>
+          <text x="248" y="252" font-family="system-ui" font-size="7" fill="#555">Last Update Hospital</text>
+          <text x="320" y="252" font-family="system-ui" font-size="7" fill="#1e293b">Bumrungrad International</text>
+          <text x="8" y="264" font-family="system-ui" font-size="7" fill="#555">Reason Previous Appt Was Transferred</text>
+          <text x="248" y="264" font-family="system-ui" font-size="7" fill="#1a7f8e">Audit Trail</text>
+          <rect x="4" y="272" width="472" height="44" rx="2" fill="#dcfce7" stroke="#86efac"/>
+          <text x="240" y="289" text-anchor="middle" font-family="system-ui" font-size="9" font-weight="600" fill="#15803d">Appointment created in TrakCare ✓</text>
+          <text x="240" y="303" text-anchor="middle" font-family="system-ui" font-size="8" fill="#166534">Status: Booked  |  18/04/2026 14:00</text>`)
       },
       {
         title: 'Step 5 · MuleSoft sends appointment acknowledgement to Salesforce',
         desc: 'MuleSoft forwards the booking confirmation (acknowledgement) back to Salesforce, indicating that TrakCare has successfully created the appointment.',
         ui: svgWrap(`
           <rect width="480" height="320" fill="#f0f4f8"/>
-          <rect x="40" y="40" width="400" height="240" rx="6" fill="white" stroke="#cbd5e1"/>
-          <text x="60" y="74" font-family="system-ui" font-size="14" font-weight="600" fill="#16a34a">200 OK — Appointment Acknowledged</text>
-          <text x="60" y="94" font-family="ui-monospace,monospace" font-size="11" fill="#64748b">Content-Type: application/json</text>
-          <line x1="40" y1="108" x2="440" y2="108" stroke="#e2e8f0"/>
-          <text x="60" y="134" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">{</text>
-          <text x="80" y="156" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">"ack": "accepted",</text>
-          <text x="80" y="178" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">"bookingId": "BK-20260509-0047",</text>
-          <text x="80" y="200" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">"status": "confirmed",</text>
-          <text x="80" y="222" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">"sfRecordId": "a1B9z00000LmKpq"</text>
-          <text x="60" y="244" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">}</text>`)
+          <rect x="20" y="30" width="440" height="260" rx="6" fill="white" stroke="#86efac"/>
+          <rect x="20" y="30" width="440" height="32" fill="#16a34a"/>
+          <text x="36" y="50" font-family="system-ui" font-size="12" font-weight="600" fill="white">200 OK — Appointment Acknowledged</text>
+          <text x="36" y="82" font-family="ui-monospace,monospace" font-size="10" fill="#64748b">Content-Type: application/json</text>
+          <line x1="20" y1="94" x2="460" y2="94" stroke="#dcfce7"/>
+          <text x="36" y="114" font-family="ui-monospace,monospace" font-size="11" fill="#1e293b">{</text>
+          <text x="52" y="134" font-family="ui-monospace,monospace" font-size="11" fill="#64748b">"ack":</text>
+          <text x="102" y="134" font-family="ui-monospace,monospace" font-size="11" fill="#15803d">"accepted",</text>
+          <text x="52" y="154" font-family="ui-monospace,monospace" font-size="11" fill="#64748b">"appointmentDate":</text>
+          <text x="214" y="154" font-family="ui-monospace,monospace" font-size="11" fill="#1e293b">"18/04/2026",</text>
+          <text x="52" y="174" font-family="ui-monospace,monospace" font-size="11" fill="#64748b">"appointmentTime":</text>
+          <text x="220" y="174" font-family="ui-monospace,monospace" font-size="11" fill="#1e293b">"14:00",</text>
+          <text x="52" y="194" font-family="ui-monospace,monospace" font-size="11" fill="#64748b">"status":</text>
+          <text x="130" y="194" font-family="ui-monospace,monospace" font-size="11" fill="#15803d">"Booked",</text>
+          <text x="52" y="214" font-family="ui-monospace,monospace" font-size="11" fill="#64748b">"resource":</text>
+          <text x="148" y="214" font-family="ui-monospace,monospace" font-size="11" fill="#1e293b">"Dr. Thitwan Simasathien"</text>
+          <text x="36" y="234" font-family="ui-monospace,monospace" font-size="11" fill="#1e293b">}</text>`)
       },
       {
         title: 'Step 6 · Salesforce notifies user — appointment confirmed with an email sent',
         desc: 'Salesforce updates the appointment record to confirmed status, displays the booking confirmation to the user on screen, and triggers an automated confirmation email to the relevant parties.',
         ui: svgWrap(`
-          <rect width="480" height="320" fill="#f0f4f8"/>
-          <rect x="40" y="24" width="400" height="272" rx="6" fill="white" stroke="#cbd5e1"/>
-          <rect x="40" y="24" width="400" height="34" fill="#0ea5e9"/>
-          <text x="56" y="46" font-family="system-ui" font-size="13" font-weight="600" fill="white">Salesforce · Appointment Confirmed</text>
-          <rect x="60" y="72" width="360" height="52" rx="4" fill="#dcfce7" stroke="#86efac"/>
-          <text x="80" y="92" font-family="system-ui" font-size="12" font-weight="600" fill="#15803d">Booking Confirmed</text>
-          <text x="80" y="112" font-family="system-ui" font-size="11" fill="#166534">ID: BK-20260509-0047  |  20 May 2026, 10:00 AM</text>
-          <line x1="60" y1="140" x2="400" y2="140" stroke="#e2e8f0"/>
-          <text x="60" y="162" font-family="system-ui" font-size="11" font-weight="600" fill="#475569">Email Notification</text>
-          <rect x="60" y="170" width="360" height="80" rx="4" fill="#f8fafc" stroke="#e2e8f0"/>
-          <text x="76" y="188" font-family="system-ui" font-size="11" fill="#64748b">To: aiko.tanaka@email.com</text>
-          <text x="76" y="204" font-family="system-ui" font-size="11" fill="#64748b">Subject: Appointment Confirmation — 20 May 2026</text>
-          <line x1="76" y1="212" x2="404" y2="212" stroke="#e2e8f0"/>
-          <text x="76" y="228" font-family="system-ui" font-size="11" fill="#1e293b">Your appointment with Dr. Somporn K. on</text>
-          <text x="76" y="244" font-family="system-ui" font-size="11" fill="#1e293b">20 May 2026 at 10:00 AM has been confirmed.</text>
-          <rect x="344" y="268" width="56" height="20" rx="3" fill="#dcfce7" stroke="#86efac"/>
-          <text x="372" y="282" text-anchor="middle" font-family="system-ui" font-size="11" font-weight="600" fill="#15803d">SENT</text>`)
+          <rect width="480" height="320" fill="#f5f5f5"/>
+          <!-- Person Client header -->
+          <rect x="0" y="0" width="480" height="42" fill="white" stroke="#e5e7eb" stroke-width="0.5"/>
+          <rect x="8" y="8" width="24" height="24" rx="4" fill="#1a7f8e"/>
+          <text x="38" y="16" font-family="system-ui" font-size="8" fill="#888">Person Client</text>
+          <text x="38" y="29" font-family="system-ui" font-size="12" font-weight="700" fill="#1e293b">Prof. Sunny Last</text>
+          <rect x="0" y="42" width="480" height="18" fill="white" stroke="#e5e7eb" stroke-width="0.5"/>
+          <text x="8" y="54" font-family="system-ui" font-size="8" fill="#1e293b">212224236248</text>
+          <!-- Tabs -->
+          <rect x="0" y="60" width="480" height="22" fill="white" stroke="#e5e7eb" stroke-width="0.5"/>
+          <text x="12" y="75" font-family="system-ui" font-size="9" fill="#888">Details</text>
+          <text x="60" y="75" font-family="system-ui" font-size="9" fill="#888">Related</text>
+          <text x="104" y="75" font-family="system-ui" font-size="9" fill="#888">Appointment List</text>
+          <text x="182" y="75" font-family="system-ui" font-size="9" font-weight="700" fill="#1a7f8e">Book Appointment</text>
+          <line x1="182" y1="81" x2="258" y2="81" stroke="#1a7f8e" stroke-width="2"/>
+          <!-- Confirmed banner -->
+          <rect x="0" y="82" width="480" height="238" fill="white"/>
+          <rect x="12" y="92" width="456" height="44" rx="4" fill="#dcfce7" stroke="#86efac"/>
+          <text x="240" y="108" text-anchor="middle" font-family="system-ui" font-size="10" font-weight="700" fill="#15803d">✓ Appointment Confirmed</text>
+          <text x="240" y="124" text-anchor="middle" font-family="system-ui" font-size="9" fill="#166534">Dr. Thitwan Simasathien  |  18/04/2026 14:00  |  Children Center</text>
+          <!-- Details -->
+          <text x="12" y="156" font-family="system-ui" font-size="8" fill="#888">Appointment Status</text>
+          <rect x="130" y="148" width="100" height="14" rx="2" fill="#dcfce7" stroke="#86efac"/>
+          <text x="136" y="159" font-family="ui-monospace,monospace" font-size="8" fill="#15803d">Booked</text>
+          <text x="12" y="178" font-family="system-ui" font-size="8" fill="#888">Resource</text>
+          <rect x="130" y="170" width="200" height="14" rx="2" fill="#f8fafc" stroke="#ddd"/>
+          <text x="136" y="181" font-family="ui-monospace,monospace" font-size="8" fill="#1e293b">Dr. Thitwan Simasathien</text>
+          <text x="12" y="200" font-family="system-ui" font-size="8" fill="#888">Location</text>
+          <rect x="130" y="192" width="200" height="14" rx="2" fill="#f8fafc" stroke="#ddd"/>
+          <text x="136" y="203" font-family="ui-monospace,monospace" font-size="8" fill="#1e293b">Children Center (Building A 17A)</text>
+          <!-- Email notification -->
+          <rect x="12" y="216" width="456" height="60" rx="4" fill="#f8fafc" stroke="#e2e8f0"/>
+          <text x="20" y="230" font-family="system-ui" font-size="8" font-weight="600" fill="#475569">Email Notification Sent</text>
+          <text x="20" y="244" font-family="system-ui" font-size="8" fill="#64748b">To: rose001@gmail.com</text>
+          <text x="20" y="257" font-family="system-ui" font-size="8" fill="#64748b">Subject: Appointment Confirmation — 18 April 2026</text>
+          <text x="20" y="270" font-family="system-ui" font-size="8" fill="#1e293b">Your appointment on 18/04/2026 at 14:00 has been confirmed.</text>
+          <rect x="430" y="260" width="32" height="12" rx="2" fill="#dcfce7" stroke="#86efac"/>
+          <text x="446" y="269" text-anchor="middle" font-family="system-ui" font-size="7" fill="#15803d">SENT</text>`)
       },
       {
         title: 'Step 7 · TrakCare returns error',
         desc: 'If TrakCare is unable to process the booking request, it returns an error response back to MuleSoft with details of the failure.',
         ui: svgWrap(`
-          <rect width="480" height="320" fill="#f0f4f8"/>
-          <rect x="40" y="40" width="400" height="240" rx="6" fill="white" stroke="#fecaca"/>
-          <text x="60" y="74" font-family="system-ui" font-size="14" font-weight="600" fill="#dc2626">409 Conflict</text>
-          <text x="60" y="94" font-family="ui-monospace,monospace" font-size="11" fill="#64748b">Content-Type: application/json</text>
-          <line x1="40" y1="108" x2="440" y2="108" stroke="#fee2e2"/>
-          <text x="60" y="134" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">{</text>
-          <text x="80" y="156" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">"status": "error",</text>
-          <text x="80" y="178" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">"errors": [{</text>
-          <text x="100" y="200" font-family="ui-monospace,monospace" font-size="11" fill="#dc2626">"code": "SLOT_UNAVAILABLE",</text>
-          <text x="100" y="220" font-family="ui-monospace,monospace" font-size="11" fill="#dc2626">"message": "Time slot already booked",</text>
-          <text x="100" y="240" font-family="ui-monospace,monospace" font-size="11" fill="#dc2626">"slot": "20260520T1000"</text>
-          <text x="80" y="260" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">}]</text>`)
+          <rect width="480" height="320" fill="#f0f0f0"/>
+          <rect x="0" y="0" width="480" height="22" fill="#1e5c32"/>
+          <text x="240" y="14" text-anchor="middle" font-family="system-ui" font-size="9" fill="white">TrakCare · Booking Error</text>
+          <rect x="10" y="30" width="460" height="270" rx="4" fill="white" stroke="#fecaca"/>
+          <rect x="10" y="30" width="460" height="24" fill="#dc2626"/>
+          <text x="20" y="46" font-family="system-ui" font-size="10" font-weight="600" fill="white">409 Conflict — Slot Unavailable</text>
+          <text x="20" y="72" font-family="ui-monospace,monospace" font-size="10" fill="#1e293b">{</text>
+          <text x="36" y="90" font-family="ui-monospace,monospace" font-size="10" fill="#64748b">"status":</text>
+          <text x="106" y="90" font-family="ui-monospace,monospace" font-size="10" fill="#dc2626">"error",</text>
+          <text x="36" y="108" font-family="ui-monospace,monospace" font-size="10" fill="#64748b">"errors":</text>
+          <text x="106" y="108" font-family="ui-monospace,monospace" font-size="10" fill="#1e293b">[{</text>
+          <text x="52" y="126" font-family="ui-monospace,monospace" font-size="10" fill="#64748b">"code":</text>
+          <text x="108" y="126" font-family="ui-monospace,monospace" font-size="10" fill="#dc2626">"SLOT_UNAVAILABLE",</text>
+          <text x="52" y="144" font-family="ui-monospace,monospace" font-size="10" fill="#64748b">"message":</text>
+          <text x="124" y="144" font-family="ui-monospace,monospace" font-size="10" fill="#dc2626">"Time slot already booked",</text>
+          <text x="52" y="162" font-family="ui-monospace,monospace" font-size="10" fill="#64748b">"slotId":</text>
+          <text x="116" y="162" font-family="ui-monospace,monospace" font-size="10" fill="#dc2626">"SL-20260418-1400"</text>
+          <text x="36" y="180" font-family="ui-monospace,monospace" font-size="10" fill="#1e293b">}]</text>
+          <text x="20" y="196" font-family="ui-monospace,monospace" font-size="10" fill="#1e293b">}</text>`)
       },
       {
         title: 'Step 8 · MuleSoft sends appointment error response to Salesforce',
         desc: 'MuleSoft forwards the error details back to Salesforce to indicate that the appointment booking was not successfully created in TrakCare.',
         ui: svgWrap(`
           <rect width="480" height="320" fill="#f0f4f8"/>
-          <rect x="40" y="40" width="400" height="240" rx="6" fill="white" stroke="#fecaca"/>
-          <text x="60" y="74" font-family="system-ui" font-size="14" font-weight="600" fill="#dc2626">422 Unprocessable — Booking Failed</text>
-          <text x="60" y="94" font-family="ui-monospace,monospace" font-size="11" fill="#64748b">Content-Type: application/json</text>
-          <line x1="40" y1="108" x2="440" y2="108" stroke="#fee2e2"/>
-          <text x="60" y="134" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">{</text>
-          <text x="80" y="156" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">"ack": "rejected",</text>
-          <text x="80" y="178" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">"sfRecordId": "a1B9z00000LmKpq",</text>
-          <text x="80" y="200" font-family="ui-monospace,monospace" font-size="12" fill="#dc2626">"errorCode": "SLOT_UNAVAILABLE",</text>
-          <text x="80" y="222" font-family="ui-monospace,monospace" font-size="12" fill="#dc2626">"errorMessage": "Time slot already booked",</text>
-          <text x="80" y="244" font-family="ui-monospace,monospace" font-size="12" fill="#dc2626">"source": "TrakCare"</text>
-          <text x="60" y="264" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">}</text>`)
+          <rect x="20" y="30" width="440" height="260" rx="6" fill="white" stroke="#fecaca"/>
+          <rect x="20" y="30" width="440" height="32" fill="#dc2626"/>
+          <text x="36" y="50" font-family="system-ui" font-size="12" font-weight="600" fill="white">Booking Failed — Error Response</text>
+          <text x="36" y="82" font-family="ui-monospace,monospace" font-size="10" fill="#64748b">Content-Type: application/json</text>
+          <line x1="20" y1="94" x2="460" y2="94" stroke="#fee2e2"/>
+          <text x="36" y="114" font-family="ui-monospace,monospace" font-size="11" fill="#1e293b">{</text>
+          <text x="52" y="134" font-family="ui-monospace,monospace" font-size="11" fill="#64748b">"ack":</text>
+          <text x="102" y="134" font-family="ui-monospace,monospace" font-size="11" fill="#dc2626">"rejected",</text>
+          <text x="52" y="154" font-family="ui-monospace,monospace" font-size="11" fill="#64748b">"hn":</text>
+          <text x="94" y="154" font-family="ui-monospace,monospace" font-size="11" fill="#1e293b">"212224236248",</text>
+          <text x="52" y="174" font-family="ui-monospace,monospace" font-size="11" fill="#64748b">"errorCode":</text>
+          <text x="162" y="174" font-family="ui-monospace,monospace" font-size="11" fill="#dc2626">"SLOT_UNAVAILABLE",</text>
+          <text x="52" y="194" font-family="ui-monospace,monospace" font-size="11" fill="#64748b">"errorMessage":</text>
+          <text x="186" y="194" font-family="ui-monospace,monospace" font-size="10" fill="#dc2626">"Time slot already booked",</text>
+          <text x="52" y="214" font-family="ui-monospace,monospace" font-size="11" fill="#64748b">"source":</text>
+          <text x="136" y="214" font-family="ui-monospace,monospace" font-size="11" fill="#1e293b">"TrakCare"</text>
+          <text x="36" y="234" font-family="ui-monospace,monospace" font-size="11" fill="#1e293b">}</text>`)
       },
       {
         title: 'Step 9 · Salesforce notifies user — appointment failed',
         desc: 'Salesforce updates the appointment record to a failed status and notifies the user that the appointment could not be created, so corrective action can be taken.',
         ui: svgWrap(`
-          <rect width="480" height="320" fill="#f0f4f8"/>
-          <rect x="40" y="24" width="400" height="272" rx="6" fill="white" stroke="#fecaca"/>
-          <rect x="40" y="24" width="400" height="34" fill="#dc2626"/>
-          <text x="56" y="46" font-family="system-ui" font-size="13" font-weight="600" fill="white">Salesforce · Appointment Failed</text>
-          <rect x="60" y="72" width="360" height="52" rx="4" fill="#fef2f2" stroke="#fecaca"/>
-          <text x="80" y="92" font-family="system-ui" font-size="12" font-weight="600" fill="#dc2626">Booking Not Confirmed</text>
-          <text x="80" y="112" font-family="system-ui" font-size="11" fill="#991b1b">Record a1B9z00000LmKpq  |  Status: FAILED</text>
-          <line x1="60" y1="140" x2="400" y2="140" stroke="#fee2e2"/>
-          <text x="60" y="162" font-family="system-ui" font-size="11" font-weight="600" fill="#475569">Email Notification</text>
-          <rect x="60" y="170" width="360" height="88" rx="4" fill="#fef2f2" stroke="#fecaca"/>
-          <text x="76" y="188" font-family="system-ui" font-size="11" fill="#64748b">To: aiko.tanaka@email.com</text>
-          <text x="76" y="204" font-family="system-ui" font-size="11" fill="#64748b">Subject: Appointment Request Unsuccessful</text>
-          <line x1="76" y1="212" x2="404" y2="212" stroke="#fee2e2"/>
-          <text x="76" y="228" font-family="system-ui" font-size="11" fill="#1e293b">Unfortunately your appointment request for</text>
-          <text x="76" y="244" font-family="system-ui" font-size="11" fill="#1e293b">20 May 2026 at 10:00 AM could not be booked.</text>
-          <text x="76" y="260" font-family="system-ui" font-size="11" fill="#dc2626">Reason: Selected time slot is unavailable.</text>`)
+          <rect width="480" height="320" fill="#f5f5f5"/>
+          <rect x="0" y="0" width="480" height="42" fill="white" stroke="#e5e7eb" stroke-width="0.5"/>
+          <rect x="8" y="8" width="24" height="24" rx="4" fill="#1a7f8e"/>
+          <text x="38" y="16" font-family="system-ui" font-size="8" fill="#888">Person Client</text>
+          <text x="38" y="29" font-family="system-ui" font-size="12" font-weight="700" fill="#1e293b">Prof. Sunny Last</text>
+          <rect x="0" y="42" width="480" height="18" fill="white" stroke="#e5e7eb" stroke-width="0.5"/>
+          <text x="8" y="54" font-family="system-ui" font-size="8" fill="#1e293b">212224236248</text>
+          <rect x="0" y="60" width="480" height="22" fill="white" stroke="#e5e7eb" stroke-width="0.5"/>
+          <text x="104" y="75" font-family="system-ui" font-size="9" fill="#888">Appointment List</text>
+          <text x="182" y="75" font-family="system-ui" font-size="9" font-weight="700" fill="#1a7f8e">Book Appointment</text>
+          <line x1="182" y1="81" x2="258" y2="81" stroke="#1a7f8e" stroke-width="2"/>
+          <rect x="0" y="82" width="480" height="238" fill="white"/>
+          <rect x="12" y="92" width="456" height="44" rx="4" fill="#fef2f2" stroke="#fecaca"/>
+          <text x="240" y="108" text-anchor="middle" font-family="system-ui" font-size="10" font-weight="700" fill="#dc2626">✗ Appointment Failed</text>
+          <text x="240" y="124" text-anchor="middle" font-family="system-ui" font-size="9" fill="#991b1b">Slot unavailable — please select a different time slot</text>
+          <text x="12" y="156" font-family="system-ui" font-size="8" fill="#888">Appointment Status</text>
+          <rect x="130" y="148" width="100" height="14" rx="2" fill="#fef2f2" stroke="#fecaca"/>
+          <text x="136" y="159" font-family="ui-monospace,monospace" font-size="8" fill="#dc2626">Failed</text>
+          <text x="12" y="178" font-family="system-ui" font-size="8" fill="#888">Error Code</text>
+          <rect x="130" y="170" width="160" height="14" rx="2" fill="#fef2f2" stroke="#fecaca"/>
+          <text x="136" y="181" font-family="ui-monospace,monospace" font-size="8" fill="#dc2626">SLOT_UNAVAILABLE</text>
+          <text x="12" y="200" font-family="system-ui" font-size="8" fill="#888">Error Message</text>
+          <rect x="130" y="192" width="300" height="14" rx="2" fill="#fef2f2" stroke="#fecaca"/>
+          <text x="136" y="203" font-family="ui-monospace,monospace" font-size="8" fill="#dc2626">Time slot already booked</text>
+          <rect x="12" y="220" width="456" height="40" rx="4" fill="#fffbeb" stroke="#fcd34d"/>
+          <text x="240" y="236" text-anchor="middle" font-family="system-ui" font-size="9" fill="#b45309">Please select a different time slot and try again.</text>
+          <text x="240" y="250" text-anchor="middle" font-family="system-ui" font-size="8" fill="#92400e">Contact support if this slot should be available.</text>`)
       }
     ]
   },
 
   // ── 06 Appointment Cancel ────────────────────────────────────────────────────
+  'appointment-get': {
+    title: 'Integration 08_Get_Appointment',
+    breadcrumb: 'Appointment',
+    mermaid: `
+sequenceDiagram
+    autonumber
+    participant U as User
+    participant SF as Salesforce
+    participant MU as MuleSoft API
+    participant TC as TrakCare
+
+    Note over U,TC: Integration 08_Get_Appointment
+    Note over U,SF: Actor: Airport Representative<br/>Trigger: Barcode scan or manual search
+    U->>SF: Search Appointment (HN / Passport / Name)
+    SF->>MU: Get Appointment Request
+    MU->>TC: GET /api/v1/appointments
+
+    alt Success
+        TC-->>MU: Appointment Data
+        MU-->>SF: Appointment Result
+        SF-->>U: Display Appointment List
+    else Error
+        TC-->>MU: Appointment Retrieval Failed
+        MU-->>SF: Propagate Error to Salesforce
+        SF-->>U: Appointment Not Found
+    end`,
+    steps: [
+      {
+        title: 'Step 1 · Search Appointment (HN / Passport / Name)',
+        desc: 'The Airport Representative initiates an appointment lookup in Salesforce by entering the patient\'s HN, Passport Number, or Name. This is typically triggered by a barcode scan at arrival or a manual search when the patient checks in.',
+        ui: svgWrap(`
+          <rect width="480" height="320" fill="#f5f5f5"/>
+          <!-- Header -->
+          <rect x="0" y="0" width="480" height="36" fill="#1a7f8e"/>
+          <text x="12" y="14" font-family="system-ui" font-size="8" fill="#a7f3d0">Salesforce · Airport Check-in</text>
+          <text x="12" y="28" font-family="system-ui" font-size="13" font-weight="700" fill="white">Appointment Search</text>
+          <!-- Actor note -->
+          <rect x="8" y="44" width="464" height="22" rx="3" fill="#fffbeb" stroke="#fcd34d"/>
+          <text x="240" y="59" text-anchor="middle" font-family="system-ui" font-size="9" fill="#92400e">Actor: Airport Representative  |  Trigger: Barcode scan or manual search</text>
+          <!-- Search fields -->
+          <rect x="8" y="74" width="464" height="200" rx="4" fill="white" stroke="#e5e7eb"/>
+          <text x="20" y="92" font-family="system-ui" font-size="10" font-weight="700" fill="#1e293b">Search Appointment</text>
+          <line x1="8" y1="98" x2="472" y2="98" stroke="#e5e7eb"/>
+          <!-- HN field -->
+          <text x="20" y="116" font-family="system-ui" font-size="9" fill="#888">Hospital Number (HN)</text>
+          <rect x="20" y="120" width="440" height="22" rx="3" fill="#f8fafc" stroke="#1a7f8e" stroke-width="1.5"/>
+          <text x="28" y="135" font-family="ui-monospace,monospace" font-size="10" fill="#1e293b">212224236248</text>
+          <!-- Passport field -->
+          <text x="20" y="158" font-family="system-ui" font-size="9" fill="#888">Passport Number</text>
+          <rect x="20" y="162" width="440" height="22" rx="3" fill="#f8fafc" stroke="#ddd"/>
+          <text x="28" y="177" font-family="ui-monospace,monospace" font-size="10" fill="#bbb">Enter passport number…</text>
+          <!-- Name field -->
+          <text x="20" y="200" font-family="system-ui" font-size="9" fill="#888">Patient Name</text>
+          <rect x="20" y="204" width="440" height="22" rx="3" fill="#f8fafc" stroke="#ddd"/>
+          <text x="28" y="219" font-family="ui-monospace,monospace" font-size="10" fill="#bbb">Enter patient name…</text>
+          <!-- Barcode scan note -->
+          <rect x="20" y="234" width="200" height="28" rx="3" fill="#eff6ff" stroke="#bfdbfe"/>
+          <text x="120" y="246" text-anchor="middle" font-family="system-ui" font-size="8" fill="#1d4ed8">📷 Scan HN Barcode</text>
+          <text x="120" y="257" text-anchor="middle" font-family="system-ui" font-size="7" fill="#3b82f6">Point camera at barcode on card</text>
+          <!-- Search button -->
+          <rect x="370" y="234" width="90" height="28" rx="4" fill="#1a7f8e"/>
+          <text x="415" y="252" text-anchor="middle" font-family="system-ui" font-size="10" font-weight="700" fill="white">Search</text>
+          <!-- Barcode visual -->
+          <rect x="8" y="282" width="464" height="30" rx="3" fill="#f8fafc" stroke="#e5e7eb"/>
+          <text x="16" y="295" font-family="system-ui" font-size="8" fill="#888">Scanned:</text>
+          <text x="62" y="295" font-family="ui-monospace,monospace" font-size="9" fill="#1e293b">212224236248</text>
+          <text x="62" y="307" font-family="ui-monospace,monospace" font-size="7" fill="#888">|||||||||||||||||||||||||||||||||||||||||||||||</text>`)
+      },
+      {
+        title: 'Step 2 · Get Appointment Request',
+        desc: 'Salesforce forwards the search criteria to MuleSoft API to retrieve the patient\'s appointment records from TrakCare.',
+        ui: svgWrap(`
+          <rect width="480" height="320" fill="#f0f4f8"/>
+          <rect x="20" y="20" width="440" height="280" rx="6" fill="white" stroke="#cbd5e1"/>
+          <rect x="20" y="20" width="440" height="32" fill="#1e293b"/>
+          <text x="36" y="40" font-family="ui-monospace,monospace" font-size="11" fill="#86efac">GET</text>
+          <text x="70" y="40" font-family="ui-monospace,monospace" font-size="10" fill="white">/bh-appointments-api/v1/appointments</text>
+          <text x="36" y="68" font-family="ui-monospace,monospace" font-size="9" fill="#64748b">Content-Type: application/json</text>
+          <line x1="36" y1="78" x2="444" y2="78" stroke="#e2e8f0"/>
+          <text x="36" y="96" font-family="ui-monospace,monospace" font-size="10" fill="#1e293b">{</text>
+          <text x="52" y="114" font-family="ui-monospace,monospace" font-size="10" fill="#64748b">"searchType":</text>
+          <text x="152" y="114" font-family="ui-monospace,monospace" font-size="10" fill="#1e293b">"HN",</text>
+          <text x="52" y="132" font-family="ui-monospace,monospace" font-size="10" fill="#64748b">"hn":</text>
+          <text x="102" y="132" font-family="ui-monospace,monospace" font-size="10" fill="#1e293b">"212224236248",</text>
+          <text x="52" y="150" font-family="ui-monospace,monospace" font-size="10" fill="#64748b">"passportNumber":</text>
+          <text x="192" y="150" font-family="ui-monospace,monospace" font-size="10" fill="#888">null,</text>
+          <text x="52" y="168" font-family="ui-monospace,monospace" font-size="10" fill="#64748b">"patientName":</text>
+          <text x="174" y="168" font-family="ui-monospace,monospace" font-size="10" fill="#888">null,</text>
+          <text x="52" y="186" font-family="ui-monospace,monospace" font-size="10" fill="#64748b">"requestedBy":</text>
+          <text x="174" y="186" font-family="ui-monospace,monospace" font-size="10" fill="#1e293b">"AirportRep",</text>
+          <text x="52" y="204" font-family="ui-monospace,monospace" font-size="10" fill="#64748b">"trigger":</text>
+          <text x="132" y="204" font-family="ui-monospace,monospace" font-size="10" fill="#1e293b">"barcode_scan"</text>
+          <text x="36" y="222" font-family="ui-monospace,monospace" font-size="10" fill="#1e293b">}</text>`)
+      },
+      {
+        title: 'Step 3 · GET /api/v1/appointments',
+        desc: 'MuleSoft calls the TrakCare appointment API with the patient\'s identifiers to fetch all relevant appointment records.',
+        ui: svgWrap(`
+          <rect width="480" height="320" fill="#f0f0f0"/>
+          <rect x="0" y="0" width="480" height="22" fill="#1e5c32"/>
+          <text x="240" y="14" text-anchor="middle" font-family="system-ui" font-size="9" fill="white">TrakCare · Appointment Query</text>
+          <rect x="10" y="30" width="460" height="270" rx="4" fill="white" stroke="#ddd"/>
+          <rect x="10" y="30" width="460" height="24" fill="#1e5c32"/>
+          <text x="24" y="46" font-family="ui-monospace,monospace" font-size="10" fill="#86efac">GET</text>
+          <text x="52" y="46" font-family="ui-monospace,monospace" font-size="10" fill="white">/api/v1/appointments</text>
+          <text x="24" y="70" font-family="ui-monospace,monospace" font-size="9" fill="#64748b">Authorization: Bearer &lt;token&gt;</text>
+          <line x1="24" y1="80" x2="454" y2="80" stroke="#e2e8f0"/>
+          <text x="24" y="98" font-family="system-ui" font-size="9" font-weight="600" fill="#475569">Query Parameters</text>
+          <text x="24" y="116" font-family="ui-monospace,monospace" font-size="10" fill="#64748b">hn</text>
+          <text x="100" y="116" font-family="ui-monospace,monospace" font-size="10" fill="#1e293b">= 212224236248</text>
+          <text x="24" y="134" font-family="ui-monospace,monospace" font-size="10" fill="#64748b">includeHistory</text>
+          <text x="140" y="134" font-family="ui-monospace,monospace" font-size="10" fill="#1e293b">= true</text>
+          <text x="24" y="152" font-family="ui-monospace,monospace" font-size="10" fill="#64748b">status</text>
+          <text x="100" y="152" font-family="ui-monospace,monospace" font-size="10" fill="#1e293b">= all</text>
+          <text x="24" y="170" font-family="ui-monospace,monospace" font-size="10" fill="#64748b">locationCode</text>
+          <text x="130" y="170" font-family="ui-monospace,monospace" font-size="10" fill="#888">= (optional)</text>
+          <rect x="20" y="188" width="440" height="20" rx="3" fill="#fef9c3" stroke="#fde68a"/>
+          <text x="240" y="201" text-anchor="middle" font-family="system-ui" font-size="9" fill="#92400e">Querying TrakCare for all appointments…</text>`)
+      },
+      {
+        title: 'Step 4 · Appointment Data',
+        desc: 'TrakCare returns the patient\'s appointment records – including past, upcoming, and cancelled appointments – back to MuleSoft.',
+        ui: svgWrap(`
+          <rect width="480" height="320" fill="#f0f0f0"/>
+          <rect x="0" y="0" width="480" height="16" fill="#1e5c32"/>
+          <text x="4" y="11" font-family="system-ui" font-size="8" fill="white">TrakCare · Appointment Data Response  200 OK</text>
+          <!-- Appointment record card -->
+          <rect x="4" y="20" width="472" height="96" rx="3" fill="white" stroke="#ddd"/>
+          <rect x="4" y="20" width="472" height="18" fill="#e8f5e9"/>
+          <text x="8" y="32" font-family="system-ui" font-size="8" font-weight="700" fill="#1e5c32">Appt. No.26268</text>
+          <text x="300" y="32" font-family="system-ui" font-size="8" fill="#15803d">Status: Booked</text>
+          <text x="8" y="46" font-family="system-ui" font-size="8" fill="#555">Appointment Date</text>
+          <text x="120" y="46" font-family="system-ui" font-size="8" fill="#1e293b">28/04/2026</text>
+          <text x="260" y="46" font-family="system-ui" font-size="8" fill="#555">Appointment Time</text>
+          <text x="370" y="46" font-family="system-ui" font-size="8" fill="#1e293b">13:00</text>
+          <text x="8" y="58" font-family="system-ui" font-size="8" fill="#555">Service</text>
+          <text x="120" y="58" font-family="system-ui" font-size="8" fill="#1e293b">New Visit / Walk in</text>
+          <text x="260" y="58" font-family="system-ui" font-size="8" fill="#555">Specialty</text>
+          <text x="370" y="58" font-family="system-ui" font-size="8" fill="#1e293b">ทันตกรรม / Dental</text>
+          <text x="8" y="70" font-family="system-ui" font-size="8" fill="#555">Hospital</text>
+          <text x="120" y="70" font-family="system-ui" font-size="8" fill="#1e293b">Bumrungrad International Hospital</text>
+          <text x="8" y="82" font-family="system-ui" font-size="8" fill="#555">Location</text>
+          <text x="120" y="82" font-family="system-ui" font-size="8" fill="#1e293b">Dental Center (Building B 3rd Floor)</text>
+          <text x="8" y="94" font-family="system-ui" font-size="8" fill="#555">Doctor</text>
+          <text x="120" y="94" font-family="system-ui" font-size="8" fill="#1e293b">Panupen Sitthisomwong, D.D.S.</text>
+          <text x="8" y="106" font-family="system-ui" font-size="8" fill="#555">HN</text>
+          <text x="120" y="106" font-family="system-ui" font-size="8" fill="#1e293b">212224236248</text>
+          <!-- Past appt -->
+          <rect x="4" y="120" width="472" height="60" rx="3" fill="white" stroke="#ddd"/>
+          <rect x="4" y="120" width="472" height="18" fill="#f1f5f9"/>
+          <text x="8" y="132" font-family="system-ui" font-size="8" font-weight="700" fill="#475569">Appt. No.24953  (Past)</text>
+          <text x="300" y="132" font-family="system-ui" font-size="8" fill="#64748b">Status: Completed</text>
+          <text x="8" y="146" font-family="system-ui" font-size="8" fill="#555">Appointment Date</text>
+          <text x="120" y="146" font-family="system-ui" font-size="8" fill="#64748b">10/03/2026</text>
+          <text x="260" y="146" font-family="system-ui" font-size="8" fill="#555">Service</text>
+          <text x="370" y="146" font-family="system-ui" font-size="8" fill="#64748b">Follow up</text>
+          <text x="8" y="158" font-family="system-ui" font-size="8" fill="#555">Location</text>
+          <text x="120" y="158" font-family="system-ui" font-size="8" fill="#64748b">Children Center (Building A 17A)</text>
+          <text x="8" y="170" font-family="system-ui" font-size="8" fill="#555">HN</text>
+          <text x="120" y="170" font-family="system-ui" font-size="8" fill="#64748b">212224236248</text>
+          <rect x="4" y="188" width="472" height="20" rx="3" fill="#dcfce7" stroke="#86efac"/>
+          <text x="240" y="201" text-anchor="middle" font-family="system-ui" font-size="9" font-weight="600" fill="#15803d">2 appointment records returned ✓</text>`)
+      },
+      {
+        title: 'Step 5 · Appointment Result',
+        desc: 'MuleSoft transforms and forwards the appointment data back to Salesforce.',
+        ui: svgWrap(`
+          <rect width="480" height="320" fill="#f0f4f8"/>
+          <rect x="20" y="20" width="440" height="280" rx="6" fill="white" stroke="#86efac"/>
+          <rect x="20" y="20" width="440" height="32" fill="#16a34a"/>
+          <text x="36" y="40" font-family="system-ui" font-size="12" font-weight="600" fill="white">200 OK — Appointment Result</text>
+          <text x="36" y="70" font-family="ui-monospace,monospace" font-size="9" fill="#64748b">Content-Type: application/json</text>
+          <line x1="20" y1="80" x2="460" y2="80" stroke="#dcfce7"/>
+          <text x="36" y="98" font-family="ui-monospace,monospace" font-size="10" fill="#1e293b">{</text>
+          <text x="52" y="116" font-family="ui-monospace,monospace" font-size="10" fill="#64748b">"hn":</text>
+          <text x="98" y="116" font-family="ui-monospace,monospace" font-size="10" fill="#1e293b">"212224236248",</text>
+          <text x="52" y="134" font-family="ui-monospace,monospace" font-size="10" fill="#64748b">"totalAppointments":</text>
+          <text x="218" y="134" font-family="ui-monospace,monospace" font-size="10" fill="#1e293b">2,</text>
+          <text x="52" y="152" font-family="ui-monospace,monospace" font-size="10" fill="#64748b">"appointments":</text>
+          <text x="178" y="152" font-family="ui-monospace,monospace" font-size="10" fill="#1e293b">[</text>
+          <text x="68" y="170" font-family="ui-monospace,monospace" font-size="10" fill="#64748b">{ "apptNo":</text>
+          <text x="154" y="170" font-family="ui-monospace,monospace" font-size="10" fill="#1e293b">"26268", "date": "28/04/2026",</text>
+          <text x="84" y="186" font-family="ui-monospace,monospace" font-size="10" fill="#64748b">"status":</text>
+          <text x="152" y="186" font-family="ui-monospace,monospace" font-size="10" fill="#15803d">"Booked",</text>
+          <text x="84" y="202" font-family="ui-monospace,monospace" font-size="10" fill="#64748b">"specialty":</text>
+          <text x="164" y="202" font-family="ui-monospace,monospace" font-size="10" fill="#1e293b">"Dental" },</text>
+          <text x="68" y="220" font-family="ui-monospace,monospace" font-size="10" fill="#64748b">{ "apptNo":</text>
+          <text x="154" y="220" font-family="ui-monospace,monospace" font-size="10" fill="#1e293b">"24953", "date": "10/03/2026",</text>
+          <text x="84" y="236" font-family="ui-monospace,monospace" font-size="10" fill="#64748b">"status":</text>
+          <text x="152" y="236" font-family="ui-monospace,monospace" font-size="10" fill="#64748b">"Completed" }</text>
+          <text x="52" y="254" font-family="ui-monospace,monospace" font-size="10" fill="#1e293b">]</text>
+          <text x="36" y="270" font-family="ui-monospace,monospace" font-size="10" fill="#1e293b">}</text>`)
+      },
+      {
+        title: 'Step 6 · Display Appointment List',
+        desc: 'Salesforce presents the full appointment list to the Airport Representative, allowing them to review and take further action on the relevant appointment.',
+        ui: svgWrap(`
+          <rect width="480" height="320" fill="#f5f5f5"/>
+          <!-- Slim teal top bar -->
+          <rect x="0" y="0" width="480" height="8" fill="#1a7f8e"/>
+          <!-- Tabs -->
+          <rect x="0" y="8" width="480" height="24" fill="white" stroke="#e5e7eb" stroke-width="0.5"/>
+          <text x="12" y="24" font-family="system-ui" font-size="9" fill="#888">Related</text>
+          <text x="56" y="24" font-family="system-ui" font-size="9" font-weight="700" fill="#1e293b">Details</text>
+          <line x1="56" y1="31" x2="80" y2="31" stroke="#1e293b" stroke-width="1.5"/>
+          <!-- Content area -->
+          <rect x="0" y="32" width="480" height="288" fill="white"/>
+          <!-- Two column layout -->
+          <!-- Left col -->
+          <text x="12" y="50" font-family="system-ui" font-size="8" fill="#888">Appointment Name</text>
+          <text x="150" y="50" font-family="system-ui" font-size="8" fill="#1e293b">Appt. No.26268</text>
+          <text x="12" y="64" font-family="system-ui" font-size="8" fill="#888">Appointment Date</text>
+          <text x="150" y="64" font-family="system-ui" font-size="8" fill="#1e293b">28/04/2026</text>
+          <text x="12" y="78" font-family="system-ui" font-size="8" fill="#888">Service</text>
+          <text x="150" y="78" font-family="system-ui" font-size="8" fill="#1e293b">New Visit / Walk in</text>
+          <text x="12" y="92" font-family="system-ui" font-size="8" fill="#888">Specialty</text>
+          <text x="150" y="92" font-family="system-ui" font-size="8" fill="#1e293b">ทันตกรรม / Dental</text>
+          <text x="12" y="106" font-family="system-ui" font-size="8" fill="#888">Appointment Time</text>
+          <text x="150" y="106" font-family="system-ui" font-size="8" fill="#1e293b">13.00</text>
+          <text x="12" y="120" font-family="system-ui" font-size="8" fill="#888">Hospital</text>
+          <text x="150" y="120" font-family="system-ui" font-size="8" fill="#1e293b">Bumrungrad International Hospital</text>
+          <text x="12" y="134" font-family="system-ui" font-size="8" fill="#888">Location</text>
+          <text x="150" y="134" font-family="system-ui" font-size="8" fill="#1e293b">Dental Center (Building B 3rd Floor)</text>
+          <text x="12" y="148" font-family="system-ui" font-size="8" fill="#888">Doctor</text>
+          <text x="150" y="148" font-family="system-ui" font-size="8" fill="#1e293b">Panupen Sitthisomwong, D.D.S.</text>
+          <text x="12" y="162" font-family="system-ui" font-size="8" fill="#888">Notes</text>
+          <text x="12" y="176" font-family="system-ui" font-size="8" fill="#888">Patient Letter Notes</text>
+          <text x="12" y="190" font-family="system-ui" font-size="8" fill="#888">Slot Id</text>
+          <text x="12" y="210" font-family="system-ui" font-size="8" fill="#888">HN Barcode</text>
+          <!-- Barcode area -->
+          <rect x="12" y="215" width="200" height="52" rx="2" fill="#f8fafc" stroke="#e5e7eb"/>
+          <text x="112" y="232" text-anchor="middle" font-family="ui-monospace,monospace" font-size="6" fill="#1e293b">||| |||| |||| ||||| |||| ||||| |||||| |||||||</text>
+          <text x="112" y="242" text-anchor="middle" font-family="ui-monospace,monospace" font-size="6" fill="#1e293b">|||||| ||||| |||||| ||||| |||| |||| ||||||||</text>
+          <text x="112" y="252" text-anchor="middle" font-family="ui-monospace,monospace" font-size="7" fill="#1e293b">212224236248</text>
+          <!-- Right col divider -->
+          <line x1="242" y1="32" x2="242" y2="280" stroke="#e5e7eb" stroke-width="0.5"/>
+          <!-- Right col -->
+          <text x="252" y="50" font-family="system-ui" font-size="8" fill="#888">Owner</text>
+          <text x="340" y="50" font-family="system-ui" font-size="8" fill="#1a7f8e">Teerawat Nakornchai</text>
+          <text x="252" y="64" font-family="system-ui" font-size="8" fill="#888">Account</text>
+          <text x="340" y="64" font-family="system-ui" font-size="8" fill="#1a7f8e">Sunny Last</text>
+          <text x="252" y="78" font-family="system-ui" font-size="8" fill="#888">Service Code</text>
+          <text x="252" y="92" font-family="system-ui" font-size="8" fill="#888">Sub Specialty</text>
+          <text x="252" y="106" font-family="system-ui" font-size="8" fill="#888">End Time</text>
+          <text x="252" y="120" font-family="system-ui" font-size="8" fill="#888">HN</text>
+          <text x="340" y="120" font-family="system-ui" font-size="8" fill="#1e293b">212224236248</text>
+          <text x="252" y="134" font-family="system-ui" font-size="8" fill="#888">Slot Length</text>
+          <text x="252" y="148" font-family="system-ui" font-size="8" fill="#888">Interpreter Required</text>
+          <text x="252" y="162" font-family="system-ui" font-size="8" fill="#888">Interpreter</text>
+          <text x="252" y="176" font-family="system-ui" font-size="8" fill="#888">Appointment Status</text>
+          <rect x="340" y="170" width="60" height="12" rx="2" fill="#dcfce7" stroke="#86efac"/>
+          <text x="346" y="179" font-family="system-ui" font-size="7" fill="#15803d">Booked</text>
+          <text x="252" y="190" font-family="system-ui" font-size="8" fill="#888">Overbook Reason</text>
+          <text x="252" y="204" font-family="system-ui" font-size="8" fill="#888">Appointment Id</text>
+          <!-- Cancellation info -->
+          <line x1="0" y1="278" x2="480" y2="278" stroke="#e5e7eb"/>
+          <text x="12" y="293" font-family="system-ui" font-size="8" fill="#888">∨ Cancellation Information</text>`)
+      },
+      {
+        title: 'Step 7 · Appointment Retrieval Failed',
+        desc: 'TrakCare returns an error indicating the appointment records could not be retrieved – e.g., patient not found, invalid HN, or system unavailable.',
+        ui: svgWrap(`
+          <rect width="480" height="320" fill="#f0f0f0"/>
+          <rect x="0" y="0" width="480" height="22" fill="#1e5c32"/>
+          <text x="240" y="14" text-anchor="middle" font-family="system-ui" font-size="9" fill="white">TrakCare · Appointment Retrieval Error</text>
+          <rect x="10" y="30" width="460" height="270" rx="4" fill="white" stroke="#fecaca"/>
+          <rect x="10" y="30" width="460" height="24" fill="#dc2626"/>
+          <text x="20" y="46" font-family="system-ui" font-size="10" font-weight="600" fill="white">404 / 503 — Appointment Retrieval Failed</text>
+          <text x="20" y="72" font-family="ui-monospace,monospace" font-size="10" fill="#1e293b">{</text>
+          <text x="36" y="90" font-family="ui-monospace,monospace" font-size="10" fill="#64748b">"status":</text>
+          <text x="106" y="90" font-family="ui-monospace,monospace" font-size="10" fill="#dc2626">"error",</text>
+          <text x="36" y="108" font-family="ui-monospace,monospace" font-size="10" fill="#64748b">"errorCode":</text>
+          <text x="130" y="108" font-family="ui-monospace,monospace" font-size="10" fill="#dc2626">"PATIENT_NOT_FOUND",</text>
+          <text x="36" y="126" font-family="ui-monospace,monospace" font-size="10" fill="#64748b">"message":</text>
+          <text x="118" y="126" font-family="ui-monospace,monospace" font-size="10" fill="#dc2626">"No records found for HN 212224236248",</text>
+          <text x="36" y="144" font-family="ui-monospace,monospace" font-size="10" fill="#64748b">"hn":</text>
+          <text x="80" y="144" font-family="ui-monospace,monospace" font-size="10" fill="#1e293b">"212224236248",</text>
+          <text x="36" y="162" font-family="ui-monospace,monospace" font-size="10" fill="#64748b">"retryable":</text>
+          <text x="130" y="162" font-family="ui-monospace,monospace" font-size="10" fill="#1e293b">false</text>
+          <text x="20" y="180" font-family="ui-monospace,monospace" font-size="10" fill="#1e293b">}</text>
+          <rect x="20" y="196" width="440" height="32" rx="3" fill="#fef2f2" stroke="#fecaca"/>
+          <text x="240" y="208" text-anchor="middle" font-family="system-ui" font-size="9" font-weight="600" fill="#dc2626">Appointment records not found in TrakCare</text>
+          <text x="240" y="220" text-anchor="middle" font-family="system-ui" font-size="8" fill="#991b1b">Patient not found / Invalid HN / System unavailable</text>`)
+      },
+      {
+        title: 'Step 8 · Propagate Error to Salesforce',
+        desc: 'MuleSoft forwards the error back to Salesforce.',
+        ui: svgWrap(`
+          <rect width="480" height="320" fill="#f0f4f8"/>
+          <rect x="20" y="30" width="440" height="260" rx="6" fill="white" stroke="#fecaca"/>
+          <rect x="20" y="30" width="440" height="32" fill="#b45309"/>
+          <text x="36" y="50" font-family="system-ui" font-size="12" font-weight="600" fill="white">Error Propagated to Salesforce</text>
+          <text x="36" y="82" font-family="ui-monospace,monospace" font-size="10" fill="#64748b">Content-Type: application/json</text>
+          <line x1="20" y1="94" x2="460" y2="94" stroke="#fee2e2"/>
+          <text x="36" y="114" font-family="ui-monospace,monospace" font-size="11" fill="#1e293b">{</text>
+          <text x="52" y="134" font-family="ui-monospace,monospace" font-size="11" fill="#64748b">"status":</text>
+          <text x="134" y="134" font-family="ui-monospace,monospace" font-size="11" fill="#dc2626">"error",</text>
+          <text x="52" y="154" font-family="ui-monospace,monospace" font-size="11" fill="#64748b">"errorCode":</text>
+          <text x="166" y="154" font-family="ui-monospace,monospace" font-size="11" fill="#dc2626">"PATIENT_NOT_FOUND",</text>
+          <text x="52" y="174" font-family="ui-monospace,monospace" font-size="11" fill="#64748b">"hn":</text>
+          <text x="96" y="174" font-family="ui-monospace,monospace" font-size="11" fill="#1e293b">"212224236248",</text>
+          <text x="52" y="194" font-family="ui-monospace,monospace" font-size="11" fill="#64748b">"source":</text>
+          <text x="136" y="194" font-family="ui-monospace,monospace" font-size="11" fill="#1e293b">"TrakCare",</text>
+          <text x="52" y="214" font-family="ui-monospace,monospace" font-size="11" fill="#64748b">"message":</text>
+          <text x="148" y="214" font-family="ui-monospace,monospace" font-size="10" fill="#dc2626">"No appointment records found"</text>
+          <text x="36" y="234" font-family="ui-monospace,monospace" font-size="11" fill="#1e293b">}</text>`)
+      },
+      {
+        title: 'Step 9 · Appointment Not Found',
+        desc: 'Salesforce displays an "Appointment Not Found" message to the Airport Representative, prompting them to verify the patient\'s details or escalate.',
+        ui: svgWrap(`
+          <rect width="480" height="320" fill="#f5f5f5"/>
+          <rect x="0" y="0" width="480" height="36" fill="#1a7f8e"/>
+          <text x="12" y="14" font-family="system-ui" font-size="8" fill="#a7f3d0">Salesforce · Airport Check-in</text>
+          <text x="12" y="28" font-family="system-ui" font-size="13" font-weight="700" fill="white">Appointment Search</text>
+          <!-- Actor note -->
+          <rect x="8" y="44" width="464" height="20" rx="3" fill="#fffbeb" stroke="#fcd34d"/>
+          <text x="240" y="58" text-anchor="middle" font-family="system-ui" font-size="9" fill="#92400e">Actor: Airport Representative  |  Trigger: Barcode scan or manual search</text>
+          <!-- Search form (dimmed) -->
+          <rect x="8" y="72" width="464" height="54" rx="4" fill="#f8fafc" stroke="#e5e7eb"/>
+          <text x="20" y="88" font-family="system-ui" font-size="8" fill="#888">Hospital Number (HN)</text>
+          <rect x="20" y="92" width="360" height="18" rx="3" fill="white" stroke="#ddd"/>
+          <text x="28" y="105" font-family="ui-monospace,monospace" font-size="9" fill="#64748b">212224236248</text>
+          <rect x="390" y="92" width="70" height="18" rx="3" fill="#1a7f8e"/>
+          <text x="425" y="105" text-anchor="middle" font-family="system-ui" font-size="8" fill="white">Search</text>
+          <!-- Error banner -->
+          <rect x="8" y="134" width="464" height="60" rx="4" fill="#fef2f2" stroke="#fecaca"/>
+          <text x="240" y="154" text-anchor="middle" font-family="system-ui" font-size="11" font-weight="700" fill="#dc2626">✗ Appointment Not Found</text>
+          <text x="240" y="170" text-anchor="middle" font-family="system-ui" font-size="9" fill="#991b1b">No appointment records found for HN: 212224236248</text>
+          <text x="240" y="184" text-anchor="middle" font-family="system-ui" font-size="8" fill="#991b1b">Please verify the patient's details or try a different identifier.</text>
+          <!-- Action suggestions -->
+          <rect x="8" y="202" width="464" height="74" rx="4" fill="white" stroke="#e5e7eb"/>
+          <text x="20" y="218" font-family="system-ui" font-size="9" font-weight="600" fill="#475569">Suggested Actions</text>
+          <text x="20" y="234" font-family="system-ui" font-size="8" fill="#1e293b">• Verify the HN number on the patient's card</text>
+          <text x="20" y="248" font-family="system-ui" font-size="8" fill="#1e293b">• Try searching by Passport Number or Patient Name</text>
+          <text x="20" y="262" font-family="system-ui" font-size="8" fill="#1e293b">• Contact hospital reception for manual assistance</text>
+          <!-- Escalate button -->
+          <rect x="8" y="284" width="130" height="24" rx="4" fill="#1e293b"/>
+          <text x="73" y="300" text-anchor="middle" font-family="system-ui" font-size="9" fill="white">Escalate to Support</text>
+          <rect x="146" y="284" width="100" height="24" rx="4" fill="white" stroke="#ddd"/>
+          <text x="196" y="300" text-anchor="middle" font-family="system-ui" font-size="9" fill="#555">Try Again</text>`)
+      }
+    ]
+  },
+
   'appointment-cancel': {
     title: 'Integration 06_Appointment_Cancel — Appointment',
     breadcrumb: 'Appointment',
