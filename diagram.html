@@ -9,12 +9,7 @@
   body { font-family: system-ui, -apple-system, "Segoe UI", sans-serif; margin: 0; background: #f7f8fa; color: #1a1a1a; display: flex; min-height: 100vh; }
 
   /* ── Sidebar ── */
-  .sidebar { width: 248px; min-width: 248px; background: #1e293b; color: #e2e8f0; display: flex; flex-direction: column; transition: width 200ms ease, min-width 200ms ease; overflow: hidden; }
-  .sidebar.collapsed { width: 0; min-width: 0; }
-
-  /* ── Sidebar toggle ── */
-  #sidebar-toggle { position: absolute; top: 18px; left: 0; width: 28px; height: 28px; border: 1px solid #d1d5db; background: white; border-radius: 6px; cursor: pointer; font-size: 14px; line-height: 1; color: #475569; display: flex; align-items: center; justify-content: center; z-index: 10; box-shadow: 0 1px 2px rgba(0,0,0,0.06); padding: 0; }
-  #sidebar-toggle:hover { color: #2563eb; border-color: #2563eb; }
+  .sidebar { width: 248px; min-width: 248px; background: #1e293b; color: #e2e8f0; display: flex; flex-direction: column; }
   .sidebar-header { padding: 18px 16px 14px; border-bottom: 1px solid #334155; }
   .sidebar-header h1 { margin: 0; font-size: 14px; font-weight: 700; color: white; line-height: 1.3; }
   .sidebar-header p { margin: 4px 0 0; font-size: 11px; color: #94a3b8; }
@@ -34,8 +29,8 @@
   .nav-item.active .nav-badge { background: rgba(37,99,235,0.35); color: #93c5fd; }
 
   /* ── Main ── */
-  .main { flex: 1; display: flex; flex-direction: column; min-width: 0; padding: 22px 24px 24px; position: relative; }
-  .page-header { margin-bottom: 16px; padding-left: 40px; }
+  .main { flex: 1; display: flex; flex-direction: column; min-width: 0; padding: 22px 24px 24px; }
+  .page-header { margin-bottom: 16px; }
   .breadcrumb { font-size: 11px; color: #94a3b8; margin-bottom: 3px; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600; }
   .page-header h2 { margin: 0; font-size: 19px; font-weight: 700; }
   .page-header p.subtitle { margin: 5px 0 0; color: #555; font-size: 13px; }
@@ -149,16 +144,7 @@
       </div>
       <div class="nav-items">
         <div class="nav-item" data-page="worklist-ipd-census" onclick="navigateTo('worklist-ipd-census')">
-          10 · IPD Census <span class="nav-badge">7</span>
-        </div>
-        <div class="nav-item" data-page="worklist-task-info" onclick="navigateTo('worklist-task-info')">
-          11 · Task Worklist Info <span class="nav-badge">8</span>
-        </div>
-        <div class="nav-item" data-page="worklist-task-update" onclick="navigateTo('worklist-task-update')">
-          12 · Task Worklist Update <span class="nav-badge">9</span>
-        </div>
-        <div class="nav-item" data-page="worklist-scanned-form" onclick="navigateTo('worklist-scanned-form')">
-          15 · Scanned Form List <span class="nav-badge">11</span>
+          08 · IPD Census <span class="nav-badge">9</span>
         </div>
       </div>
     </div>
@@ -166,7 +152,6 @@
 </nav>
 
 <div class="main">
-  <button id="sidebar-toggle" title="Toggle navigation" aria-label="Toggle navigation">&#9776;</button>
   <div class="page-header">
     <div class="breadcrumb" id="breadcrumb">Patient</div>
     <h2 id="page-title"></h2>
@@ -482,7 +467,7 @@ sequenceDiagram
     mermaid: `
 sequenceDiagram
     autonumber
-    actor U as User
+    participant U as User
     participant TC as TrakCare
     participant MU as MuleSoft API
     participant SF as Salesforce
@@ -713,7 +698,7 @@ sequenceDiagram
     mermaid: `
 sequenceDiagram
     autonumber
-    actor U as User
+    participant U as User
     participant SF as Salesforce
     participant MU as MuleSoft API
     participant TC as TrakCare
@@ -1019,7 +1004,7 @@ sequenceDiagram
     mermaid: `
 sequenceDiagram
     autonumber
-    actor U as User
+    participant U as User
     participant TC as TrakCare
     participant MU as MuleSoft API
     participant SF as Salesforce
@@ -1338,7 +1323,7 @@ sequenceDiagram
     mermaid: `
 sequenceDiagram
     autonumber
-    actor U as User
+    participant U as User
     participant SF as Salesforce
     participant MU as MuleSoft API
     participant PD as PDVS
@@ -1878,7 +1863,7 @@ sequenceDiagram
     mermaid: `
 sequenceDiagram
     autonumber
-    actor U as User
+    participant U as User
     participant SF as Salesforce
     participant MU as MuleSoft API
     participant PD as PDVS
@@ -2391,7 +2376,7 @@ sequenceDiagram
     mermaid: `
 sequenceDiagram
     autonumber
-    actor U as User
+    participant U as User
     participant SF as Salesforce
     participant MU as MuleSoft API
     participant TC as TrakCare
@@ -2755,21 +2740,22 @@ sequenceDiagram
     ]
   },
 
-  // ── 08 Get Appointment ────────────────────────────────────────────────────
+  // ── 06 Appointment Cancel ────────────────────────────────────────────────────
   'appointment-get': {
     title: 'Integration 08_Get_Appointment',
     breadcrumb: 'Appointment',
     mermaid: `
 sequenceDiagram
     autonumber
-    actor U as User
-    participant TC as TrakCare
-    participant MU as MuleSoft API
+    participant U as User
     participant SF as Salesforce
+    participant MU as MuleSoft API
+    participant TC as TrakCare
 
-    Note over U,SF: Integration 08_Get_Appointment
-    U->>TC: User create the appointment
-    TC->>MU: [Event Trigger] Appointment Created on TrakCare
+    Note over U,TC: Integration 08_Get_Appointment
+    Note over U,SF: Actor: Airport Representative<br/>Trigger: Barcode scan or manual search
+    U->>SF: Search Appointment (HN / Passport / Name)
+    SF->>MU: Get Appointment Request
     MU->>TC: GET /api/v1/appointments
 
     alt Success
@@ -2784,84 +2770,80 @@ sequenceDiagram
     steps: [
       {
         title: 'Step 1 · Search Appointment (HN / Passport / Name)',
-        desc: 'A hospital staff member (clinical, admin, or scheduling team) creates a new appointment record directly in the TrakCare UI. This is the initial trigger for the integration.',
+        desc: 'The Airport Representative initiates an appointment lookup in Salesforce by entering the patient\'s HN, Passport Number, or Name. This is typically triggered by a barcode scan at arrival or a manual search when the patient checks in.',
         ui: svgWrap(`
-          <rect width="480" height="320" fill="#f0f0f0"/>
+          <rect width="480" height="320" fill="#f5f5f5"/>
           <!-- Header -->
-          <rect x="0" y="0" width="480" height="36" fill="#1e5c32"/>
-          <text x="12" y="14" font-family="system-ui" font-size="8" fill="#a7f3d0">TrakCare · Appointment Management</text>
-          <text x="12" y="28" font-family="system-ui" font-size="13" font-weight="700" fill="white">Create New Appointment</text>
+          <rect x="0" y="0" width="480" height="36" fill="#1a7f8e"/>
+          <text x="12" y="14" font-family="system-ui" font-size="8" fill="#a7f3d0">Salesforce · Airport Check-in</text>
+          <text x="12" y="28" font-family="system-ui" font-size="13" font-weight="700" fill="white">Appointment Search</text>
           <!-- Actor note -->
           <rect x="8" y="44" width="464" height="22" rx="3" fill="#fffbeb" stroke="#fcd34d"/>
-          <text x="240" y="59" text-anchor="middle" font-family="system-ui" font-size="9" fill="#92400e">Actor: Hospital Staff (Clinical / Admin / Scheduling)  |  System: TrakCare</text>
-          <!-- Form fields -->
-          <rect x="8" y="74" width="464" height="230" rx="4" fill="white" stroke="#e5e7eb"/>
-          <text x="20" y="92" font-family="system-ui" font-size="10" font-weight="700" fill="#1e293b">New Appointment Form</text>
+          <text x="240" y="59" text-anchor="middle" font-family="system-ui" font-size="9" fill="#92400e">Actor: Airport Representative  |  Trigger: Barcode scan or manual search</text>
+          <!-- Search fields -->
+          <rect x="8" y="74" width="464" height="200" rx="4" fill="white" stroke="#e5e7eb"/>
+          <text x="20" y="92" font-family="system-ui" font-size="10" font-weight="700" fill="#1e293b">Search Appointment</text>
           <line x1="8" y1="98" x2="472" y2="98" stroke="#e5e7eb"/>
-          <!-- Row 1 -->
+          <!-- HN field -->
           <text x="20" y="116" font-family="system-ui" font-size="9" fill="#888">Hospital Number (HN)</text>
-          <rect x="20" y="120" width="200" height="20" rx="3" fill="#f8fafc" stroke="#1e5c32" stroke-width="1.5"/>
-          <text x="28" y="134" font-family="ui-monospace,monospace" font-size="10" fill="#1e293b">212224236248</text>
-          <text x="240" y="116" font-family="system-ui" font-size="9" fill="#888">Service</text>
-          <rect x="240" y="120" width="220" height="20" rx="3" fill="#f8fafc" stroke="#ddd"/>
-          <text x="248" y="134" font-family="system-ui" font-size="10" fill="#1e293b">New Visit / Walk in</text>
-          <!-- Row 2 -->
-          <text x="20" y="156" font-family="system-ui" font-size="9" fill="#888">Appointment Date</text>
-          <rect x="20" y="160" width="200" height="20" rx="3" fill="#f8fafc" stroke="#ddd"/>
-          <text x="28" y="174" font-family="system-ui" font-size="10" fill="#1e293b">28/04/2026</text>
-          <text x="240" y="156" font-family="system-ui" font-size="9" fill="#888">Appointment Time</text>
-          <rect x="240" y="160" width="220" height="20" rx="3" fill="#f8fafc" stroke="#ddd"/>
-          <text x="248" y="174" font-family="system-ui" font-size="10" fill="#1e293b">13.00</text>
-          <!-- Row 3 -->
-          <text x="20" y="196" font-family="system-ui" font-size="9" fill="#888">Specialty</text>
-          <rect x="20" y="200" width="200" height="20" rx="3" fill="#f8fafc" stroke="#ddd"/>
-          <text x="28" y="214" font-family="system-ui" font-size="10" fill="#1e293b">Dental</text>
-          <text x="240" y="196" font-family="system-ui" font-size="9" fill="#888">Location</text>
-          <rect x="240" y="200" width="220" height="20" rx="3" fill="#f8fafc" stroke="#ddd"/>
-          <text x="248" y="214" font-family="system-ui" font-size="9" fill="#1e293b">Dental Center (Bldg B 3rd Floor)</text>
-          <!-- Row 4 -->
-          <text x="20" y="236" font-family="system-ui" font-size="9" fill="#888">Doctor</text>
-          <rect x="20" y="240" width="440" height="20" rx="3" fill="#f8fafc" stroke="#ddd"/>
-          <text x="28" y="254" font-family="system-ui" font-size="10" fill="#1e293b">Panupen Sitthisomwong, D.D.S. (Dr.)</text>
-          <!-- Save button -->
-          <rect x="370" y="270" width="90" height="26" rx="4" fill="#1e5c32"/>
-          <text x="415" y="287" text-anchor="middle" font-family="system-ui" font-size="10" font-weight="700" fill="white">Save</text>`)
+          <rect x="20" y="120" width="440" height="22" rx="3" fill="#f8fafc" stroke="#1a7f8e" stroke-width="1.5"/>
+          <text x="28" y="135" font-family="ui-monospace,monospace" font-size="10" fill="#1e293b">212224236248</text>
+          <!-- Passport field -->
+          <text x="20" y="158" font-family="system-ui" font-size="9" fill="#888">Passport Number</text>
+          <rect x="20" y="162" width="440" height="22" rx="3" fill="#f8fafc" stroke="#ddd"/>
+          <text x="28" y="177" font-family="ui-monospace,monospace" font-size="10" fill="#bbb">Enter passport number…</text>
+          <!-- Name field -->
+          <text x="20" y="200" font-family="system-ui" font-size="9" fill="#888">Patient Name</text>
+          <rect x="20" y="204" width="440" height="22" rx="3" fill="#f8fafc" stroke="#ddd"/>
+          <text x="28" y="219" font-family="ui-monospace,monospace" font-size="10" fill="#bbb">Enter patient name…</text>
+          <!-- Barcode scan note -->
+          <rect x="20" y="234" width="200" height="28" rx="3" fill="#eff6ff" stroke="#bfdbfe"/>
+          <text x="120" y="246" text-anchor="middle" font-family="system-ui" font-size="8" fill="#1d4ed8">📷 Scan HN Barcode</text>
+          <text x="120" y="257" text-anchor="middle" font-family="system-ui" font-size="7" fill="#3b82f6">Point camera at barcode on card</text>
+          <!-- Search button -->
+          <rect x="370" y="234" width="90" height="28" rx="4" fill="#1a7f8e"/>
+          <text x="415" y="252" text-anchor="middle" font-family="system-ui" font-size="10" font-weight="700" fill="white">Search</text>
+          <!-- Barcode visual -->
+          <rect x="8" y="282" width="464" height="30" rx="3" fill="#f8fafc" stroke="#e5e7eb"/>
+          <text x="16" y="295" font-family="system-ui" font-size="8" fill="#888">Scanned:</text>
+          <text x="62" y="295" font-family="ui-monospace,monospace" font-size="9" fill="#1e293b">212224236248</text>
+          <text x="62" y="307" font-family="ui-monospace,monospace" font-size="7" fill="#888">|||||||||||||||||||||||||||||||||||||||||||||||</text>`)
       },
       {
         title: 'Step 2 · Get Appointment Request',
-        desc: 'Once TrakCare successfully saves the appointment, it publishes an "Appointment Created" event to MuleSoft. The event notifies MuleSoft that a new appointment exists and is ready to be fetched.',
+        desc: 'Salesforce forwards the search criteria to MuleSoft API to retrieve the patient\'s appointment records from TrakCare.',
         ui: svgWrap(`
           <rect width="480" height="320" fill="#f0f4f8"/>
           <rect x="20" y="20" width="440" height="280" rx="6" fill="white" stroke="#cbd5e1"/>
-          <rect x="20" y="20" width="440" height="32" fill="#1e5c32"/>
-          <text x="36" y="40" font-family="system-ui" font-size="12" font-weight="600" fill="white">Event Trigger — Appointment Created</text>
-          <text x="36" y="68" font-family="system-ui" font-size="10" fill="#64748b">Source: TrakCare → MuleSoft</text>
+          <rect x="20" y="20" width="440" height="32" fill="#1e293b"/>
+          <text x="36" y="40" font-family="ui-monospace,monospace" font-size="11" fill="#86efac">GET</text>
+          <text x="70" y="40" font-family="ui-monospace,monospace" font-size="10" fill="white">/bh-appointments-api/v1/appointments</text>
+          <text x="36" y="68" font-family="ui-monospace,monospace" font-size="9" fill="#64748b">Content-Type: application/json</text>
           <line x1="36" y1="78" x2="444" y2="78" stroke="#e2e8f0"/>
-          <text x="36" y="98" font-family="system-ui" font-size="9" font-weight="600" fill="#475569">Event Payload</text>
-          <text x="36" y="116" font-family="ui-monospace,monospace" font-size="10" fill="#1e293b">{</text>
-          <text x="52" y="134" font-family="ui-monospace,monospace" font-size="10" fill="#64748b">"eventType":</text>
-          <text x="152" y="134" font-family="ui-monospace,monospace" font-size="10" fill="#15803d">"APPOINTMENT_CREATED",</text>
-          <text x="52" y="152" font-family="ui-monospace,monospace" font-size="10" fill="#64748b">"source":</text>
-          <text x="118" y="152" font-family="ui-monospace,monospace" font-size="10" fill="#1e293b">"TrakCare",</text>
-          <text x="52" y="170" font-family="ui-monospace,monospace" font-size="10" fill="#64748b">"hn":</text>
-          <text x="88" y="170" font-family="ui-monospace,monospace" font-size="10" fill="#1e293b">"212224236248",</text>
-          <text x="52" y="188" font-family="ui-monospace,monospace" font-size="10" fill="#64748b">"appointmentId":</text>
-          <text x="186" y="188" font-family="ui-monospace,monospace" font-size="10" fill="#1e293b">"26268",</text>
-          <text x="52" y="206" font-family="ui-monospace,monospace" font-size="10" fill="#64748b">"timestamp":</text>
-          <text x="152" y="206" font-family="ui-monospace,monospace" font-size="10" fill="#1e293b">"2026-04-28T12:45:00Z"</text>
-          <text x="36" y="224" font-family="ui-monospace,monospace" font-size="10" fill="#1e293b">}</text>
-          <rect x="36" y="240" width="408" height="28" rx="3" fill="#eff6ff" stroke="#bfdbfe"/>
-          <text x="240" y="258" text-anchor="middle" font-family="system-ui" font-size="9" fill="#1d4ed8">MuleSoft receives event and prepares to fetch full appointment details</text>`)
+          <text x="36" y="96" font-family="ui-monospace,monospace" font-size="10" fill="#1e293b">{</text>
+          <text x="52" y="114" font-family="ui-monospace,monospace" font-size="10" fill="#64748b">"searchType":</text>
+          <text x="152" y="114" font-family="ui-monospace,monospace" font-size="10" fill="#1e293b">"HN",</text>
+          <text x="52" y="132" font-family="ui-monospace,monospace" font-size="10" fill="#64748b">"hn":</text>
+          <text x="102" y="132" font-family="ui-monospace,monospace" font-size="10" fill="#1e293b">"212224236248",</text>
+          <text x="52" y="150" font-family="ui-monospace,monospace" font-size="10" fill="#64748b">"passportNumber":</text>
+          <text x="192" y="150" font-family="ui-monospace,monospace" font-size="10" fill="#888">null,</text>
+          <text x="52" y="168" font-family="ui-monospace,monospace" font-size="10" fill="#64748b">"patientName":</text>
+          <text x="174" y="168" font-family="ui-monospace,monospace" font-size="10" fill="#888">null,</text>
+          <text x="52" y="186" font-family="ui-monospace,monospace" font-size="10" fill="#64748b">"requestedBy":</text>
+          <text x="174" y="186" font-family="ui-monospace,monospace" font-size="10" fill="#1e293b">"AirportRep",</text>
+          <text x="52" y="204" font-family="ui-monospace,monospace" font-size="10" fill="#64748b">"trigger":</text>
+          <text x="132" y="204" font-family="ui-monospace,monospace" font-size="10" fill="#1e293b">"barcode_scan"</text>
+          <text x="36" y="222" font-family="ui-monospace,monospace" font-size="10" fill="#1e293b">}</text>`)
       },
       {
         title: 'Step 3 · GET /api/v1/appointments',
-        desc: 'In response to the event, MuleSoft calls TrakCare\'s appointment API to retrieve the full appointment details that weren\'t carried in the lightweight event payload.',
+        desc: 'MuleSoft calls the TrakCare appointment API with the patient\'s identifiers to fetch all relevant appointment records.',
         ui: svgWrap(`
           <rect width="480" height="320" fill="#f0f0f0"/>
-          <rect x="0" y="0" width="480" height="22" fill="#1e293b"/>
-          <text x="240" y="14" text-anchor="middle" font-family="system-ui" font-size="9" fill="white">MuleSoft → TrakCare · Fetch Appointment Details</text>
+          <rect x="0" y="0" width="480" height="22" fill="#1e5c32"/>
+          <text x="240" y="14" text-anchor="middle" font-family="system-ui" font-size="9" fill="white">TrakCare · Appointment Query</text>
           <rect x="10" y="30" width="460" height="270" rx="4" fill="white" stroke="#ddd"/>
-          <rect x="10" y="30" width="460" height="24" fill="#1e293b"/>
+          <rect x="10" y="30" width="460" height="24" fill="#1e5c32"/>
           <text x="24" y="46" font-family="ui-monospace,monospace" font-size="10" fill="#86efac">GET</text>
           <text x="52" y="46" font-family="ui-monospace,monospace" font-size="10" fill="white">/api/v1/appointments</text>
           <text x="24" y="70" font-family="ui-monospace,monospace" font-size="9" fill="#64748b">Authorization: Bearer &lt;token&gt;</text>
@@ -2869,232 +2851,183 @@ sequenceDiagram
           <text x="24" y="98" font-family="system-ui" font-size="9" font-weight="600" fill="#475569">Query Parameters</text>
           <text x="24" y="116" font-family="ui-monospace,monospace" font-size="10" fill="#64748b">hn</text>
           <text x="100" y="116" font-family="ui-monospace,monospace" font-size="10" fill="#1e293b">= 212224236248</text>
-          <text x="24" y="134" font-family="ui-monospace,monospace" font-size="10" fill="#64748b">appointmentId</text>
-          <text x="140" y="134" font-family="ui-monospace,monospace" font-size="10" fill="#1e293b">= 26268</text>
-          <rect x="20" y="160" width="440" height="20" rx="3" fill="#fef9c3" stroke="#fde68a"/>
-          <text x="240" y="173" text-anchor="middle" font-family="system-ui" font-size="9" fill="#92400e">Fetching full appointment details from TrakCare…</text>
-          <rect x="20" y="192" width="440" height="88" rx="3" fill="#f8fafc" stroke="#e5e7eb"/>
-          <text x="30" y="208" font-family="system-ui" font-size="9" font-weight="600" fill="#475569">Expected Response Fields</text>
-          <text x="30" y="224" font-family="system-ui" font-size="8" fill="#555">Date/Time, Location, Care Provider, Slot ID, Barcode,</text>
-          <text x="30" y="238" font-family="system-ui" font-size="8" fill="#555">Interpreter Requirements, Preferred Language,</text>
-          <text x="30" y="252" font-family="system-ui" font-size="8" fill="#555">and other clinical/logistical details</text>`)
+          <text x="24" y="134" font-family="ui-monospace,monospace" font-size="10" fill="#64748b">includeHistory</text>
+          <text x="140" y="134" font-family="ui-monospace,monospace" font-size="10" fill="#1e293b">= true</text>
+          <text x="24" y="152" font-family="ui-monospace,monospace" font-size="10" fill="#64748b">status</text>
+          <text x="100" y="152" font-family="ui-monospace,monospace" font-size="10" fill="#1e293b">= all</text>
+          <text x="24" y="170" font-family="ui-monospace,monospace" font-size="10" fill="#64748b">locationCode</text>
+          <text x="130" y="170" font-family="ui-monospace,monospace" font-size="10" fill="#888">= (optional)</text>
+          <rect x="20" y="188" width="440" height="20" rx="3" fill="#fef9c3" stroke="#fde68a"/>
+          <text x="240" y="201" text-anchor="middle" font-family="system-ui" font-size="9" fill="#92400e">Querying TrakCare for all appointments…</text>`)
       },
       {
         title: 'Step 4 · Appointment Data',
-        desc: 'TrakCare returns the complete appointment record to MuleSoft, including Date/time, location, care provider, slot ID, barcode, interpreter requirements, preferred language, and other clinical/logistical details.',
+        desc: 'TrakCare returns the patient\'s appointment records – including past, upcoming, and cancelled appointments – back to MuleSoft.',
         ui: svgWrap(`
-          <rect width="480" height="380" fill="#f0f0f0"/>
+          <rect width="480" height="320" fill="#f0f0f0"/>
           <rect x="0" y="0" width="480" height="16" fill="#1e5c32"/>
           <text x="4" y="11" font-family="system-ui" font-size="8" fill="white">TrakCare · Appointment Data Response  200 OK</text>
           <!-- Appointment record card -->
-          <rect x="4" y="20" width="472" height="170" rx="3" fill="white" stroke="#ddd"/>
+          <rect x="4" y="20" width="472" height="96" rx="3" fill="white" stroke="#ddd"/>
           <rect x="4" y="20" width="472" height="18" fill="#e8f5e9"/>
           <text x="8" y="32" font-family="system-ui" font-size="8" font-weight="700" fill="#1e5c32">Appt. No.26268</text>
           <text x="300" y="32" font-family="system-ui" font-size="8" fill="#15803d">Status: Booked</text>
-          <text x="8" y="48" font-family="system-ui" font-size="7" fill="#555">Appointment Date</text>
-          <text x="100" y="48" font-family="system-ui" font-size="7" fill="#1e293b">28/04/2026</text>
-          <text x="240" y="48" font-family="system-ui" font-size="7" fill="#555">Appointment Time</text>
-          <text x="340" y="48" font-family="system-ui" font-size="7" fill="#1e293b">13:00</text>
-          <text x="8" y="60" font-family="system-ui" font-size="7" fill="#555">Service</text>
-          <text x="100" y="60" font-family="system-ui" font-size="7" fill="#1e293b">New Visit / Walk in</text>
-          <text x="240" y="60" font-family="system-ui" font-size="7" fill="#555">Specialty</text>
-          <text x="340" y="60" font-family="system-ui" font-size="7" fill="#1e293b">Dental</text>
-          <text x="8" y="72" font-family="system-ui" font-size="7" fill="#555">Location Code</text>
-          <text x="100" y="72" font-family="system-ui" font-size="7" fill="#1e293b">Dental Center (Bldg B 3rd Floor)</text>
-          <text x="8" y="84" font-family="system-ui" font-size="7" fill="#555">Resource</text>
-          <text x="100" y="84" font-family="system-ui" font-size="7" fill="#1e293b">Panupen Sitthisomwong, D.D.S.</text>
-          <text x="8" y="96" font-family="system-ui" font-size="7" fill="#555">Slot ID</text>
-          <text x="100" y="96" font-family="system-ui" font-size="7" fill="#1e293b">SL-00482</text>
-          <text x="240" y="96" font-family="system-ui" font-size="7" fill="#555">HN</text>
-          <text x="340" y="96" font-family="system-ui" font-size="7" fill="#1e293b">212224236248</text>
-          <text x="8" y="108" font-family="system-ui" font-size="7" fill="#555">Remark</text>
-          <text x="100" y="108" font-family="system-ui" font-size="7" fill="#888">—</text>
-          <text x="240" y="108" font-family="system-ui" font-size="7" fill="#555">Service Code</text>
-          <text x="340" y="108" font-family="system-ui" font-size="7" fill="#1e293b">NV-WALK</text>
-          <text x="8" y="120" font-family="system-ui" font-size="7" fill="#555">Patient Letter Notes</text>
-          <text x="100" y="120" font-family="system-ui" font-size="7" fill="#888">—</text>
-          <text x="240" y="120" font-family="system-ui" font-size="7" fill="#555">Interpreter Required</text>
-          <text x="340" y="120" font-family="system-ui" font-size="7" fill="#1e293b">Yes</text>
-          <text x="8" y="132" font-family="system-ui" font-size="7" fill="#555">Interpreter</text>
-          <text x="100" y="132" font-family="system-ui" font-size="7" fill="#888">—</text>
-          <text x="240" y="132" font-family="system-ui" font-size="7" fill="#555">Interpreter Confirmed</text>
-          <text x="340" y="132" font-family="system-ui" font-size="7" fill="#1e293b">No</text>
-          <text x="8" y="144" font-family="system-ui" font-size="7" fill="#555">Preferred Language</text>
-          <text x="100" y="144" font-family="system-ui" font-size="7" fill="#1e293b">English</text>
-          <text x="240" y="144" font-family="system-ui" font-size="7" fill="#555">Non-fixed Time</text>
-          <text x="340" y="144" font-family="system-ui" font-size="7" fill="#888">—</text>
-          <text x="8" y="156" font-family="system-ui" font-size="7" fill="#555">Overbook Reason</text>
-          <text x="100" y="156" font-family="system-ui" font-size="7" fill="#888">—</text>
-          <text x="240" y="156" font-family="system-ui" font-size="7" fill="#555">Case</text>
-          <text x="340" y="156" font-family="system-ui" font-size="7" fill="#888">—</text>
-          <text x="8" y="168" font-family="system-ui" font-size="7" fill="#555">Appointment Status</text>
-          <rect x="100" y="161" width="44" height="10" rx="2" fill="#dcfce7" stroke="#86efac"/>
-          <text x="104" y="169" font-family="system-ui" font-size="6" fill="#15803d">Booked</text>
-          <rect x="4" y="196" width="472" height="20" rx="3" fill="#dcfce7" stroke="#86efac"/>
-          <text x="240" y="209" text-anchor="middle" font-family="system-ui" font-size="9" font-weight="600" fill="#15803d">Complete appointment record returned (17 fields)</text>`)
+          <text x="8" y="46" font-family="system-ui" font-size="8" fill="#555">Appointment Date</text>
+          <text x="120" y="46" font-family="system-ui" font-size="8" fill="#1e293b">28/04/2026</text>
+          <text x="260" y="46" font-family="system-ui" font-size="8" fill="#555">Appointment Time</text>
+          <text x="370" y="46" font-family="system-ui" font-size="8" fill="#1e293b">13:00</text>
+          <text x="8" y="58" font-family="system-ui" font-size="8" fill="#555">Service</text>
+          <text x="120" y="58" font-family="system-ui" font-size="8" fill="#1e293b">New Visit / Walk in</text>
+          <text x="260" y="58" font-family="system-ui" font-size="8" fill="#555">Specialty</text>
+          <text x="370" y="58" font-family="system-ui" font-size="8" fill="#1e293b">ทันตกรรม / Dental</text>
+          <text x="8" y="70" font-family="system-ui" font-size="8" fill="#555">Hospital</text>
+          <text x="120" y="70" font-family="system-ui" font-size="8" fill="#1e293b">Bumrungrad International Hospital</text>
+          <text x="8" y="82" font-family="system-ui" font-size="8" fill="#555">Location</text>
+          <text x="120" y="82" font-family="system-ui" font-size="8" fill="#1e293b">Dental Center (Building B 3rd Floor)</text>
+          <text x="8" y="94" font-family="system-ui" font-size="8" fill="#555">Doctor</text>
+          <text x="120" y="94" font-family="system-ui" font-size="8" fill="#1e293b">Panupen Sitthisomwong, D.D.S.</text>
+          <text x="8" y="106" font-family="system-ui" font-size="8" fill="#555">HN</text>
+          <text x="120" y="106" font-family="system-ui" font-size="8" fill="#1e293b">212224236248</text>
+          <!-- Past appt -->
+          <rect x="4" y="120" width="472" height="60" rx="3" fill="white" stroke="#ddd"/>
+          <rect x="4" y="120" width="472" height="18" fill="#f1f5f9"/>
+          <text x="8" y="132" font-family="system-ui" font-size="8" font-weight="700" fill="#475569">Appt. No.24953  (Past)</text>
+          <text x="300" y="132" font-family="system-ui" font-size="8" fill="#64748b">Status: Completed</text>
+          <text x="8" y="146" font-family="system-ui" font-size="8" fill="#555">Appointment Date</text>
+          <text x="120" y="146" font-family="system-ui" font-size="8" fill="#64748b">10/03/2026</text>
+          <text x="260" y="146" font-family="system-ui" font-size="8" fill="#555">Service</text>
+          <text x="370" y="146" font-family="system-ui" font-size="8" fill="#64748b">Follow up</text>
+          <text x="8" y="158" font-family="system-ui" font-size="8" fill="#555">Location</text>
+          <text x="120" y="158" font-family="system-ui" font-size="8" fill="#64748b">Children Center (Building A 17A)</text>
+          <text x="8" y="170" font-family="system-ui" font-size="8" fill="#555">HN</text>
+          <text x="120" y="170" font-family="system-ui" font-size="8" fill="#64748b">212224236248</text>
+          <rect x="4" y="188" width="472" height="20" rx="3" fill="#dcfce7" stroke="#86efac"/>
+          <text x="240" y="201" text-anchor="middle" font-family="system-ui" font-size="9" font-weight="600" fill="#15803d">2 appointment records returned ✓</text>`)
       },
       {
         title: 'Step 5 · Appointment Result',
-        desc: 'MuleSoft passes the appointment data to Salesforce, which upserts the appointment record (keyed on HN + appointment ID).',
+        desc: 'MuleSoft transforms and forwards the appointment data back to Salesforce.',
         ui: svgWrap(`
           <rect width="480" height="320" fill="#f0f4f8"/>
-          <rect x="20" y="14" width="440" height="292" rx="6" fill="white" stroke="#86efac"/>
-          <rect x="20" y="14" width="440" height="28" fill="#16a34a"/>
-          <text x="36" y="32" font-family="system-ui" font-size="11" font-weight="600" fill="white">Upsert to Salesforce — Appointment Record</text>
-          <text x="36" y="56" font-family="system-ui" font-size="9" fill="#64748b">Key: HN (212224236248) + Appointment ID (26268)</text>
-          <line x1="20" y1="64" x2="460" y2="64" stroke="#dcfce7"/>
-          <!-- Field mapping table header -->
-          <rect x="30" y="72" width="420" height="16" fill="#f1f5f9"/>
-          <text x="36" y="83" font-family="system-ui" font-size="7" font-weight="700" fill="#475569">Salesforce API Name</text>
-          <text x="190" y="83" font-family="system-ui" font-size="7" font-weight="700" fill="#475569">Value</text>
-          <text x="370" y="83" font-family="system-ui" font-size="7" font-weight="700" fill="#475569">Type</text>
-          <!-- Mandatory fields -->
-          <text x="36" y="97" font-family="ui-monospace,monospace" font-size="7" fill="#64748b">Location_Code__c</text>
-          <text x="190" y="97" font-family="system-ui" font-size="7" fill="#1e293b">Dental Center (Bldg B 3rd)</text>
-          <text x="370" y="97" font-family="system-ui" font-size="7" fill="#dc2626">M</text>
-          <text x="36" y="109" font-family="ui-monospace,monospace" font-size="7" fill="#64748b">Resource__c</text>
-          <text x="190" y="109" font-family="system-ui" font-size="7" fill="#1e293b">Panupen Sitthisomwong</text>
-          <text x="370" y="109" font-family="system-ui" font-size="7" fill="#dc2626">M</text>
-          <text x="36" y="121" font-family="ui-monospace,monospace" font-size="7" fill="#64748b">Slot_Id__c</text>
-          <text x="190" y="121" font-family="system-ui" font-size="7" fill="#1e293b">SL-00482</text>
-          <text x="370" y="121" font-family="system-ui" font-size="7" fill="#dc2626">M</text>
-          <text x="36" y="133" font-family="ui-monospace,monospace" font-size="7" fill="#64748b">Appointment_Date__c</text>
-          <text x="190" y="133" font-family="system-ui" font-size="7" fill="#1e293b">2026-04-28</text>
-          <text x="370" y="133" font-family="system-ui" font-size="7" fill="#dc2626">M</text>
-          <text x="36" y="145" font-family="ui-monospace,monospace" font-size="7" fill="#64748b">Appointment_Time__c</text>
-          <text x="190" y="145" font-family="system-ui" font-size="7" fill="#1e293b">13:00</text>
-          <text x="370" y="145" font-family="system-ui" font-size="7" fill="#dc2626">M</text>
-          <text x="36" y="157" font-family="ui-monospace,monospace" font-size="7" fill="#64748b">Hospital_Number_HN__c</text>
-          <text x="190" y="157" font-family="system-ui" font-size="7" fill="#1e293b">212224236248</text>
-          <text x="370" y="157" font-family="system-ui" font-size="7" fill="#dc2626">M</text>
-          <text x="36" y="169" font-family="ui-monospace,monospace" font-size="7" fill="#64748b">Appointment_Status__c</text>
-          <text x="190" y="169" font-family="system-ui" font-size="7" fill="#1e293b">Booked</text>
-          <text x="370" y="169" font-family="system-ui" font-size="7" fill="#dc2626">M</text>
-          <!-- Optional fields -->
-          <line x1="30" y1="176" x2="450" y2="176" stroke="#e5e7eb" stroke-dasharray="2,2"/>
-          <text x="36" y="188" font-family="ui-monospace,monospace" font-size="7" fill="#64748b">Remark__c</text>
-          <text x="190" y="188" font-family="system-ui" font-size="7" fill="#888">—</text>
-          <text x="370" y="188" font-family="system-ui" font-size="7" fill="#64748b">O</text>
-          <text x="36" y="200" font-family="ui-monospace,monospace" font-size="7" fill="#64748b">Interpreter_Required__c</text>
-          <text x="190" y="200" font-family="system-ui" font-size="7" fill="#1e293b">true</text>
-          <text x="370" y="200" font-family="system-ui" font-size="7" fill="#64748b">O</text>
-          <text x="36" y="212" font-family="ui-monospace,monospace" font-size="7" fill="#64748b">Preferred_Language__c</text>
-          <text x="190" y="212" font-family="system-ui" font-size="7" fill="#1e293b">English</text>
-          <text x="370" y="212" font-family="system-ui" font-size="7" fill="#64748b">O</text>
-          <text x="36" y="224" font-family="ui-monospace,monospace" font-size="7" fill="#64748b">Service_Code__c</text>
-          <text x="190" y="224" font-family="system-ui" font-size="7" fill="#1e293b">NV-WALK</text>
-          <text x="370" y="224" font-family="system-ui" font-size="7" fill="#64748b">O</text>
-          <text x="36" y="236" font-family="system-ui" font-size="7" fill="#888">+ 6 more optional fields…</text>
-          <!-- Status -->
-          <rect x="30" y="250" width="420" height="20" rx="3" fill="#dcfce7" stroke="#86efac"/>
-          <text x="240" y="263" text-anchor="middle" font-family="system-ui" font-size="9" font-weight="600" fill="#15803d">Upsert successful — 17 fields mapped</text>`)
+          <rect x="20" y="20" width="440" height="280" rx="6" fill="white" stroke="#86efac"/>
+          <rect x="20" y="20" width="440" height="32" fill="#16a34a"/>
+          <text x="36" y="40" font-family="system-ui" font-size="12" font-weight="600" fill="white">200 OK — Appointment Result</text>
+          <text x="36" y="70" font-family="ui-monospace,monospace" font-size="9" fill="#64748b">Content-Type: application/json</text>
+          <line x1="20" y1="80" x2="460" y2="80" stroke="#dcfce7"/>
+          <text x="36" y="98" font-family="ui-monospace,monospace" font-size="10" fill="#1e293b">{</text>
+          <text x="52" y="116" font-family="ui-monospace,monospace" font-size="10" fill="#64748b">"hn":</text>
+          <text x="98" y="116" font-family="ui-monospace,monospace" font-size="10" fill="#1e293b">"212224236248",</text>
+          <text x="52" y="134" font-family="ui-monospace,monospace" font-size="10" fill="#64748b">"totalAppointments":</text>
+          <text x="218" y="134" font-family="ui-monospace,monospace" font-size="10" fill="#1e293b">2,</text>
+          <text x="52" y="152" font-family="ui-monospace,monospace" font-size="10" fill="#64748b">"appointments":</text>
+          <text x="178" y="152" font-family="ui-monospace,monospace" font-size="10" fill="#1e293b">[</text>
+          <text x="68" y="170" font-family="ui-monospace,monospace" font-size="10" fill="#64748b">{ "apptNo":</text>
+          <text x="154" y="170" font-family="ui-monospace,monospace" font-size="10" fill="#1e293b">"26268", "date": "28/04/2026",</text>
+          <text x="84" y="186" font-family="ui-monospace,monospace" font-size="10" fill="#64748b">"status":</text>
+          <text x="152" y="186" font-family="ui-monospace,monospace" font-size="10" fill="#15803d">"Booked",</text>
+          <text x="84" y="202" font-family="ui-monospace,monospace" font-size="10" fill="#64748b">"specialty":</text>
+          <text x="164" y="202" font-family="ui-monospace,monospace" font-size="10" fill="#1e293b">"Dental" },</text>
+          <text x="68" y="220" font-family="ui-monospace,monospace" font-size="10" fill="#64748b">{ "apptNo":</text>
+          <text x="154" y="220" font-family="ui-monospace,monospace" font-size="10" fill="#1e293b">"24953", "date": "10/03/2026",</text>
+          <text x="84" y="236" font-family="ui-monospace,monospace" font-size="10" fill="#64748b">"status":</text>
+          <text x="152" y="236" font-family="ui-monospace,monospace" font-size="10" fill="#64748b">"Completed" }</text>
+          <text x="52" y="254" font-family="ui-monospace,monospace" font-size="10" fill="#1e293b">]</text>
+          <text x="36" y="270" font-family="ui-monospace,monospace" font-size="10" fill="#1e293b">}</text>`)
       },
       {
         title: 'Step 6 · Display Appointment List',
-        desc: 'A user in Salesforce sees the new appointment in their Patient 360 / Case view or Appointment list.',
+        desc: 'Salesforce presents the full appointment list to the Airport Representative, allowing them to review and take further action on the relevant appointment.',
         ui: svgWrap(`
           <rect width="480" height="320" fill="#f5f5f5"/>
-          <!-- Slim teal top bar with appointment header -->
-          <rect x="0" y="0" width="480" height="36" fill="#00a1e0"/>
-          <text x="12" y="14" font-family="system-ui" font-size="8" fill="#e0f2fe">Appointment</text>
-          <text x="12" y="28" font-family="system-ui" font-size="11" font-weight="700" fill="white">28/04/2026</text>
-          <text x="120" y="14" font-family="system-ui" font-size="7" fill="#e0f2fe">Appointment Name</text>
-          <text x="120" y="24" font-family="system-ui" font-size="8" fill="white">Appt. No.26268</text>
-          <text x="230" y="14" font-family="system-ui" font-size="7" fill="#e0f2fe">Appointment Status</text>
-          <text x="230" y="24" font-family="system-ui" font-size="8" fill="white">Booked</text>
-          <text x="320" y="14" font-family="system-ui" font-size="7" fill="#e0f2fe">Specialty</text>
-          <text x="320" y="24" font-family="system-ui" font-size="8" fill="white">Dental</text>
-          <rect x="400" y="8" width="70" height="20" rx="3" fill="white"/>
-          <text x="435" y="22" text-anchor="middle" font-family="system-ui" font-size="8" fill="#00a1e0">Cancel Appt</text>
+          <!-- Slim teal top bar -->
+          <rect x="0" y="0" width="480" height="8" fill="#1a7f8e"/>
           <!-- Tabs -->
-          <rect x="0" y="36" width="480" height="20" fill="white" stroke="#e5e7eb" stroke-width="0.5"/>
-          <text x="12" y="50" font-family="system-ui" font-size="8" fill="#888">Related</text>
-          <text x="56" y="50" font-family="system-ui" font-size="8" font-weight="700" fill="#1e293b">Details</text>
-          <line x1="56" y1="55" x2="80" y2="55" stroke="#1e293b" stroke-width="1.5"/>
+          <rect x="0" y="8" width="480" height="24" fill="white" stroke="#e5e7eb" stroke-width="0.5"/>
+          <text x="12" y="24" font-family="system-ui" font-size="9" fill="#888">Related</text>
+          <text x="56" y="24" font-family="system-ui" font-size="9" font-weight="700" fill="#1e293b">Details</text>
+          <line x1="56" y1="31" x2="80" y2="31" stroke="#1e293b" stroke-width="1.5"/>
           <!-- Content area -->
-          <rect x="0" y="56" width="480" height="264" fill="white"/>
+          <rect x="0" y="32" width="480" height="288" fill="white"/>
+          <!-- Two column layout -->
           <!-- Left col -->
-          <text x="12" y="72" font-family="system-ui" font-size="7" fill="#888">Appointment Name</text>
-          <text x="130" y="72" font-family="system-ui" font-size="7" fill="#1e293b">Appt. No.26268</text>
-          <text x="12" y="84" font-family="system-ui" font-size="7" fill="#888">Appointment Date</text>
-          <text x="130" y="84" font-family="system-ui" font-size="7" fill="#1e293b">28/04/2026</text>
-          <text x="12" y="96" font-family="system-ui" font-size="7" fill="#888">Service</text>
-          <text x="130" y="96" font-family="system-ui" font-size="7" fill="#1e293b">New Visit / Walk in</text>
-          <text x="12" y="108" font-family="system-ui" font-size="7" fill="#888">Specialty</text>
-          <text x="130" y="108" font-family="system-ui" font-size="7" fill="#1e293b">Dental</text>
-          <text x="12" y="120" font-family="system-ui" font-size="7" fill="#888">Appointment Time</text>
-          <text x="130" y="120" font-family="system-ui" font-size="7" fill="#1e293b">13.00</text>
-          <text x="12" y="132" font-family="system-ui" font-size="7" fill="#888">Non-fixed Time</text>
-          <text x="12" y="144" font-family="system-ui" font-size="7" fill="#888">Hospital</text>
-          <text x="130" y="144" font-family="system-ui" font-size="7" fill="#1e293b">Bumrungrad International Hospital</text>
-          <text x="12" y="156" font-family="system-ui" font-size="7" fill="#888">Location</text>
-          <text x="130" y="156" font-family="system-ui" font-size="7" fill="#1e293b">Dental Center (Building B 3rd Floor)</text>
-          <text x="12" y="168" font-family="system-ui" font-size="7" fill="#888">Doctor</text>
-          <text x="130" y="168" font-family="system-ui" font-size="7" fill="#1e293b">Panupen Sitthisomwong, D.D.S. (Dr.)</text>
-          <text x="12" y="180" font-family="system-ui" font-size="7" fill="#888">Notes</text>
-          <text x="12" y="192" font-family="system-ui" font-size="7" fill="#888">Patient Letter Notes</text>
-          <text x="12" y="204" font-family="system-ui" font-size="7" fill="#888">Remark</text>
-          <text x="12" y="216" font-family="system-ui" font-size="7" fill="#888">Slot Id</text>
-          <text x="12" y="234" font-family="system-ui" font-size="7" fill="#888">HN Barcode</text>
+          <text x="12" y="50" font-family="system-ui" font-size="8" fill="#888">Appointment Name</text>
+          <text x="150" y="50" font-family="system-ui" font-size="8" fill="#1e293b">Appt. No.26268</text>
+          <text x="12" y="64" font-family="system-ui" font-size="8" fill="#888">Appointment Date</text>
+          <text x="150" y="64" font-family="system-ui" font-size="8" fill="#1e293b">28/04/2026</text>
+          <text x="12" y="78" font-family="system-ui" font-size="8" fill="#888">Service</text>
+          <text x="150" y="78" font-family="system-ui" font-size="8" fill="#1e293b">New Visit / Walk in</text>
+          <text x="12" y="92" font-family="system-ui" font-size="8" fill="#888">Specialty</text>
+          <text x="150" y="92" font-family="system-ui" font-size="8" fill="#1e293b">ทันตกรรม / Dental</text>
+          <text x="12" y="106" font-family="system-ui" font-size="8" fill="#888">Appointment Time</text>
+          <text x="150" y="106" font-family="system-ui" font-size="8" fill="#1e293b">13.00</text>
+          <text x="12" y="120" font-family="system-ui" font-size="8" fill="#888">Hospital</text>
+          <text x="150" y="120" font-family="system-ui" font-size="8" fill="#1e293b">Bumrungrad International Hospital</text>
+          <text x="12" y="134" font-family="system-ui" font-size="8" fill="#888">Location</text>
+          <text x="150" y="134" font-family="system-ui" font-size="8" fill="#1e293b">Dental Center (Building B 3rd Floor)</text>
+          <text x="12" y="148" font-family="system-ui" font-size="8" fill="#888">Doctor</text>
+          <text x="150" y="148" font-family="system-ui" font-size="8" fill="#1e293b">Panupen Sitthisomwong, D.D.S.</text>
+          <text x="12" y="162" font-family="system-ui" font-size="8" fill="#888">Notes</text>
+          <text x="12" y="176" font-family="system-ui" font-size="8" fill="#888">Patient Letter Notes</text>
+          <text x="12" y="190" font-family="system-ui" font-size="8" fill="#888">Slot Id</text>
+          <text x="12" y="210" font-family="system-ui" font-size="8" fill="#888">HN Barcode</text>
           <!-- Barcode area -->
-          <rect x="12" y="240" width="160" height="36" rx="2" fill="#f8fafc" stroke="#e5e7eb"/>
-          <text x="92" y="254" text-anchor="middle" font-family="ui-monospace,monospace" font-size="5" fill="#1e293b">||| |||| |||| ||||| |||| ||||| |||||| |||||||</text>
-          <text x="92" y="262" text-anchor="middle" font-family="ui-monospace,monospace" font-size="5" fill="#1e293b">|||||| ||||| |||||| ||||| |||| |||| ||||||||</text>
-          <text x="92" y="270" text-anchor="middle" font-family="ui-monospace,monospace" font-size="6" fill="#1e293b">212224236248</text>
+          <rect x="12" y="215" width="200" height="52" rx="2" fill="#f8fafc" stroke="#e5e7eb"/>
+          <text x="112" y="232" text-anchor="middle" font-family="ui-monospace,monospace" font-size="6" fill="#1e293b">||| |||| |||| ||||| |||| ||||| |||||| |||||||</text>
+          <text x="112" y="242" text-anchor="middle" font-family="ui-monospace,monospace" font-size="6" fill="#1e293b">|||||| ||||| |||||| ||||| |||| |||| ||||||||</text>
+          <text x="112" y="252" text-anchor="middle" font-family="ui-monospace,monospace" font-size="7" fill="#1e293b">212224236248</text>
           <!-- Right col divider -->
-          <line x1="242" y1="56" x2="242" y2="280" stroke="#e5e7eb" stroke-width="0.5"/>
+          <line x1="242" y1="32" x2="242" y2="280" stroke="#e5e7eb" stroke-width="0.5"/>
           <!-- Right col -->
-          <text x="252" y="72" font-family="system-ui" font-size="7" fill="#888">Owner</text>
-          <text x="340" y="72" font-family="system-ui" font-size="7" fill="#1a7f8e">Teerawat Nakornchai</text>
-          <text x="252" y="84" font-family="system-ui" font-size="7" fill="#888">Account</text>
-          <text x="340" y="84" font-family="system-ui" font-size="7" fill="#1a7f8e">Sunny Last</text>
-          <text x="252" y="96" font-family="system-ui" font-size="7" fill="#888">Service Code</text>
-          <text x="252" y="108" font-family="system-ui" font-size="7" fill="#888">Sub Specialty</text>
-          <text x="252" y="120" font-family="system-ui" font-size="7" fill="#888">End Time</text>
-          <text x="252" y="132" font-family="system-ui" font-size="7" fill="#888">HN</text>
-          <text x="340" y="132" font-family="system-ui" font-size="7" fill="#1e293b">212224236248</text>
-          <text x="252" y="144" font-family="system-ui" font-size="7" fill="#888">Slot Length</text>
-          <text x="252" y="156" font-family="system-ui" font-size="7" fill="#888">Interpreter Required</text>
-          <text x="340" y="156" font-family="system-ui" font-size="7" fill="#1e293b">Yes</text>
-          <text x="252" y="168" font-family="system-ui" font-size="7" fill="#888">Interpreter</text>
-          <text x="252" y="180" font-family="system-ui" font-size="7" fill="#888">Appointment Status</text>
-          <rect x="340" y="174" width="44" height="10" rx="2" fill="#dcfce7" stroke="#86efac"/>
-          <text x="344" y="182" font-family="system-ui" font-size="6" fill="#15803d">Booked</text>
-          <text x="252" y="192" font-family="system-ui" font-size="7" fill="#888">Overbook Reason</text>
-          <text x="252" y="204" font-family="system-ui" font-size="7" fill="#888">Appointment Id</text>
+          <text x="252" y="50" font-family="system-ui" font-size="8" fill="#888">Owner</text>
+          <text x="340" y="50" font-family="system-ui" font-size="8" fill="#1a7f8e">Teerawat Nakornchai</text>
+          <text x="252" y="64" font-family="system-ui" font-size="8" fill="#888">Account</text>
+          <text x="340" y="64" font-family="system-ui" font-size="8" fill="#1a7f8e">Sunny Last</text>
+          <text x="252" y="78" font-family="system-ui" font-size="8" fill="#888">Service Code</text>
+          <text x="252" y="92" font-family="system-ui" font-size="8" fill="#888">Sub Specialty</text>
+          <text x="252" y="106" font-family="system-ui" font-size="8" fill="#888">End Time</text>
+          <text x="252" y="120" font-family="system-ui" font-size="8" fill="#888">HN</text>
+          <text x="340" y="120" font-family="system-ui" font-size="8" fill="#1e293b">212224236248</text>
+          <text x="252" y="134" font-family="system-ui" font-size="8" fill="#888">Slot Length</text>
+          <text x="252" y="148" font-family="system-ui" font-size="8" fill="#888">Interpreter Required</text>
+          <text x="252" y="162" font-family="system-ui" font-size="8" fill="#888">Interpreter</text>
+          <text x="252" y="176" font-family="system-ui" font-size="8" fill="#888">Appointment Status</text>
+          <rect x="340" y="170" width="60" height="12" rx="2" fill="#dcfce7" stroke="#86efac"/>
+          <text x="346" y="179" font-family="system-ui" font-size="7" fill="#15803d">Booked</text>
+          <text x="252" y="190" font-family="system-ui" font-size="8" fill="#888">Overbook Reason</text>
+          <text x="252" y="204" font-family="system-ui" font-size="8" fill="#888">Appointment Id</text>
           <!-- Cancellation info -->
-          <line x1="0" y1="290" x2="480" y2="290" stroke="#e5e7eb"/>
-          <text x="12" y="304" font-family="system-ui" font-size="7" fill="#888">&#8964; Cancellation Information</text>`)
+          <line x1="0" y1="278" x2="480" y2="278" stroke="#e5e7eb"/>
+          <text x="12" y="293" font-family="system-ui" font-size="8" fill="#888">∨ Cancellation Information</text>`)
       },
       {
         title: 'Step 7 · Appointment Retrieval Failed',
-        desc: 'TrakCare cannot return the appointment data \u2013 either the record is no longer accessible, the API call times out, or TrakCare encounters an internal error.',
+        desc: 'TrakCare returns an error indicating the appointment records could not be retrieved – e.g., patient not found, invalid HN, or system unavailable.',
         ui: svgWrap(`
           <rect width="480" height="320" fill="#f0f0f0"/>
           <rect x="0" y="0" width="480" height="22" fill="#1e5c32"/>
           <text x="240" y="14" text-anchor="middle" font-family="system-ui" font-size="9" fill="white">TrakCare · Appointment Retrieval Error</text>
           <rect x="10" y="30" width="460" height="270" rx="4" fill="white" stroke="#fecaca"/>
           <rect x="10" y="30" width="460" height="24" fill="#dc2626"/>
-          <text x="20" y="46" font-family="system-ui" font-size="10" font-weight="600" fill="white">404 / 500 / 503 — Appointment Retrieval Failed</text>
+          <text x="20" y="46" font-family="system-ui" font-size="10" font-weight="600" fill="white">404 / 503 — Appointment Retrieval Failed</text>
           <text x="20" y="72" font-family="ui-monospace,monospace" font-size="10" fill="#1e293b">{</text>
           <text x="36" y="90" font-family="ui-monospace,monospace" font-size="10" fill="#64748b">"status":</text>
           <text x="106" y="90" font-family="ui-monospace,monospace" font-size="10" fill="#dc2626">"error",</text>
           <text x="36" y="108" font-family="ui-monospace,monospace" font-size="10" fill="#64748b">"errorCode":</text>
-          <text x="130" y="108" font-family="ui-monospace,monospace" font-size="10" fill="#dc2626">"RECORD_NOT_ACCESSIBLE",</text>
+          <text x="130" y="108" font-family="ui-monospace,monospace" font-size="10" fill="#dc2626">"PATIENT_NOT_FOUND",</text>
           <text x="36" y="126" font-family="ui-monospace,monospace" font-size="10" fill="#64748b">"message":</text>
-          <text x="118" y="126" font-family="ui-monospace,monospace" font-size="10" fill="#dc2626">"Appointment data could not be retrieved",</text>
+          <text x="118" y="126" font-family="ui-monospace,monospace" font-size="10" fill="#dc2626">"No records found for HN 212224236248",</text>
           <text x="36" y="144" font-family="ui-monospace,monospace" font-size="10" fill="#64748b">"hn":</text>
           <text x="80" y="144" font-family="ui-monospace,monospace" font-size="10" fill="#1e293b">"212224236248",</text>
-          <text x="36" y="162" font-family="ui-monospace,monospace" font-size="10" fill="#64748b">"appointmentId":</text>
-          <text x="170" y="162" font-family="ui-monospace,monospace" font-size="10" fill="#1e293b">"26268"</text>
+          <text x="36" y="162" font-family="ui-monospace,monospace" font-size="10" fill="#64748b">"retryable":</text>
+          <text x="130" y="162" font-family="ui-monospace,monospace" font-size="10" fill="#1e293b">false</text>
           <text x="20" y="180" font-family="ui-monospace,monospace" font-size="10" fill="#1e293b">}</text>
-          <rect x="20" y="196" width="440" height="40" rx="3" fill="#fef2f2" stroke="#fecaca"/>
-          <text x="240" y="210" text-anchor="middle" font-family="system-ui" font-size="9" font-weight="600" fill="#dc2626">Appointment data could not be retrieved from TrakCare</text>
-          <text x="240" y="226" text-anchor="middle" font-family="system-ui" font-size="8" fill="#991b1b">Record not accessible / API timeout / Internal error</text>`)
+          <rect x="20" y="196" width="440" height="32" rx="3" fill="#fef2f2" stroke="#fecaca"/>
+          <text x="240" y="208" text-anchor="middle" font-family="system-ui" font-size="9" font-weight="600" fill="#dc2626">Appointment records not found in TrakCare</text>
+          <text x="240" y="220" text-anchor="middle" font-family="system-ui" font-size="8" fill="#991b1b">Patient not found / Invalid HN / System unavailable</text>`)
       },
       {
         title: 'Step 8 · Propagate Error to Salesforce',
-        desc: 'MuleSoft passes the error response back to Salesforce, indicating that the appointment data could not be retrieved.',
+        desc: 'MuleSoft forwards the error back to Salesforce.',
         ui: svgWrap(`
           <rect width="480" height="320" fill="#f0f4f8"/>
           <rect x="20" y="30" width="440" height="260" rx="6" fill="white" stroke="#fecaca"/>
@@ -3106,59 +3039,65 @@ sequenceDiagram
           <text x="52" y="134" font-family="ui-monospace,monospace" font-size="11" fill="#64748b">"status":</text>
           <text x="134" y="134" font-family="ui-monospace,monospace" font-size="11" fill="#dc2626">"error",</text>
           <text x="52" y="154" font-family="ui-monospace,monospace" font-size="11" fill="#64748b">"errorCode":</text>
-          <text x="166" y="154" font-family="ui-monospace,monospace" font-size="11" fill="#dc2626">"RETRIEVAL_FAILED",</text>
+          <text x="166" y="154" font-family="ui-monospace,monospace" font-size="11" fill="#dc2626">"PATIENT_NOT_FOUND",</text>
           <text x="52" y="174" font-family="ui-monospace,monospace" font-size="11" fill="#64748b">"hn":</text>
           <text x="96" y="174" font-family="ui-monospace,monospace" font-size="11" fill="#1e293b">"212224236248",</text>
           <text x="52" y="194" font-family="ui-monospace,monospace" font-size="11" fill="#64748b">"source":</text>
           <text x="136" y="194" font-family="ui-monospace,monospace" font-size="11" fill="#1e293b">"TrakCare",</text>
           <text x="52" y="214" font-family="ui-monospace,monospace" font-size="11" fill="#64748b">"message":</text>
-          <text x="148" y="214" font-family="ui-monospace,monospace" font-size="10" fill="#dc2626">"Appointment data could not be retrieved"</text>
+          <text x="148" y="214" font-family="ui-monospace,monospace" font-size="10" fill="#dc2626">"No appointment records found"</text>
           <text x="36" y="234" font-family="ui-monospace,monospace" font-size="11" fill="#1e293b">}</text>`)
       },
       {
         title: 'Step 9 · Appointment Not Found',
-        desc: 'The user sees an "Appointment Not Found" message or the appointment record is not created/updated in Salesforce.',
+        desc: 'Salesforce displays an "Appointment Not Found" message to the Airport Representative, prompting them to verify the patient\'s details or escalate.',
         ui: svgWrap(`
           <rect width="480" height="320" fill="#f5f5f5"/>
-          <rect x="0" y="0" width="480" height="36" fill="#00a1e0"/>
-          <text x="12" y="14" font-family="system-ui" font-size="8" fill="#e0f2fe">Salesforce · Appointment</text>
-          <text x="12" y="28" font-family="system-ui" font-size="13" font-weight="700" fill="white">Appointment Record</text>
+          <rect x="0" y="0" width="480" height="36" fill="#1a7f8e"/>
+          <text x="12" y="14" font-family="system-ui" font-size="8" fill="#a7f3d0">Salesforce · Airport Check-in</text>
+          <text x="12" y="28" font-family="system-ui" font-size="13" font-weight="700" fill="white">Appointment Search</text>
+          <!-- Actor note -->
+          <rect x="8" y="44" width="464" height="20" rx="3" fill="#fffbeb" stroke="#fcd34d"/>
+          <text x="240" y="58" text-anchor="middle" font-family="system-ui" font-size="9" fill="#92400e">Actor: Airport Representative  |  Trigger: Barcode scan or manual search</text>
+          <!-- Search form (dimmed) -->
+          <rect x="8" y="72" width="464" height="54" rx="4" fill="#f8fafc" stroke="#e5e7eb"/>
+          <text x="20" y="88" font-family="system-ui" font-size="8" fill="#888">Hospital Number (HN)</text>
+          <rect x="20" y="92" width="360" height="18" rx="3" fill="white" stroke="#ddd"/>
+          <text x="28" y="105" font-family="ui-monospace,monospace" font-size="9" fill="#64748b">212224236248</text>
+          <rect x="390" y="92" width="70" height="18" rx="3" fill="#1a7f8e"/>
+          <text x="425" y="105" text-anchor="middle" font-family="system-ui" font-size="8" fill="white">Search</text>
           <!-- Error banner -->
-          <rect x="8" y="46" width="464" height="60" rx="4" fill="#fef2f2" stroke="#fecaca"/>
-          <text x="240" y="68" text-anchor="middle" font-family="system-ui" font-size="12" font-weight="700" fill="#dc2626">Appointment Not Found</text>
-          <text x="240" y="84" text-anchor="middle" font-family="system-ui" font-size="9" fill="#991b1b">The appointment data could not be retrieved from TrakCare.</text>
-          <text x="240" y="98" text-anchor="middle" font-family="system-ui" font-size="8" fill="#991b1b">The appointment record was not created/updated in Salesforce.</text>
-          <!-- Details -->
-          <rect x="8" y="116" width="464" height="100" rx="4" fill="white" stroke="#e5e7eb"/>
-          <text x="20" y="134" font-family="system-ui" font-size="9" font-weight="600" fill="#475569">Error Details</text>
-          <text x="20" y="150" font-family="system-ui" font-size="8" fill="#555">HN:</text>
-          <text x="120" y="150" font-family="system-ui" font-size="8" fill="#1e293b">212224236248</text>
-          <text x="20" y="164" font-family="system-ui" font-size="8" fill="#555">Appointment ID:</text>
-          <text x="120" y="164" font-family="system-ui" font-size="8" fill="#1e293b">26268</text>
-          <text x="20" y="178" font-family="system-ui" font-size="8" fill="#555">Source:</text>
-          <text x="120" y="178" font-family="system-ui" font-size="8" fill="#1e293b">TrakCare</text>
-          <text x="20" y="192" font-family="system-ui" font-size="8" fill="#555">Error:</text>
-          <text x="120" y="192" font-family="system-ui" font-size="8" fill="#dc2626">Record not accessible / API timeout / Internal error</text>
-          <!-- Info note -->
-          <rect x="8" y="226" width="464" height="40" rx="4" fill="#fffbeb" stroke="#fcd34d"/>
-          <text x="240" y="244" text-anchor="middle" font-family="system-ui" font-size="9" fill="#92400e">The appointment created in TrakCare was not synced to Salesforce.</text>
-          <text x="240" y="258" text-anchor="middle" font-family="system-ui" font-size="8" fill="#92400e">Please contact support or wait for automatic retry.</text>`)
+          <rect x="8" y="134" width="464" height="60" rx="4" fill="#fef2f2" stroke="#fecaca"/>
+          <text x="240" y="154" text-anchor="middle" font-family="system-ui" font-size="11" font-weight="700" fill="#dc2626">✗ Appointment Not Found</text>
+          <text x="240" y="170" text-anchor="middle" font-family="system-ui" font-size="9" fill="#991b1b">No appointment records found for HN: 212224236248</text>
+          <text x="240" y="184" text-anchor="middle" font-family="system-ui" font-size="8" fill="#991b1b">Please verify the patient's details or try a different identifier.</text>
+          <!-- Action suggestions -->
+          <rect x="8" y="202" width="464" height="74" rx="4" fill="white" stroke="#e5e7eb"/>
+          <text x="20" y="218" font-family="system-ui" font-size="9" font-weight="600" fill="#475569">Suggested Actions</text>
+          <text x="20" y="234" font-family="system-ui" font-size="8" fill="#1e293b">• Verify the HN number on the patient's card</text>
+          <text x="20" y="248" font-family="system-ui" font-size="8" fill="#1e293b">• Try searching by Passport Number or Patient Name</text>
+          <text x="20" y="262" font-family="system-ui" font-size="8" fill="#1e293b">• Contact hospital reception for manual assistance</text>
+          <!-- Escalate button -->
+          <rect x="8" y="284" width="130" height="24" rx="4" fill="#1e293b"/>
+          <text x="73" y="300" text-anchor="middle" font-family="system-ui" font-size="9" fill="white">Escalate to Support</text>
+          <rect x="146" y="284" width="100" height="24" rx="4" fill="white" stroke="#ddd"/>
+          <text x="196" y="300" text-anchor="middle" font-family="system-ui" font-size="9" fill="#555">Try Again</text>`)
       }
     ]
   },
 
   'appointment-cancel': {
-    title: 'Integration 09_Appointment_Cancel',
+    title: 'Integration 06_Appointment_Cancel — Appointment',
     breadcrumb: 'Appointment',
     mermaid: `
 sequenceDiagram
     autonumber
-    actor U as User
+    participant U as User
     participant SF as Salesforce
     participant MU as MuleSoft API
     participant TC as TrakCare
 
-    Note over U,TC: Integration 09_Appointment_Cancel
+    Note over U,TC: Integration 06_Appointment_Cancel — Appointment
     U->>SF: Cancel Appointment + Fill Cancel Reason
     SF->>MU: Cancel Appointment Request
     MU->>TC: POST /api/v1/cancel
@@ -3175,7 +3114,7 @@ sequenceDiagram
     end`,
     steps: [
       {
-        title: 'Step 1 · User cancels appointment and provides cancellation reason',
+        title: 'Step 1 · User cancels appointment and fills cancel reason on Salesforce',
         desc: 'The user initiates a cancellation on the Salesforce interface by selecting the appointment to cancel and providing a cancellation reason. This is the initial trigger for the integration.',
         ui: svgWrap(`
           <rect width="480" height="320" fill="#f0f4f8"/>
@@ -3202,7 +3141,7 @@ sequenceDiagram
           <text x="125" y="281" text-anchor="middle" font-family="system-ui" font-size="12" font-weight="600" fill="white">Cancel Appointment</text>`)
       },
       {
-        title: 'Step 2 · Salesforce fires cancellation event',
+        title: 'Step 2 · Salesforce sends cancel appointment request to MuleSoft',
         desc: 'Salesforce internally fires an event upon the appointment record being cancelled, preparing to dispatch the cancellation request downstream to MuleSoft.',
         ui: svgWrap(`
           <rect width="480" height="320" fill="#f0f4f8"/>
@@ -3222,7 +3161,7 @@ sequenceDiagram
           <text x="56" y="268" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">}</text>`)
       },
       {
-        title: 'Step 3 · Salesforce forwards cancellation request to MuleSoft',
+        title: 'Step 3 · MuleSoft calls TrakCare cancel API',
         desc: 'Salesforce forwards the cancellation request payload, including the appointment ID and cancellation reason, to the MuleSoft API to begin the cancellation process.',
         ui: svgWrap(`
           <rect width="480" height="320" fill="#f0f4f8"/>
@@ -3241,7 +3180,7 @@ sequenceDiagram
           <text x="56" y="248" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">}</text>`)
       },
       {
-        title: 'Step 4 · MuleSoft validates and transforms cancellation request',
+        title: 'Step 4 · TrakCare returns success with cancel timestamp',
         desc: 'MuleSoft internally validates the incoming cancellation request for completeness and correctness, then transforms the payload into the format required by TrakCare\'s cancel API.',
         ui: svgWrap(`
           <rect width="480" height="320" fill="#f0f4f8"/>
@@ -3258,7 +3197,7 @@ sequenceDiagram
           <text x="60" y="264" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">}</text>`)
       },
       {
-        title: 'Step 5 · MuleSoft sends POST to TrakCare cancel API',
+        title: 'Step 5 · MuleSoft sends cancellation acknowledgement to Salesforce',
         desc: 'MuleSoft sends a POST request to TrakCare via /api/v1/cancel to cancel the appointment in the hospital system.',
         ui: svgWrap(`
           <rect width="480" height="320" fill="#f0f4f8"/>
@@ -3275,7 +3214,7 @@ sequenceDiagram
           <text x="60" y="264" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">}</text>`)
       },
       {
-        title: 'Step 6 · TrakCare returns success with cancel timestamp',
+        title: 'Step 6 · Salesforce notifies interpreter and confirms cancellation to user',
         desc: 'TrakCare confirms the appointment was cancelled successfully and returns a success response along with the cancelDate and cancelTime back to MuleSoft.',
         ui: svgWrap(`
           <rect width="480" height="320" fill="#f0f4f8"/>
@@ -3299,7 +3238,7 @@ sequenceDiagram
           <text x="372" y="286" text-anchor="middle" font-family="system-ui" font-size="11" font-weight="600" fill="#15803d">SENT</text>`)
       },
       {
-        title: 'Step 7 · MuleSoft logs successful cancellation',
+        title: 'Step 7 · TrakCare returns error',
         desc: 'MuleSoft records/logs the successful cancellation transaction for auditing, tracking, or troubleshooting purposes.',
         ui: svgWrap(`
           <rect width="480" height="320" fill="#f0f4f8"/>
@@ -3317,7 +3256,7 @@ sequenceDiagram
           <text x="60" y="278" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">}</text>`)
       },
       {
-        title: 'Step 8 · MuleSoft returns cancellation confirmation to Salesforce',
+        title: 'Step 8 · MuleSoft sends cancellation error response to Salesforce',
         desc: 'MuleSoft returns the cancellation confirmation (acknowledgement) back to Salesforce, indicating TrakCare successfully processed the cancellation.',
         ui: svgWrap(`
           <rect width="480" height="320" fill="#f0f4f8"/>
@@ -3334,7 +3273,7 @@ sequenceDiagram
           <text x="60" y="264" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">}</text>`)
       },
       {
-        title: 'Step 9 · Salesforce notifies interpreter of cancellation',
+        title: 'Step 9 · Salesforce notifies user — cancellation failed',
         desc: 'Salesforce triggers an internal notification to the assigned interpreter to inform them that the appointment has been cancelled.',
         ui: svgWrap(`
           <rect width="480" height="320" fill="#f0f4f8"/>
@@ -3358,9 +3297,9 @@ sequenceDiagram
     ]
   },
 
-  // ── 10 IPD Census ─────────────────────────────────────────────────────────────
+  // ── 08 IPD Census ─────────────────────────────────────────────────────────────
   'worklist-ipd-census': {
-    title: 'Integration 10_IPD_Census — Get daily patient IPD records',
+    title: 'Integration 08_IPD_Census — Get daily patient IPD records',
     breadcrumb: 'Worklist',
     mermaid: `
 sequenceDiagram
@@ -3369,27 +3308,26 @@ sequenceDiagram
     participant TC as TrakCare
     participant SF as Salesforce
 
-    Note over MU,SF: Integration 10_IPD_Census — Get daily patient IPD records
-    MU->>MU: Trigger scheduled job<br/>Daily @ 07:00 AM
-    MU->>TC: Get IPD Census records<br/>where ModifyDate or CreatedDate = Yesterday
-    alt Failed to Retrieve IPD Census Records
-        TC-->>MU: Retrieval failed
-    else IPD Census Records Retrieved
-        TC-->>MU: Return IPD Census Record List
-    end
+    Note over MU,SF: Integration 08_IPD_Census — Get daily patient IPD records
+    MU->>MU: Trigger scheduled job<br/>Daily at 07:00 AM
+    MU->>TC: Get IPD Census records<br/>where the modify date or created date is yesterday
+    TC-->>MU: Return IPD Census Record List
+    MU->>MU: TrakCare to Salesforce Field Mapping
 
     loop For each IPD Census record
         MU->>SF: Create / Update<br/>IPD Case Record in Salesforce
         alt Success
             SF-->>MU: Request successful
+            MU->>MU: Log success
         else Error
             SF-->>MU: Request failed
+            MU->>MU: Log error
         end
     end`,
     steps: [
       {
-        title: 'Step 1 · MuleSoft triggers scheduled batch job',
-        desc: 'MuleSoft automatically triggers the batch job every day at 07:00 AM. This supports Create/update IPD case records in Salesforce based on daily Census data from TrakCare.',
+        title: 'Step 1 · Trigger scheduled job — daily at 07:00 AM',
+        desc: 'MuleSoft triggers its daily scheduled job at 07:00 AM to initiate the IPD Census data synchronisation from TrakCare to Salesforce.',
         ui: svgWrap(`
           <rect width="480" height="320" fill="#f0f4f8"/>
           <rect x="40" y="30" width="400" height="260" rx="6" fill="white" stroke="#cbd5e1"/>
@@ -3412,8 +3350,8 @@ sequenceDiagram
           <text x="68" y="263" font-family="system-ui" font-size="11" fill="#1d4ed8">Flow: ipd-census-main-flow</text>`)
       },
       {
-        title: 'Step 2 · MuleSoft requests IPD Census records from TrakCare',
-        desc: 'MuleSoft queries TrakCare for all IPD Census records where the created date or modified date equals yesterday. This incremental sync approach ensures that only new or updated IPD admission records since the last run are retrieved, avoiding full data re-processing and reducing system load.',
+        title: 'Step 2 · MuleSoft queries TrakCare for IPD Census records',
+        desc: 'MuleSoft sends a query to TrakCare requesting all IPD Census records where the modify date or created date is yesterday\'s date.',
         ui: svgWrap(`
           <rect width="480" height="320" fill="#f0f4f8"/>
           <rect x="40" y="40" width="400" height="240" rx="6" fill="white" stroke="#cbd5e1"/>
@@ -3436,25 +3374,8 @@ sequenceDiagram
           <text x="180" y="258" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">= json</text>`)
       },
       {
-        title: 'Step 3 · TrakCare retrieval failed',
-        desc: 'If TrakCare is unable to return the IPD Census records, it returns a failure response to MuleSoft.',
-        ui: svgWrap(`
-          <rect width="480" height="320" fill="#f0f4f8"/>
-          <rect x="40" y="40" width="400" height="240" rx="6" fill="white" stroke="#fecaca"/>
-          <rect x="40" y="40" width="400" height="34" fill="#dc2626"/>
-          <text x="56" y="62" font-family="system-ui" font-size="13" font-weight="600" fill="white">TrakCare · IPD Census — Retrieval Failed</text>
-          <text x="60" y="96" font-family="system-ui" font-size="14" font-weight="600" fill="#dc2626">500 Internal Server Error</text>
-          <text x="60" y="116" font-family="ui-monospace,monospace" font-size="11" fill="#64748b">Content-Type: application/json</text>
-          <line x1="40" y1="130" x2="440" y2="130" stroke="#fee2e2"/>
-          <text x="60" y="156" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">{</text>
-          <text x="80" y="178" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">"success": false,</text>
-          <text x="80" y="200" font-family="ui-monospace,monospace" font-size="12" fill="#dc2626">"error": "Unable to retrieve IPD Census records",</text>
-          <text x="80" y="222" font-family="ui-monospace,monospace" font-size="12" fill="#dc2626">"message": "Connection timeout"</text>
-          <text x="60" y="244" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">}</text>`)
-      },
-      {
-        title: 'Step 4 · TrakCare returns the IPD Census record list',
-        desc: 'TrakCare responds with a list of IPD Census records that match the date filter criteria, including patient admission data such as HN, ward, bed, episode number, and admission status.',
+        title: 'Step 3 · TrakCare returns IPD Census record list',
+        desc: 'TrakCare responds with the full list of IPD Census records matching yesterday\'s modify date or created date criteria.',
         ui: svgWrap(`
           <rect width="480" height="320" fill="#f0f4f8"/>
           <rect x="40" y="30" width="400" height="260" rx="6" fill="white" stroke="#cbd5e1"/>
@@ -3462,7 +3383,7 @@ sequenceDiagram
           <text x="56" y="52" font-family="system-ui" font-size="13" font-weight="600" fill="white">TrakCare · IPD Census Records</text>
           <text x="60" y="80" font-family="system-ui" font-size="11" fill="#64748b">200 OK — totalRecords: 3</text>
           <rect x="60" y="88" width="340" height="24" rx="3" fill="#1e293b"/>
-          <text x="68" y="104" font-family="ui-monospace,monospace" font-size="11" fill="#94a3b8">  HN            Ward   AdmitDate   Status</text>
+          <text x="68" y="104" font-family="ui-monospace,monospace" font-size="11" fill="#94a3b8">  MRN           Ward   AdmitDate   Status</text>
           <rect x="60" y="114" width="340" height="22" rx="2" fill="#f8fafc" stroke="#e2e8f0"/>
           <text x="68" y="129" font-family="ui-monospace,monospace" font-size="11" fill="#1e293b">  INT-00482     3B     2026-05-09  Admitted</text>
           <rect x="60" y="138" width="340" height="22" rx="2" fill="#f8fafc" stroke="#e2e8f0"/>
@@ -3478,89 +3399,118 @@ sequenceDiagram
           <text x="140" y="260" font-family="ui-monospace,monospace" font-size="12" fill="#7c3aed">TrakCare IPD Module v3.2</text>`)
       },
       {
-        title: 'Step 5 · MuleSoft loops through each IPD Census record and upserts to Salesforce',
-        desc: 'For each IPD Census record, MuleSoft sends a create or update (upsert) request to Salesforce to maintain the IPD Case record. This loop continues until all records in the batch have been processed.',
+        title: 'Step 4 · TrakCare to Salesforce field mapping',
+        desc: 'MuleSoft applies the field mapping transformation, converting the TrakCare IPD Census schema into the Salesforce IPD Case Record object schema.',
         ui: svgWrap(`
-          <rect width="480" height="420" fill="#f0f4f8"/>
-          <rect x="40" y="10" width="400" height="400" rx="6" fill="white" stroke="#cbd5e1"/>
-          <rect x="40" y="10" width="400" height="34" fill="#0ea5e9"/>
-          <text x="56" y="32" font-family="system-ui" font-size="13" font-weight="600" fill="white">Salesforce · IPD Case Record (Upsert)</text>
-          <text x="60" y="60" font-family="ui-monospace,monospace" font-size="10" fill="#64748b">PATCH /services/data/v58.0/sobjects/IPD_Case__c/HN__c/INT-00482</text>
-          <line x1="60" y1="68" x2="420" y2="68" stroke="#e2e8f0"/>
-          <!-- Field Mapping Table -->
-          <rect x="60" y="76" width="340" height="18" fill="#334155"/>
-          <text x="68" y="89" font-family="system-ui" font-size="9" font-weight="700" fill="#94a3b8">#</text>
-          <text x="84" y="89" font-family="system-ui" font-size="9" font-weight="700" fill="#94a3b8">TrakCare Field</text>
-          <text x="200" y="89" font-family="system-ui" font-size="9" font-weight="700" fill="#7dd3fc">Salesforce API Name</text>
-          <text x="340" y="89" font-family="system-ui" font-size="9" font-weight="700" fill="#94a3b8">Value</text>
-          <!-- Row 1: HN -->
-          <rect x="60" y="94" width="340" height="18" fill="#f8fafc"/>
-          <text x="68" y="106" font-family="ui-monospace,monospace" font-size="9" fill="#94a3b8">1</text>
-          <text x="84" y="106" font-family="ui-monospace,monospace" font-size="9" fill="#475569">HN</text>
-          <text x="200" y="106" font-family="ui-monospace,monospace" font-size="9" fill="#1e293b">HN__c</text>
-          <text x="340" y="106" font-family="ui-monospace,monospace" font-size="9" fill="#1e293b">INT-00482</text>
-          <!-- Row 2: Admit Date -->
-          <rect x="60" y="112" width="340" height="18" fill="white"/>
-          <text x="68" y="124" font-family="ui-monospace,monospace" font-size="9" fill="#94a3b8">2</text>
-          <text x="84" y="124" font-family="ui-monospace,monospace" font-size="9" fill="#475569">Admit Date</text>
-          <text x="200" y="124" font-family="ui-monospace,monospace" font-size="9" fill="#1e293b">Admit_Date__c</text>
-          <text x="340" y="124" font-family="ui-monospace,monospace" font-size="9" fill="#1e293b">2026-05-09</text>
-          <!-- Row 3: LOS -->
-          <rect x="60" y="130" width="340" height="18" fill="#f8fafc"/>
-          <text x="68" y="142" font-family="ui-monospace,monospace" font-size="9" fill="#94a3b8">3</text>
-          <text x="84" y="142" font-family="ui-monospace,monospace" font-size="9" fill="#475569">LOS</text>
-          <text x="200" y="142" font-family="ui-monospace,monospace" font-size="9" fill="#1e293b">LOS__c</text>
-          <text x="340" y="142" font-family="ui-monospace,monospace" font-size="9" fill="#1e293b">5</text>
-          <!-- Row 4: Care Provider -->
-          <rect x="60" y="148" width="340" height="18" fill="white"/>
-          <text x="68" y="160" font-family="ui-monospace,monospace" font-size="9" fill="#94a3b8">4</text>
-          <text x="84" y="160" font-family="ui-monospace,monospace" font-size="9" fill="#475569">Care Provider</text>
-          <text x="200" y="160" font-family="ui-monospace,monospace" font-size="9" fill="#1e293b">Care_Provider__c</text>
-          <text x="340" y="160" font-family="ui-monospace,monospace" font-size="9" fill="#1e293b">Dr. Somporn K.</text>
-          <!-- Row 5: Ward -->
-          <rect x="60" y="166" width="340" height="18" fill="#f8fafc"/>
-          <text x="68" y="178" font-family="ui-monospace,monospace" font-size="9" fill="#94a3b8">5</text>
-          <text x="84" y="178" font-family="ui-monospace,monospace" font-size="9" fill="#475569">Ward</text>
-          <text x="200" y="178" font-family="ui-monospace,monospace" font-size="9" fill="#1e293b">Ward__c</text>
-          <text x="340" y="178" font-family="ui-monospace,monospace" font-size="9" fill="#1e293b">3B</text>
-          <!-- Row 6: Room -->
-          <rect x="60" y="184" width="340" height="18" fill="white"/>
-          <text x="68" y="196" font-family="ui-monospace,monospace" font-size="9" fill="#94a3b8">6</text>
-          <text x="84" y="196" font-family="ui-monospace,monospace" font-size="9" fill="#475569">Room</text>
-          <text x="200" y="196" font-family="ui-monospace,monospace" font-size="9" fill="#1e293b">Room__c</text>
-          <text x="340" y="196" font-family="ui-monospace,monospace" font-size="9" fill="#1e293b">302</text>
-          <!-- Row 7: Bed -->
-          <rect x="60" y="202" width="340" height="18" fill="#f8fafc"/>
-          <text x="68" y="214" font-family="ui-monospace,monospace" font-size="9" fill="#94a3b8">7</text>
-          <text x="84" y="214" font-family="ui-monospace,monospace" font-size="9" fill="#475569">Bed</text>
-          <text x="200" y="214" font-family="ui-monospace,monospace" font-size="9" fill="#1e293b">Bed__c</text>
-          <text x="340" y="214" font-family="ui-monospace,monospace" font-size="9" fill="#1e293b">B</text>
-          <!-- Row 8: Episode Payor -->
-          <rect x="60" y="220" width="340" height="18" fill="white"/>
-          <text x="68" y="232" font-family="ui-monospace,monospace" font-size="9" fill="#94a3b8">8</text>
-          <text x="84" y="232" font-family="ui-monospace,monospace" font-size="9" fill="#475569">Episode Payor</text>
-          <text x="200" y="232" font-family="ui-monospace,monospace" font-size="9" fill="#1e293b">Episode_Payor__c</text>
-          <text x="340" y="232" font-family="ui-monospace,monospace" font-size="9" fill="#1e293b">OPD-INS</text>
-          <!-- Row 9: Collect Payment IPD -->
-          <rect x="60" y="238" width="340" height="18" fill="#f8fafc"/>
-          <text x="68" y="250" font-family="ui-monospace,monospace" font-size="9" fill="#94a3b8">9</text>
-          <text x="84" y="250" font-family="ui-monospace,monospace" font-size="9" fill="#475569">Collect Payment IPD</text>
-          <text x="200" y="250" font-family="ui-monospace,monospace" font-size="9" fill="#1e293b">Collect_Payment_IPD__c</text>
-          <text x="340" y="250" font-family="ui-monospace,monospace" font-size="9" fill="#1e293b">Collected</text>
-          <!-- Dividers -->
-          <line x1="60" y1="256" x2="400" y2="256" stroke="#e2e8f0"/>
-          <line x1="194" y1="76" x2="194" y2="256" stroke="#e2e8f0"/>
-          <line x1="334" y1="76" x2="334" y2="256" stroke="#e2e8f0"/>
+          <rect width="480" height="320" fill="#f0f4f8"/>
+          <rect x="40" y="16" width="400" height="288" rx="6" fill="white" stroke="#cbd5e1"/>
+          <rect x="40" y="16" width="400" height="28" fill="#1e293b"/>
+          <text x="56" y="34" font-family="system-ui" font-size="12" font-weight="600" fill="white">MuleSoft · Field Mapping (TrakCare &#8594; Salesforce)</text>
+          <!-- Column header row -->
+          <rect x="40" y="44" width="400" height="18" fill="#334155"/>
+          <text x="48" y="57" font-family="system-ui" font-size="9" font-weight="700" fill="#94a3b8">#</text>
+          <text x="68" y="57" font-family="system-ui" font-size="9" font-weight="700" fill="#94a3b8">TrakCare Field</text>
+          <text x="188" y="57" font-family="system-ui" font-size="9" font-weight="700" fill="#7dd3fc">Salesforce API Name</text>
+          <text x="348" y="57" font-family="system-ui" font-size="9" font-weight="700" fill="#94a3b8">SF Label Name</text>
+          <!-- Row 1 -->
+          <rect x="40" y="62" width="400" height="20" fill="#f8fafc"/>
+          <text x="48" y="76" font-family="ui-monospace,monospace" font-size="10" fill="#94a3b8">1</text>
+          <text x="68" y="76" font-family="ui-monospace,monospace" font-size="10" fill="#475569">HN</text>
+          <text x="188" y="76" font-family="ui-monospace,monospace" font-size="10" fill="#1e293b">HN__c</text>
+          <text x="348" y="76" font-family="ui-monospace,monospace" font-size="10" fill="#475569">HN</text>
+          <!-- Row 2 -->
+          <rect x="40" y="82" width="400" height="20" fill="white"/>
+          <text x="48" y="96" font-family="ui-monospace,monospace" font-size="10" fill="#94a3b8">2</text>
+          <text x="68" y="96" font-family="ui-monospace,monospace" font-size="10" fill="#475569">Admit Date</text>
+          <text x="188" y="96" font-family="ui-monospace,monospace" font-size="10" fill="#1e293b">Admit_Date__c</text>
+          <text x="348" y="96" font-family="ui-monospace,monospace" font-size="10" fill="#475569">Admit Date</text>
+          <!-- Row 3 -->
+          <rect x="40" y="102" width="400" height="20" fill="#f8fafc"/>
+          <text x="48" y="116" font-family="ui-monospace,monospace" font-size="10" fill="#94a3b8">3</text>
+          <text x="68" y="116" font-family="ui-monospace,monospace" font-size="10" fill="#475569">LOS</text>
+          <text x="188" y="116" font-family="ui-monospace,monospace" font-size="10" fill="#1e293b">LOS__c</text>
+          <text x="348" y="116" font-family="ui-monospace,monospace" font-size="10" fill="#475569">LOS</text>
+          <!-- Row 4 -->
+          <rect x="40" y="122" width="400" height="20" fill="white"/>
+          <text x="48" y="136" font-family="ui-monospace,monospace" font-size="10" fill="#94a3b8">4</text>
+          <text x="68" y="136" font-family="ui-monospace,monospace" font-size="10" fill="#475569">Care Provider</text>
+          <text x="188" y="136" font-family="ui-monospace,monospace" font-size="10" fill="#1e293b">Care_Provider__c</text>
+          <text x="348" y="136" font-family="ui-monospace,monospace" font-size="10" fill="#475569">Care Provider</text>
+          <!-- Row 5 -->
+          <rect x="40" y="142" width="400" height="20" fill="#f8fafc"/>
+          <text x="48" y="156" font-family="ui-monospace,monospace" font-size="10" fill="#94a3b8">5</text>
+          <text x="68" y="156" font-family="ui-monospace,monospace" font-size="10" fill="#475569">Ward</text>
+          <text x="188" y="156" font-family="ui-monospace,monospace" font-size="10" fill="#1e293b">Ward__c</text>
+          <text x="348" y="156" font-family="ui-monospace,monospace" font-size="10" fill="#475569">Ward</text>
+          <!-- Row 6 -->
+          <rect x="40" y="162" width="400" height="20" fill="white"/>
+          <text x="48" y="176" font-family="ui-monospace,monospace" font-size="10" fill="#94a3b8">6</text>
+          <text x="68" y="176" font-family="ui-monospace,monospace" font-size="10" fill="#475569">Room</text>
+          <text x="188" y="176" font-family="ui-monospace,monospace" font-size="10" fill="#1e293b">Room__c</text>
+          <text x="348" y="176" font-family="ui-monospace,monospace" font-size="10" fill="#475569">Room</text>
+          <!-- Row 7 -->
+          <rect x="40" y="182" width="400" height="20" fill="#f8fafc"/>
+          <text x="48" y="196" font-family="ui-monospace,monospace" font-size="10" fill="#94a3b8">7</text>
+          <text x="68" y="196" font-family="ui-monospace,monospace" font-size="10" fill="#475569">Bed</text>
+          <text x="188" y="196" font-family="ui-monospace,monospace" font-size="10" fill="#1e293b">Bed__c</text>
+          <text x="348" y="196" font-family="ui-monospace,monospace" font-size="10" fill="#475569">Bed</text>
+          <!-- Row 8 -->
+          <rect x="40" y="202" width="400" height="20" fill="white"/>
+          <text x="48" y="216" font-family="ui-monospace,monospace" font-size="10" fill="#94a3b8">8</text>
+          <text x="68" y="216" font-family="ui-monospace,monospace" font-size="10" fill="#475569">Episode Payor</text>
+          <text x="188" y="216" font-family="ui-monospace,monospace" font-size="10" fill="#1e293b">Episode_Payor__c</text>
+          <text x="348" y="216" font-family="ui-monospace,monospace" font-size="10" fill="#475569">Episode Payor</text>
+          <!-- Divider -->
+          <line x1="40" y1="226" x2="440" y2="226" stroke="#e2e8f0"/>
+          <!-- Column dividers -->
+          <line x1="182" y1="44" x2="182" y2="226" stroke="#e2e8f0"/>
+          <line x1="342" y1="44" x2="342" y2="226" stroke="#e2e8f0"/>
           <!-- Status -->
-          <rect x="60" y="264" width="340" height="30" fill="#f0fdf4"/>
-          <text x="230" y="278" text-anchor="middle" font-family="system-ui" font-size="11" font-weight="600" fill="#15803d">9 fields mapped — ready for upsert</text>
-          <text x="230" y="292" text-anchor="middle" font-family="system-ui" font-size="10" fill="#166534">Loop: processing record 1 of 3</text>
-          <rect x="316" y="360" width="84" height="18" rx="3" fill="#dcfce7" stroke="#86efac"/>
-          <text x="358" y="373" text-anchor="middle" font-family="system-ui" font-size="10" font-weight="600" fill="#15803d">Upserting…</text>`)
+          <rect x="40" y="234" width="400" height="36" rx="0" fill="#dcfce7" stroke="#86efac" stroke-width="0"/>
+          <rect x="40" y="234" width="400" height="36" fill="#f0fdf4"/>
+          <text x="240" y="249" text-anchor="middle" font-family="system-ui" font-size="11" font-weight="600" fill="#15803d">8 fields mapped — ready for upsert</text>
+          <text x="240" y="265" text-anchor="middle" font-family="system-ui" font-size="10" fill="#166534">Loop: processing record 1 of 3</text>`)
       },
       {
-        title: 'Step 6 · Salesforce returns success response',
-        desc: 'For each successfully processed record, Salesforce returns a success response to MuleSoft confirming the IPD Case record was created or updated in the Salesforce platform.',
+        title: 'Step 5 · MuleSoft creates / updates IPD Case Record in Salesforce',
+        desc: 'For each IPD Census record in the list, MuleSoft sends a create or update (upsert) request to Salesforce to sync the IPD Case Record.',
+        ui: svgWrap(`
+          <rect width="480" height="320" fill="#f0f4f8"/>
+          <rect x="40" y="40" width="400" height="240" rx="6" fill="white" stroke="#cbd5e1"/>
+          <rect x="40" y="40" width="400" height="34" fill="#0ea5e9"/>
+          <text x="56" y="62" font-family="system-ui" font-size="13" font-weight="600" fill="white">Salesforce · IPD Case Record (Upsert)</text>
+          <text x="60" y="92" font-family="ui-monospace,monospace" font-size="10" fill="#64748b">PATCH /services/data/v58.0/sobjects/IPD_Case__c/HN__c/INT-00482</text>
+          <line x1="60" y1="102" x2="420" y2="102" stroke="#e2e8f0"/>
+          <text x="60" y="120" font-family="system-ui" font-size="10" fill="#64748b">HN__c</text>
+          <rect x="160" y="108" width="220" height="20" rx="3" fill="#f8fafc" stroke="#cbd5e1"/>
+          <text x="168" y="122" font-family="ui-monospace,monospace" font-size="10" fill="#1e293b">INT-00482</text>
+          <text x="60" y="142" font-family="system-ui" font-size="10" fill="#64748b">Admit_Date__c</text>
+          <rect x="160" y="130" width="220" height="20" rx="3" fill="#f8fafc" stroke="#cbd5e1"/>
+          <text x="168" y="144" font-family="ui-monospace,monospace" font-size="10" fill="#1e293b">2026-05-09</text>
+          <text x="60" y="164" font-family="system-ui" font-size="10" fill="#64748b">LOS__c</text>
+          <rect x="160" y="152" width="220" height="20" rx="3" fill="#f8fafc" stroke="#cbd5e1"/>
+          <text x="168" y="166" font-family="ui-monospace,monospace" font-size="10" fill="#1e293b">5</text>
+          <text x="60" y="186" font-family="system-ui" font-size="10" fill="#64748b">Care_Provider__c</text>
+          <rect x="160" y="174" width="220" height="20" rx="3" fill="#f8fafc" stroke="#cbd5e1"/>
+          <text x="168" y="188" font-family="ui-monospace,monospace" font-size="10" fill="#1e293b">Dr. Somporn K.</text>
+          <text x="60" y="208" font-family="system-ui" font-size="10" fill="#64748b">Ward__c</text>
+          <rect x="160" y="196" width="100" height="20" rx="3" fill="#f8fafc" stroke="#cbd5e1"/>
+          <text x="168" y="210" font-family="ui-monospace,monospace" font-size="10" fill="#1e293b">3B</text>
+          <text x="270" y="208" font-family="system-ui" font-size="10" fill="#64748b">Room__c</text>
+          <rect x="340" y="196" width="60" height="20" rx="3" fill="#f8fafc" stroke="#cbd5e1"/>
+          <text x="348" y="210" font-family="ui-monospace,monospace" font-size="10" fill="#1e293b">302</text>
+          <text x="60" y="230" font-family="system-ui" font-size="10" fill="#64748b">Bed__c</text>
+          <rect x="160" y="218" width="100" height="20" rx="3" fill="#f8fafc" stroke="#cbd5e1"/>
+          <text x="168" y="232" font-family="ui-monospace,monospace" font-size="10" fill="#1e293b">B</text>
+          <text x="270" y="230" font-family="system-ui" font-size="10" fill="#64748b">Episode_Payor__c</text>
+          <rect x="340" y="218" width="60" height="20" rx="3" fill="#f8fafc" stroke="#cbd5e1"/>
+          <text x="348" y="232" font-family="ui-monospace,monospace" font-size="10" fill="#1e293b">OPD-INS</text>
+          <rect x="336" y="252" width="84" height="18" rx="3" fill="#dcfce7" stroke="#86efac"/>
+          <text x="378" y="265" text-anchor="middle" font-family="system-ui" font-size="10" font-weight="600" fill="#15803d">Upserting…</text>`)
+      },
+      {
+        title: 'Step 6 · Salesforce returns request successful',
+        desc: 'Salesforce successfully processes the IPD Case Record upsert and returns a success response with the record identifier.',
         ui: svgWrap(`
           <rect width="480" height="320" fill="#f0f4f8"/>
           <rect x="40" y="40" width="400" height="240" rx="6" fill="white" stroke="#cbd5e1"/>
@@ -3577,8 +3527,25 @@ sequenceDiagram
           <text x="350" y="267" text-anchor="middle" font-family="system-ui" font-size="11" fill="#15803d">record 1 of 3 synced</text>`)
       },
       {
-        title: 'Step 7 · Salesforce returns failed response',
-        desc: 'If Salesforce is unable to create or update a specific IPD Case record, it returns a failure response for that individual record. The loop continues processing the remaining records regardless of the error.',
+        title: 'Step 7 · Log success',
+        desc: 'MuleSoft logs the successful IPD Case Record upsert for audit and tracking purposes before processing the next record in the loop.',
+        ui: svgWrap(`
+          <rect width="480" height="320" fill="#0f172a"/>
+          <text x="20" y="38" font-family="ui-monospace,monospace" font-size="12" fill="#94a3b8">mulesoft:ipd-census-api · log stream</text>
+          <line x1="20" y1="50" x2="460" y2="50" stroke="#1e293b"/>
+          <text x="20" y="80" font-family="ui-monospace,monospace" font-size="11" fill="#64748b">2026-05-10T07:00:14.882Z</text>
+          <text x="20" y="100" font-family="ui-monospace,monospace" font-size="11" fill="#86efac">[INFO ] ipd.census.record.upsert.success</text>
+          <text x="20" y="124" font-family="ui-monospace,monospace" font-size="11" fill="#cbd5e1">  correlationId : c2e1-7a04-dd91</text>
+          <text x="20" y="142" font-family="ui-monospace,monospace" font-size="11" fill="#cbd5e1">  mrn           : INT-00482</text>
+          <text x="20" y="160" font-family="ui-monospace,monospace" font-size="11" fill="#cbd5e1">  ward          : 3B</text>
+          <text x="20" y="178" font-family="ui-monospace,monospace" font-size="11" fill="#cbd5e1">  sfRecordId    : a3Z8p00000YwQrs</text>
+          <text x="20" y="196" font-family="ui-monospace,monospace" font-size="11" fill="#cbd5e1">  loopIndex     : 1 / 3</text>
+          <text x="20" y="214" font-family="ui-monospace,monospace" font-size="11" fill="#cbd5e1">  durationMs    : 198</text>
+          <rect x="20" y="226" width="6" height="14" fill="#86efac"><animate attributeName="opacity" values="1;0;1" dur="1s" repeatCount="indefinite"/></rect>`)
+      },
+      {
+        title: 'Step 8 · Salesforce returns request failed',
+        desc: 'Salesforce rejects the IPD Case Record upsert and returns an error response with details of the failure.',
         ui: svgWrap(`
           <rect width="480" height="320" fill="#f0f4f8"/>
           <rect x="40" y="40" width="400" height="240" rx="6" fill="white" stroke="#fecaca"/>
@@ -3592,732 +3559,24 @@ sequenceDiagram
           <text x="100" y="220" font-family="ui-monospace,monospace" font-size="11" fill="#dc2626">"message": "Ward__c: invalid picklist value",</text>
           <text x="100" y="240" font-family="ui-monospace,monospace" font-size="11" fill="#dc2626">"fields": ["Ward__c"]</text>
           <text x="80" y="260" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">}]</text>`)
+      },
+      {
+        title: 'Step 9 · Log error',
+        desc: 'MuleSoft logs the error details for investigation and correction, then continues the loop to process the remaining IPD Census records.',
+        ui: svgWrap(`
+          <rect width="480" height="320" fill="#0f172a"/>
+          <text x="20" y="38" font-family="ui-monospace,monospace" font-size="12" fill="#94a3b8">mulesoft:ipd-census-api · log stream</text>
+          <line x1="20" y1="50" x2="460" y2="50" stroke="#1e293b"/>
+          <text x="20" y="80" font-family="ui-monospace,monospace" font-size="11" fill="#64748b">2026-05-10T07:00:15.104Z</text>
+          <text x="20" y="100" font-family="ui-monospace,monospace" font-size="11" fill="#fca5a5">[ERROR] ipd.census.record.upsert.failed</text>
+          <text x="20" y="124" font-family="ui-monospace,monospace" font-size="11" fill="#cbd5e1">  correlationId : c2e1-7a04-dd91</text>
+          <text x="20" y="142" font-family="ui-monospace,monospace" font-size="11" fill="#cbd5e1">  mrn           : INT-00317</text>
+          <text x="20" y="160" font-family="ui-monospace,monospace" font-size="11" fill="#cbd5e1">  loopIndex     : 2 / 3</text>
+          <text x="20" y="178" font-family="ui-monospace,monospace" font-size="11" fill="#fca5a5">  status        : 400 FIELD_INTEGRITY_EXCEPTION</text>
+          <text x="20" y="196" font-family="ui-monospace,monospace" font-size="11" fill="#fca5a5">  message       : Ward__c: invalid picklist value</text>
+          <text x="20" y="214" font-family="ui-monospace,monospace" font-size="11" fill="#cbd5e1">  durationMs    : 143</text>
+          <rect x="20" y="226" width="6" height="14" fill="#fca5a5"><animate attributeName="opacity" values="1;0;1" dur="1s" repeatCount="indefinite"/></rect>`)
       }
-    ]
-  },
-  'worklist-task-info': {
-    title: 'Integration 11_Task_Worklist_Info',
-    breadcrumb: 'Worklist',
-    mermaid: `
-sequenceDiagram
-    autonumber
-    participant SF as Salesforce
-    participant MU as MuleSoft API
-    participant TC as TrakCare
-
-    Note over TC,MU: Trigger: Event-driven — Task created or updated on TrakCare
-    Note over TC,MU: Interpreter-Arabic: Task = 'ARABIC Interpreter-O' / GR-Non Arabic: Task = TBC
-    TC->>MU: New Task Event Triggered
-
-    alt Success — Task within 07:00-20:00
-        MU->>SF: Sync Task Worklist to Salesforce
-        SF->>SF: Auto-create Case Record
-        Note over SF: TBC: SF field mapping and Record Type not yet defined
-        SF-->>MU: Case Creation Acknowledged
-        Note over SF,MU: Interpreter-Arabic / GR-Non Arabic review Task in SF
-    end
-
-    alt Excluded — Task created 20:00-07:00
-        MU->>MU: Filter Out Off-Hours Task
-        MU->>SF: Compile Excluded Summary List
-        SF->>SF: Send Email to Dispatch Manager
-        Note over SF: arabicmanagerandsupervisors@bumrungrad.com<br/>Email sent only if excluded records exist
-    end
-
-    alt Error
-        MU-->>TC: Notify TrakCare of Failure
-    end`,
-    steps: [
-      {
-        title: 'Step 1 · New Task Event Triggered',
-        desc: 'TrakCare fires an event to MuleSoft when a new task is created or updated. For Interpreter-Arabic, the trigger condition is Task = \'ARABIC Interpreter-O\'. For GR-Non Arabic, the task name is TBC.',
-        ui: svgWrap(`
-          <rect width="480" height="320" fill="#f0f4f8"/>
-          <rect x="40" y="30" width="400" height="260" rx="6" fill="white" stroke="#cbd5e1"/>
-          <rect x="40" y="30" width="400" height="34" fill="#7c3aed"/>
-          <text x="56" y="52" font-family="system-ui" font-size="13" font-weight="600" fill="white">TrakCare · Task Event Payload</text>
-          <text x="60" y="82" font-family="system-ui" font-size="11" fill="#64748b">Event Type</text>
-          <rect x="60" y="90" width="340" height="26" rx="3" fill="#f8fafc" stroke="#cbd5e1"/>
-          <text x="68" y="107" font-family="ui-monospace,monospace" font-size="12" fill="#7c3aed">TASK_CREATED</text>
-          <text x="60" y="134" font-family="system-ui" font-size="11" fill="#64748b">Task Name</text>
-          <rect x="60" y="142" width="340" height="26" rx="3" fill="#1e293b"/>
-          <text x="68" y="159" font-family="ui-monospace,monospace" font-size="12" fill="#86efac">ARABIC Interpreter-O</text>
-          <text x="60" y="186" font-family="system-ui" font-size="11" fill="#64748b">HN</text>
-          <rect x="60" y="194" width="160" height="26" rx="3" fill="#f8fafc" stroke="#cbd5e1"/>
-          <text x="68" y="211" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">INT-00712</text>
-          <text x="240" y="186" font-family="system-ui" font-size="11" fill="#64748b">Episode</text>
-          <rect x="240" y="194" width="160" height="26" rx="3" fill="#f8fafc" stroke="#cbd5e1"/>
-          <text x="248" y="211" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">EP-20260512-001</text>
-          <text x="60" y="240" font-family="system-ui" font-size="11" fill="#64748b">Trigger</text>
-          <rect x="60" y="248" width="340" height="22" rx="3" fill="#eff6ff" stroke="#bfdbfe"/>
-          <text x="68" y="263" font-family="system-ui" font-size="11" fill="#1d4ed8">Event-driven — Task created or updated on TrakCare</text>`)
-      },
-      {
-        title: 'Step 2 · Sync Task Worklist to Salesforce',
-        desc: 'MuleSoft validates the task falls within operating hours (07:00\u201320:00) and syncs the task data to Salesforce.',
-        ui: svgWrap(`
-          <rect width="480" height="320" fill="#f0f4f8"/>
-          <rect x="40" y="30" width="400" height="260" rx="6" fill="white" stroke="#cbd5e1"/>
-          <rect x="40" y="30" width="400" height="34" fill="#0ea5e9"/>
-          <text x="56" y="52" font-family="system-ui" font-size="13" font-weight="600" fill="white">MuleSoft · Time Validation &amp; Sync</text>
-          <text x="60" y="82" font-family="system-ui" font-size="11" fill="#64748b">Operating Hours Window</text>
-          <rect x="60" y="90" width="340" height="26" rx="3" fill="#1e293b"/>
-          <text x="68" y="107" font-family="ui-monospace,monospace" font-size="12" fill="#86efac">07:00 — 20:00</text>
-          <text x="250" y="107" font-family="ui-monospace,monospace" font-size="11" fill="#64748b">current: 09:15</text>
-          <text x="60" y="134" font-family="system-ui" font-size="11" fill="#64748b">Validation Result</text>
-          <rect x="60" y="142" width="340" height="26" rx="3" fill="#dcfce7" stroke="#86efac"/>
-          <text x="68" y="159" font-family="ui-monospace,monospace" font-size="12" fill="#15803d">WITHIN_HOURS — proceed to sync</text>
-          <line x1="60" y1="180" x2="400" y2="180" stroke="#e2e8f0"/>
-          <text x="60" y="200" font-family="system-ui" font-size="11" font-weight="600" fill="#475569">Task Payload to Salesforce</text>
-          <text x="60" y="220" font-family="ui-monospace,monospace" font-size="11" fill="#64748b">HN</text>
-          <text x="180" y="220" font-family="ui-monospace,monospace" font-size="11" fill="#1e293b">INT-00712</text>
-          <text x="60" y="240" font-family="ui-monospace,monospace" font-size="11" fill="#64748b">TaskItem</text>
-          <text x="180" y="240" font-family="ui-monospace,monospace" font-size="11" fill="#1e293b">ARABIC Interpreter-O</text>
-          <text x="60" y="260" font-family="ui-monospace,monospace" font-size="11" fill="#64748b">Priority</text>
-          <text x="180" y="260" font-family="ui-monospace,monospace" font-size="11" fill="#1e293b">Normal</text>
-          <text x="60" y="280" font-family="ui-monospace,monospace" font-size="11" fill="#64748b">DueTime</text>
-          <text x="180" y="280" font-family="ui-monospace,monospace" font-size="11" fill="#1e293b">10:30</text>`)
-      },
-      {
-        title: 'Step 3 · Auto-create Case Record',
-        desc: 'Salesforce automatically creates a Case record from the incoming task data. SF field mapping and Record Type are not yet defined.',
-        ui: svgWrap(`
-          <rect width="480" height="320" fill="#f0f4f8"/>
-          <rect x="40" y="30" width="400" height="260" rx="6" fill="white" stroke="#cbd5e1"/>
-          <rect x="40" y="30" width="400" height="34" fill="#16a34a"/>
-          <text x="56" y="52" font-family="system-ui" font-size="13" font-weight="600" fill="white">Salesforce · Case Record Creation</text>
-          <text x="60" y="82" font-family="system-ui" font-size="11" fill="#64748b">Object</text>
-          <rect x="60" y="90" width="340" height="26" rx="3" fill="#f8fafc" stroke="#cbd5e1"/>
-          <text x="68" y="107" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">Case (Record Type: TBC)</text>
-          <text x="60" y="134" font-family="system-ui" font-size="11" fill="#64748b">Case Number</text>
-          <rect x="60" y="142" width="160" height="26" rx="3" fill="#f8fafc" stroke="#cbd5e1"/>
-          <text x="68" y="159" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">CS-00045821</text>
-          <text x="240" y="134" font-family="system-ui" font-size="11" fill="#64748b">Status</text>
-          <rect x="240" y="142" width="160" height="26" rx="3" fill="#dcfce7" stroke="#86efac"/>
-          <text x="248" y="159" font-family="ui-monospace,monospace" font-size="12" fill="#15803d">New</text>
-          <line x1="60" y1="180" x2="400" y2="180" stroke="#e2e8f0"/>
-          <text x="60" y="200" font-family="system-ui" font-size="11" font-weight="600" fill="#475569">Field Mapping (TBC)</text>
-          <text x="60" y="220" font-family="ui-monospace,monospace" font-size="11" fill="#64748b">HN</text>
-          <text x="180" y="220" font-family="ui-monospace,monospace" font-size="11" fill="#94a3b8">waiting for field creation</text>
-          <text x="60" y="240" font-family="ui-monospace,monospace" font-size="11" fill="#64748b">EpisodeNumber</text>
-          <text x="180" y="240" font-family="ui-monospace,monospace" font-size="11" fill="#94a3b8">waiting for field creation</text>
-          <text x="60" y="260" font-family="ui-monospace,monospace" font-size="11" fill="#64748b">TaskItem</text>
-          <text x="180" y="260" font-family="ui-monospace,monospace" font-size="11" fill="#94a3b8">waiting for field creation</text>
-          <rect x="60" y="268" width="340" height="18" rx="3" fill="#fef9c3" stroke="#fde047"/>
-          <text x="68" y="281" font-family="system-ui" font-size="10" fill="#854d0e">SF field mapping and Record Type not yet defined</text>`)
-      },
-      {
-        title: 'Step 4 · Case Creation Acknowledged',
-        desc: 'Salesforce returns an acknowledgement to MuleSoft confirming the Case record was created successfully. Interpreter-Arabic and GR-Non Arabic personas can now review the task in Salesforce.',
-        ui: svgWrap(`
-          <rect width="480" height="320" fill="#f0f4f8"/>
-          <rect x="40" y="40" width="400" height="240" rx="6" fill="white" stroke="#cbd5e1"/>
-          <text x="60" y="74" font-family="system-ui" font-size="14" font-weight="600" fill="#16a34a">200 OK — Case Created</text>
-          <text x="60" y="94" font-family="ui-monospace,monospace" font-size="11" fill="#64748b">Content-Type: application/json</text>
-          <line x1="40" y1="108" x2="440" y2="108" stroke="#e2e8f0"/>
-          <text x="60" y="134" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">{</text>
-          <text x="80" y="156" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">"success": true,</text>
-          <text x="80" y="178" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">"id": "500Dn000008kXYZ",</text>
-          <text x="80" y="200" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">"caseNumber": "CS-00045821",</text>
-          <text x="80" y="222" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">"errors": []</text>
-          <text x="60" y="244" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">}</text>
-          <rect x="200" y="256" width="220" height="18" rx="3" fill="#dcfce7" stroke="#86efac"/>
-          <text x="310" y="269" text-anchor="middle" font-family="system-ui" font-size="10" fill="#15803d">Interpreter-Arabic / GR-Non Arabic can review</text>`)
-      },
-      {
-        title: 'Step 5 · Filter Out Off-Hours Task',
-        desc: 'MuleSoft identifies the task was created outside operating hours (20:00\u201307:00) and excludes it from Case creation.',
-        ui: svgWrap(`
-          <rect width="480" height="320" fill="#f0f4f8"/>
-          <rect x="40" y="30" width="400" height="260" rx="6" fill="white" stroke="#cbd5e1"/>
-          <rect x="40" y="30" width="400" height="34" fill="#d97706"/>
-          <text x="56" y="52" font-family="system-ui" font-size="13" font-weight="600" fill="white">MuleSoft · Off-Hours Filter</text>
-          <text x="60" y="82" font-family="system-ui" font-size="11" fill="#64748b">Operating Hours Window</text>
-          <rect x="60" y="90" width="340" height="26" rx="3" fill="#1e293b"/>
-          <text x="68" y="107" font-family="ui-monospace,monospace" font-size="12" fill="#86efac">07:00 — 20:00</text>
-          <text x="250" y="107" font-family="ui-monospace,monospace" font-size="11" fill="#fbbf24">current: 22:45</text>
-          <text x="60" y="134" font-family="system-ui" font-size="11" fill="#64748b">Validation Result</text>
-          <rect x="60" y="142" width="340" height="26" rx="3" fill="#fef9c3" stroke="#fde047"/>
-          <text x="68" y="159" font-family="ui-monospace,monospace" font-size="12" fill="#854d0e">OUTSIDE_HOURS — excluded from Case creation</text>
-          <line x1="60" y1="180" x2="400" y2="180" stroke="#e2e8f0"/>
-          <text x="60" y="200" font-family="system-ui" font-size="11" font-weight="600" fill="#475569">Excluded Task</text>
-          <text x="60" y="220" font-family="ui-monospace,monospace" font-size="11" fill="#64748b">HN</text>
-          <text x="180" y="220" font-family="ui-monospace,monospace" font-size="11" fill="#1e293b">INT-00718</text>
-          <text x="60" y="240" font-family="ui-monospace,monospace" font-size="11" fill="#64748b">TaskItem</text>
-          <text x="180" y="240" font-family="ui-monospace,monospace" font-size="11" fill="#1e293b">ARABIC Interpreter-O</text>
-          <text x="60" y="260" font-family="ui-monospace,monospace" font-size="11" fill="#64748b">CreatedDate</text>
-          <text x="180" y="260" font-family="ui-monospace,monospace" font-size="11" fill="#d97706">2026-05-11 22:45</text>
-          <rect x="60" y="268" width="340" height="18" rx="3" fill="#fef3c7" stroke="#fbbf24"/>
-          <text x="68" y="281" font-family="system-ui" font-size="10" fill="#92400e">Task queued to Excluded Summary List</text>`)
-      },
-      {
-        title: 'Step 6 · Compile Excluded Summary List',
-        desc: 'MuleSoft forwards the excluded task records to Salesforce as a summary list.',
-        ui: svgWrap(`
-          <rect width="480" height="320" fill="#f0f4f8"/>
-          <rect x="40" y="30" width="400" height="260" rx="6" fill="white" stroke="#cbd5e1"/>
-          <rect x="40" y="30" width="400" height="34" fill="#0ea5e9"/>
-          <text x="56" y="52" font-family="system-ui" font-size="13" font-weight="600" fill="white">MuleSoft · Excluded Summary List</text>
-          <text x="60" y="80" font-family="system-ui" font-size="11" fill="#64748b">Excluded records (20:00\u201307:00)</text>
-          <rect x="60" y="88" width="340" height="24" rx="3" fill="#1e293b"/>
-          <text x="68" y="104" font-family="ui-monospace,monospace" font-size="10" fill="#94a3b8">  HN            Task               Created</text>
-          <rect x="60" y="114" width="340" height="22" rx="2" fill="#f8fafc" stroke="#e2e8f0"/>
-          <text x="68" y="129" font-family="ui-monospace,monospace" font-size="10" fill="#1e293b">  INT-00718     ARABIC Interp-O    22:45</text>
-          <rect x="60" y="138" width="340" height="22" rx="2" fill="#f8fafc" stroke="#e2e8f0"/>
-          <text x="68" y="153" font-family="ui-monospace,monospace" font-size="10" fill="#1e293b">  INT-00721     ARABIC Interp-O    21:10</text>
-          <rect x="60" y="162" width="340" height="22" rx="2" fill="#f8fafc" stroke="#e2e8f0"/>
-          <text x="68" y="177" font-family="ui-monospace,monospace" font-size="10" fill="#1e293b">  INT-00730     GR-Non Arabic      23:55</text>
-          <line x1="60" y1="196" x2="400" y2="196" stroke="#e2e8f0"/>
-          <text x="60" y="216" font-family="system-ui" font-size="11" fill="#64748b">Total Excluded</text>
-          <text x="180" y="216" font-family="ui-monospace,monospace" font-size="12" fill="#d97706">3 records</text>
-          <text x="60" y="240" font-family="system-ui" font-size="11" fill="#64748b">Destination</text>
-          <text x="180" y="240" font-family="ui-monospace,monospace" font-size="12" fill="#0ea5e9">Salesforce (summary list)</text>
-          <rect x="60" y="256" width="340" height="22" rx="3" fill="#eff6ff" stroke="#bfdbfe"/>
-          <text x="68" y="271" font-family="system-ui" font-size="11" fill="#1d4ed8">Forwarding excluded summary to Salesforce...</text>`)
-      },
-      {
-        title: 'Step 7 · Send Email to Dispatch Manager',
-        desc: 'Salesforce sends a summary email to arabicmanagerandsupervisors@bumrungrad.com. Email is sent only if excluded records exist.',
-        ui: svgWrap(`
-          <rect width="480" height="320" fill="#f0f4f8"/>
-          <rect x="40" y="30" width="400" height="260" rx="6" fill="white" stroke="#cbd5e1"/>
-          <rect x="40" y="30" width="400" height="34" fill="#6366f1"/>
-          <text x="56" y="52" font-family="system-ui" font-size="13" font-weight="600" fill="white">Salesforce · Email Notification</text>
-          <text x="60" y="82" font-family="system-ui" font-size="11" fill="#64748b">To</text>
-          <rect x="60" y="90" width="340" height="26" rx="3" fill="#f8fafc" stroke="#cbd5e1"/>
-          <text x="68" y="107" font-family="ui-monospace,monospace" font-size="10" fill="#1e293b">arabicmanagerandsupervisors@bumrungrad.com</text>
-          <text x="60" y="134" font-family="system-ui" font-size="11" fill="#64748b">Subject</text>
-          <rect x="60" y="142" width="340" height="26" rx="3" fill="#f8fafc" stroke="#cbd5e1"/>
-          <text x="68" y="159" font-family="ui-monospace,monospace" font-size="11" fill="#1e293b">Excluded Task Summary — 2026-05-12</text>
-          <line x1="60" y1="180" x2="400" y2="180" stroke="#e2e8f0"/>
-          <text x="60" y="200" font-family="system-ui" font-size="11" font-weight="600" fill="#475569">Body</text>
-          <text x="60" y="218" font-family="system-ui" font-size="11" fill="#1e293b">3 task(s) were excluded (created 20:00\u201307:00):</text>
-          <text x="60" y="236" font-family="ui-monospace,monospace" font-size="10" fill="#64748b">  \u2022 INT-00718 — ARABIC Interpreter-O (22:45)</text>
-          <text x="60" y="252" font-family="ui-monospace,monospace" font-size="10" fill="#64748b">  \u2022 INT-00721 — ARABIC Interpreter-O (21:10)</text>
-          <text x="60" y="268" font-family="ui-monospace,monospace" font-size="10" fill="#64748b">  \u2022 INT-00730 — GR-Non Arabic (23:55)</text>
-          <rect x="280" y="276" width="120" height="18" rx="3" fill="#dcfce7" stroke="#86efac"/>
-          <text x="340" y="289" text-anchor="middle" font-family="system-ui" font-size="10" fill="#15803d">Email Sent</text>`)
-      },
-      {
-        title: 'Step 8 · Notify TrakCare of Failure',
-        desc: 'MuleSoft returns an error response to TrakCare indicating the task event could not be processed.',
-        ui: svgWrap(`
-          <rect width="480" height="320" fill="#f0f4f8"/>
-          <rect x="40" y="40" width="400" height="240" rx="6" fill="white" stroke="#fecaca"/>
-          <rect x="40" y="40" width="400" height="34" fill="#dc2626"/>
-          <text x="56" y="62" font-family="system-ui" font-size="13" font-weight="600" fill="white">MuleSoft · Error Response to TrakCare</text>
-          <text x="60" y="96" font-family="system-ui" font-size="14" font-weight="600" fill="#dc2626">500 Processing Error</text>
-          <text x="60" y="116" font-family="ui-monospace,monospace" font-size="11" fill="#64748b">Content-Type: application/json</text>
-          <line x1="40" y1="130" x2="440" y2="130" stroke="#fee2e2"/>
-          <text x="60" y="156" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">{</text>
-          <text x="80" y="178" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">"success": false,</text>
-          <text x="80" y="200" font-family="ui-monospace,monospace" font-size="12" fill="#dc2626">"error": "TASK_EVENT_PROCESSING_FAILED",</text>
-          <text x="80" y="222" font-family="ui-monospace,monospace" font-size="12" fill="#dc2626">"message": "Unable to process task event",</text>
-          <text x="80" y="244" font-family="ui-monospace,monospace" font-size="12" fill="#dc2626">"taskId": "TSK-20260512-001"</text>
-          <text x="60" y="266" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">}</text>`)
-      }
-    ]
-  },
-
-  // ── 12 Task Worklist Update ──────────────────────────────────────────────────
-  'worklist-task-update': {
-    title: 'Integration 12_Task_Worklist_Update — Sync task status changes to TrakCare',
-    breadcrumb: 'Worklist',
-    mermaid: `
-sequenceDiagram
-    autonumber
-    actor US as User<br/>(Interpreter-Arabic)
-    participant SF as Salesforce
-    participant MU as MuleSoft API
-    participant TC as TrakCare
-
-    Note over US,TC: Integration 12_Task_Worklist_Update
-    US->>SF: Update Case Status
-    Note right of US: Accepted → IPS_Case_Status__c = 'Accepted'<br/>Done → IPS_Case_Status__c = 'Done'
-    SF->>MU: Task Status Update Request
-    Note right of SF: Accepted: stamp Assigned Time (IPS_Accepted_Time__c)<br/>Done: stamp Done Time (IPS_Done_Time__c)
-    MU->>TC: Update Task Status
-    Note right of MU: Accepted → Task Status = TBC<br/>Done → Task Status = 'Completed'<br/>TBC: Last Modified Date/Time field not confirmed
-    alt Success
-        TC-->>MU: Task Update Confirmed
-        MU-->>SF: Task Sync Acknowledged
-    else Error
-        TC-->>MU: Task Update Failed
-        MU-->>SF: Propagate Error to Salesforce
-    end`,
-    steps: [
-      {
-        title: 'Step 1 · Update Case Status',
-        desc: 'The Interpreter-Arabic updates the case status in Salesforce — either to \'Accepted\' when taking on a task, or \'Done\' when the task is completed.',
-        ui: svgWrap(`
-          <rect width="480" height="320" fill="#f0f4f8"/>
-          <rect x="40" y="30" width="400" height="270" rx="6" fill="white" stroke="#cbd5e1"/>
-          <rect x="40" y="30" width="400" height="34" fill="#0176d3"/>
-          <text x="56" y="52" font-family="system-ui" font-size="13" font-weight="600" fill="white">Salesforce · Case Status Update</text>
-          <text x="60" y="88" font-family="system-ui" font-size="11" fill="#64748b">Case Number</text>
-          <rect x="60" y="96" width="340" height="26" rx="3" fill="#f8fafc" stroke="#cbd5e1"/>
-          <text x="68" y="113" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">CASE-2026-00412</text>
-          <text x="60" y="142" font-family="system-ui" font-size="11" fill="#64748b">IPS_Case_Status__c</text>
-          <rect x="60" y="150" width="160" height="26" rx="3" fill="#f8fafc" stroke="#cbd5e1"/>
-          <text x="68" y="167" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">Pending</text>
-          <text x="60" y="200" font-family="system-ui" font-size="11" fill="#64748b">Update Status To</text>
-          <rect x="60" y="210" width="140" height="30" rx="4" fill="#dcfce7" stroke="#86efac"/>
-          <text x="130" y="229" text-anchor="middle" font-family="system-ui" font-size="12" font-weight="600" fill="#15803d">Accepted</text>
-          <rect x="220" y="210" width="140" height="30" rx="4" fill="#dbeafe" stroke="#93c5fd"/>
-          <text x="290" y="229" text-anchor="middle" font-family="system-ui" font-size="12" font-weight="600" fill="#1d4ed8">Done</text>
-          <text x="60" y="268" font-family="system-ui" font-size="10" fill="#94a3b8">Assigned Interpreter: Arabic-01</text>`)
-      },
-      {
-        title: 'Step 2 · Task Status Update Request',
-        desc: 'Salesforce triggers an event and sends the status update to MuleSoft, stamping the relevant timestamp — Assigned Time for Accepted, or Done Time for Done.',
-        ui: svgWrap(`
-          <rect width="480" height="320" fill="#f0f4f8"/>
-          <rect x="40" y="30" width="400" height="270" rx="6" fill="white" stroke="#cbd5e1"/>
-          <rect x="40" y="30" width="400" height="34" fill="#1e293b"/>
-          <text x="56" y="52" font-family="system-ui" font-size="13" font-weight="600" fill="white">MuleSoft · Task Status Update Request</text>
-          <text x="60" y="88" font-family="system-ui" font-size="11" fill="#64748b">Event Received</text>
-          <rect x="60" y="96" width="340" height="26" rx="3" fill="#f8fafc" stroke="#cbd5e1"/>
-          <text x="68" y="113" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">IPS_Task_Status_Change__e</text>
-          <text x="60" y="142" font-family="system-ui" font-size="11" fill="#64748b">IPS_Case_Status__c</text>
-          <rect x="60" y="150" width="160" height="26" rx="3" fill="#dcfce7" stroke="#86efac"/>
-          <text x="68" y="167" font-family="ui-monospace,monospace" font-size="12" fill="#15803d">Accepted</text>
-          <text x="60" y="198" font-family="system-ui" font-size="11" fill="#64748b">Timestamp Stamped</text>
-          <rect x="60" y="206" width="340" height="26" rx="3" fill="#1e293b"/>
-          <text x="68" y="223" font-family="ui-monospace,monospace" font-size="12" fill="#86efac">IPS_Accepted_Time__c = 2026-05-12T09:15:00Z</text>
-          <text x="60" y="252" font-family="system-ui" font-size="10" fill="#94a3b8">Done → stamps IPS_Done_Time__c</text>
-          <rect x="300" y="268" width="100" height="22" rx="3" fill="#eff6ff" stroke="#bfdbfe"/>
-          <text x="350" y="283" text-anchor="middle" font-family="system-ui" font-size="10" fill="#1d4ed8">Forwarding…</text>`)
-      },
-      {
-        title: 'Step 3 · Update Task Status on TrakCare',
-        desc: 'MuleSoft forwards the status update to TrakCare. Accepted maps to Task Status = TBC, Done maps to Task Status = \'Completed\'. Last Modified Date/Time field on TrakCare not yet confirmed.',
-        ui: svgWrap(`
-          <rect width="480" height="320" fill="#f0f4f8"/>
-          <rect x="40" y="30" width="400" height="270" rx="6" fill="white" stroke="#cbd5e1"/>
-          <rect x="40" y="30" width="400" height="34" fill="#6366f1"/>
-          <text x="56" y="52" font-family="system-ui" font-size="13" font-weight="600" fill="white">TrakCare · Update Task Status</text>
-          <text x="60" y="88" font-family="system-ui" font-size="11" fill="#64748b">Status Mapping</text>
-          <rect x="60" y="96" width="340" height="50" rx="3" fill="#f8fafc" stroke="#cbd5e1"/>
-          <text x="68" y="114" font-family="ui-monospace,monospace" font-size="11" fill="#475569">Accepted → Task Status = TBC</text>
-          <text x="68" y="134" font-family="ui-monospace,monospace" font-size="11" fill="#475569">Done     → Task Status = 'Completed'</text>
-          <text x="60" y="168" font-family="system-ui" font-size="11" fill="#64748b">Current Update</text>
-          <rect x="60" y="176" width="340" height="26" rx="3" fill="#dcfce7" stroke="#86efac"/>
-          <text x="68" y="193" font-family="ui-monospace,monospace" font-size="12" fill="#15803d">Task Status → TBC (Accepted)</text>
-          <text x="60" y="222" font-family="system-ui" font-size="11" fill="#f59e0b">⚠ Last Modified Date/Time — field not yet confirmed</text>
-          <rect x="60" y="236" width="340" height="26" rx="3" fill="#fffbeb" stroke="#fcd34d"/>
-          <text x="68" y="253" font-family="ui-monospace,monospace" font-size="11" fill="#92400e">LastModifiedDateTime = TBC</text>
-          <rect x="300" y="272" width="100" height="22" rx="3" fill="#eff6ff" stroke="#bfdbfe"/>
-          <text x="350" y="287" text-anchor="middle" font-family="system-ui" font-size="10" fill="#1d4ed8">Updating…</text>`)
-      },
-      {
-        title: 'Step 4 · Task Update Confirmed',
-        desc: 'TrakCare successfully updates the task status and returns a success response to MuleSoft.',
-        ui: svgWrap(`
-          <rect width="480" height="320" fill="#f0f4f8"/>
-          <rect x="40" y="40" width="400" height="240" rx="6" fill="white" stroke="#cbd5e1"/>
-          <text x="60" y="74" font-family="system-ui" font-size="14" font-weight="600" fill="#16a34a">200 OK</text>
-          <text x="60" y="94" font-family="ui-monospace,monospace" font-size="11" fill="#64748b">Content-Type: application/json</text>
-          <line x1="40" y1="108" x2="440" y2="108" stroke="#e2e8f0"/>
-          <text x="60" y="134" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">{</text>
-          <text x="80" y="156" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">"status": "success",</text>
-          <text x="80" y="178" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">"taskId": "TRK-TASK-00891",</text>
-          <text x="80" y="200" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">"taskStatus": "TBC",</text>
-          <text x="80" y="222" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">"message": "Task updated"</text>
-          <text x="60" y="244" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">}</text>
-          <rect x="300" y="256" width="120" height="18" rx="3" fill="#dcfce7" stroke="#86efac"/>
-          <text x="360" y="269" text-anchor="middle" font-family="system-ui" font-size="10" fill="#15803d">Update Confirmed</text>`)
-      },
-      {
-        title: 'Step 5 · Task Sync Acknowledged',
-        desc: 'MuleSoft forwards the success acknowledgement back to Salesforce, confirming the sync is complete.',
-        ui: svgWrap(`
-          <rect width="480" height="320" fill="#f0f4f8"/>
-          <rect x="40" y="40" width="400" height="240" rx="6" fill="white" stroke="#cbd5e1"/>
-          <rect x="40" y="40" width="400" height="34" fill="#0176d3"/>
-          <text x="56" y="62" font-family="system-ui" font-size="13" font-weight="600" fill="white">Salesforce · Sync Acknowledgement</text>
-          <text x="60" y="100" font-family="system-ui" font-size="14" font-weight="600" fill="#16a34a">Sync Complete</text>
-          <line x1="40" y1="114" x2="440" y2="114" stroke="#e2e8f0"/>
-          <text x="60" y="140" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">{</text>
-          <text x="80" y="162" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">"acknowledged": true,</text>
-          <text x="80" y="184" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">"caseNumber": "CASE-2026-00412",</text>
-          <text x="80" y="206" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">"syncedStatus": "Accepted",</text>
-          <text x="80" y="228" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">"trakCareTaskId": "TRK-TASK-00891"</text>
-          <text x="60" y="250" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">}</text>
-          <rect x="300" y="260" width="120" height="18" rx="3" fill="#dcfce7" stroke="#86efac"/>
-          <text x="360" y="273" text-anchor="middle" font-family="system-ui" font-size="10" fill="#15803d">Acknowledged</text>`)
-      },
-      {
-        title: 'Step 6 · Task Update Failed',
-        desc: 'TrakCare returns an error indicating the task status could not be updated (e.g., field mapping issue or TBC field not yet available).',
-        ui: svgWrap(`
-          <rect width="480" height="320" fill="#f0f4f8"/>
-          <rect x="40" y="40" width="400" height="240" rx="6" fill="white" stroke="#fecaca"/>
-          <text x="60" y="74" font-family="system-ui" font-size="14" font-weight="600" fill="#dc2626">500 Internal Server Error</text>
-          <text x="60" y="94" font-family="ui-monospace,monospace" font-size="11" fill="#64748b">Content-Type: application/json</text>
-          <line x1="40" y1="108" x2="440" y2="108" stroke="#fee2e2"/>
-          <text x="60" y="134" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">{</text>
-          <text x="80" y="156" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">"status": "error",</text>
-          <text x="80" y="178" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">"taskId": "TRK-TASK-00891",</text>
-          <text x="80" y="200" font-family="ui-monospace,monospace" font-size="12" fill="#dc2626">"errorCode": "FIELD_MAPPING_ERROR",</text>
-          <text x="80" y="222" font-family="ui-monospace,monospace" font-size="11" fill="#dc2626">"message": "LastModifiedDateTime</text>
-          <text x="100" y="240" font-family="ui-monospace,monospace" font-size="11" fill="#dc2626">field not available"</text>
-          <text x="60" y="258" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">}</text>`)
-      },
-      {
-        title: 'Step 7 · Propagate Error to Salesforce',
-        desc: 'MuleSoft forwards the error back to Salesforce for logging or user notification.',
-        ui: svgWrap(`
-          <rect width="480" height="320" fill="#f0f4f8"/>
-          <rect x="40" y="40" width="400" height="240" rx="6" fill="white" stroke="#fecaca"/>
-          <rect x="40" y="40" width="400" height="34" fill="#dc2626"/>
-          <text x="56" y="62" font-family="system-ui" font-size="13" font-weight="600" fill="white">Salesforce · Error Notification</text>
-          <text x="60" y="100" font-family="system-ui" font-size="11" fill="#64748b">Case</text>
-          <rect x="60" y="108" width="340" height="26" rx="3" fill="#f8fafc" stroke="#cbd5e1"/>
-          <text x="68" y="125" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">CASE-2026-00412</text>
-          <text x="60" y="152" font-family="system-ui" font-size="11" fill="#64748b">Error Source</text>
-          <rect x="60" y="160" width="340" height="26" rx="3" fill="#fef2f2" stroke="#fecaca"/>
-          <text x="68" y="177" font-family="ui-monospace,monospace" font-size="12" fill="#dc2626">TrakCare — FIELD_MAPPING_ERROR</text>
-          <text x="60" y="204" font-family="system-ui" font-size="11" fill="#64748b">Error Message</text>
-          <rect x="60" y="212" width="340" height="40" rx="3" fill="#fef2f2" stroke="#fecaca"/>
-          <text x="68" y="229" font-family="ui-monospace,monospace" font-size="11" fill="#dc2626">LastModifiedDateTime field not available.</text>
-          <text x="68" y="245" font-family="ui-monospace,monospace" font-size="11" fill="#dc2626">Task status update could not be applied.</text>
-          <rect x="60" y="264" width="340" height="18" rx="3" fill="#fef2f2"/>
-          <text x="230" y="277" text-anchor="middle" font-family="system-ui" font-size="10" fill="#dc2626">Logged for review · notification sent to user</text>`)
-      }
-    ],
-    fieldMap: [
-      { no: 1,  trakcare: 'Episode Number',   sf: 'TBC',  mandatory: true,  sample: 'waiting for field creation' },
-      { no: 2,  trakcare: 'TaskWorklist List', sf: 'TBC',  mandatory: false, sample: 'waiting for field creation' },
-      { no: 3,  trakcare: 'Task Item',         sf: 'TBC',  mandatory: true,  sample: 'waiting for field creation' },
-      { no: 4,  trakcare: 'Task Category',     sf: 'TBC',  mandatory: true,  sample: 'waiting for field creation' },
-      { no: 5,  trakcare: 'Due Time',          sf: 'TBC',  mandatory: true,  sample: 'waiting for field creation' },
-      { no: 6,  trakcare: 'Create Time',       sf: 'TBC',  mandatory: true,  sample: 'waiting for field creation' },
-      { no: 7,  trakcare: 'Task Status',       sf: 'TBC',  mandatory: true,  sample: 'waiting for field creation' },
-      { no: 8,  trakcare: 'Completed',         sf: 'TBC',  mandatory: true,  sample: 'waiting for field creation' },
-      { no: 9,  trakcare: 'Assigned User',     sf: 'TBC',  mandatory: true,  sample: 'waiting for field creation' }
-    ]
-  },
-
-  // ── 15 Scanned Form List ───────────────────────────────────────────────────
-  'worklist-scanned-form': {
-    title: 'Integration 15_Scanned_Form_List',
-    breadcrumb: 'Worklist',
-    mermaid: `
-sequenceDiagram
-    autonumber
-    actor U as User
-    participant SF as Salesforce
-    participant MU as MuleSoft
-    participant TC as TrakCare
-    participant VNA as VNA
-
-    Note over U,VNA: Integration 15_Scanned_Form_List
-    U->>SF: Open Patient 360 / Case<br/>(or apply Scanned Form filter)
-    SF->>MU: GET Scanned Form List
-    MU->>TC: Query BIH Scanned Forms List
-    TC->>VNA: Request document image
-    VNA-->>TC: Return document image
-
-    alt Success
-        TC-->>MU: Return form metadata + TC document links
-        Note right of TC: Date, Time, Document Name,<br/>Document Link (→ TrakCare),<br/>Document Category, Care Provider,<br/>Scanned User
-        MU-->>SF: Return Scanned Form Result
-        SF-->>U: Display document list
-        Note right of SF: link opens TrakCare,<br/>which renders doc from VNA
-    else No Records / Error
-        TC-->>MU: 404 / Error
-        MU-->>SF: Propagate error
-        SF-->>U: Display "No documents found" / error message
-    end`,
-    steps: [
-      {
-        title: 'Step 1 · User opens Patient 360 or Case',
-        desc: 'A user from the MCO, Compliance, or Medical Report team opens a Patient 360 view or Case record in Salesforce, or applies a filter to view scanned forms. This is the initial trigger for the integration.',
-        ui: svgWrap(`
-          <rect width="480" height="320" fill="#f0f4f8"/>
-          <rect x="20" y="10" width="440" height="300" rx="8" fill="white" stroke="#cbd5e1"/>
-          <rect x="20" y="10" width="440" height="36" rx="8" fill="#0070d2"/>
-          <rect x="20" y="30" width="440" height="16" fill="#0070d2"/>
-          <text x="36" y="34" font-family="system-ui" font-size="13" font-weight="700" fill="white">Salesforce · Patient 360</text>
-          <rect x="36" y="56" width="408" height="28" rx="4" fill="#f4f6f9" stroke="#d8dde6"/>
-          <text x="48" y="74" font-family="system-ui" font-size="11" fill="#3e3e3c">Patient: Naresa Jaiboonswat</text>
-          <text x="340" y="74" font-family="system-ui" font-size="11" fill="#0070d2">HN 1123235345</text>
-          <rect x="36" y="94" width="110" height="24" rx="4" fill="#0070d2"/>
-          <text x="48" y="110" font-family="system-ui" font-size="10" font-weight="600" fill="white">Scanned Forms</text>
-          <rect x="152" y="94" width="100" height="24" rx="4" fill="#f4f6f9" stroke="#d8dde6"/>
-          <text x="168" y="110" font-family="system-ui" font-size="10" fill="#706e6b">Lab Results</text>
-          <rect x="258" y="94" width="90" height="24" rx="4" fill="#f4f6f9" stroke="#d8dde6"/>
-          <text x="272" y="110" font-family="system-ui" font-size="10" fill="#706e6b">Allergies</text>
-          <line x1="36" y1="128" x2="444" y2="128" stroke="#d8dde6"/>
-          <rect x="36" y="138" width="408" height="24" rx="4" fill="#eef6ff" stroke="#0070d2"/>
-          <text x="48" y="154" font-family="system-ui" font-size="10" fill="#0070d2">Filter: Scanned Forms  |  Date From: 01-01-2026  |  Date To: 12-05-2026</text>
-          <rect x="36" y="174" width="408" height="120" rx="4" fill="#f9f9f9" stroke="#d8dde6"/>
-          <text x="220" y="240" text-anchor="middle" font-family="system-ui" font-size="12" fill="#706e6b">Loading scanned forms...</text>`)
-      },
-      {
-        title: 'Step 2 · Salesforce requests the scanned form list',
-        desc: 'Salesforce sends a GET request to MuleSoft with the relevant parameters (Date From, Date To, Care Provider, Document Name) to retrieve the patient\'s scanned forms.',
-        ui: svgWrap(`
-          <rect width="480" height="320" fill="#f0f4f8"/>
-          <rect x="40" y="30" width="400" height="260" rx="6" fill="white" stroke="#cbd5e1"/>
-          <rect x="40" y="30" width="400" height="34" fill="#1e293b"/>
-          <text x="56" y="52" font-family="ui-monospace,monospace" font-size="12" fill="#86efac">GET</text>
-          <text x="90" y="52" font-family="ui-monospace,monospace" font-size="11" fill="white">/scanned-forms/v1/list</text>
-          <text x="56" y="82" font-family="ui-monospace,monospace" font-size="11" fill="#64748b">Host: mulesoft.api</text>
-          <text x="56" y="98" font-family="ui-monospace,monospace" font-size="11" fill="#64748b">Content-Type: application/json</text>
-          <line x1="56" y1="110" x2="424" y2="110" stroke="#e2e8f0"/>
-          <text x="56" y="130" font-family="system-ui" font-size="11" font-weight="600" fill="#334155">Query Parameters</text>
-          <text x="56" y="152" font-family="ui-monospace,monospace" font-size="11" fill="#1e293b">dateFrom    = 01-01-2026</text>
-          <text x="56" y="172" font-family="ui-monospace,monospace" font-size="11" fill="#1e293b">dateTo      = 12-05-2026</text>
-          <text x="56" y="192" font-family="ui-monospace,monospace" font-size="11" fill="#1e293b">careProvider = Dr. Smith</text>
-          <text x="56" y="212" font-family="ui-monospace,monospace" font-size="11" fill="#1e293b">docName     = (all)</text>
-          <rect x="56" y="232" width="80" height="6" rx="3" fill="#86efac"/>
-          <text x="56" y="258" font-family="system-ui" font-size="10" fill="#64748b">Salesforce → MuleSoft</text>
-          <text x="56" y="274" font-family="system-ui" font-size="10" fill="#94a3b8">Date format: dd-mm-yyyy | Date From is mandatory</text>`)
-      },
-      {
-        title: 'Step 3 · MuleSoft queries TrakCare',
-        desc: 'MuleSoft forwards the request to TrakCare, querying the BIH Scanned Forms List for documents matching the filter criteria.',
-        ui: svgWrap(`
-          <rect width="480" height="320" fill="#f0f4f8"/>
-          <rect x="40" y="30" width="400" height="260" rx="6" fill="white" stroke="#cbd5e1"/>
-          <rect x="40" y="30" width="400" height="34" fill="#7c3aed"/>
-          <text x="56" y="52" font-family="system-ui" font-size="13" font-weight="600" fill="white">MuleSoft → TrakCare Query</text>
-          <text x="56" y="82" font-family="system-ui" font-size="11" font-weight="600" fill="#334155">Target: BIH Scanned Forms List</text>
-          <line x1="56" y1="94" x2="424" y2="94" stroke="#e2e8f0"/>
-          <text x="56" y="116" font-family="ui-monospace,monospace" font-size="11" fill="#1e293b">Query Filters:</text>
-          <text x="72" y="138" font-family="ui-monospace,monospace" font-size="11" fill="#6d28d9">• dateFrom:     01-01-2026</text>
-          <text x="72" y="158" font-family="ui-monospace,monospace" font-size="11" fill="#6d28d9">• dateTo:       12-05-2026</text>
-          <text x="72" y="178" font-family="ui-monospace,monospace" font-size="11" fill="#6d28d9">• careProvider: Dr. Smith</text>
-          <text x="72" y="198" font-family="ui-monospace,monospace" font-size="11" fill="#6d28d9">• docName:      (all)</text>
-          <rect x="56" y="218" width="368" height="30" rx="4" fill="#f5f3ff" stroke="#ddd6fe"/>
-          <text x="68" y="238" font-family="system-ui" font-size="10" fill="#7c3aed">MuleSoft transforms Salesforce params into TrakCare-compatible query</text>
-          <text x="56" y="274" font-family="system-ui" font-size="10" fill="#94a3b8">Protocol: REST → TrakCare API</text>`)
-      },
-      {
-        title: 'Step 4 · TrakCare requests the document image from VNA',
-        desc: 'TrakCare references the document storage in VNA to retrieve the actual scanned image associated with each form record.',
-        ui: svgWrap(`
-          <rect width="480" height="320" fill="#f0f4f8"/>
-          <rect x="40" y="30" width="400" height="260" rx="6" fill="white" stroke="#cbd5e1"/>
-          <rect x="40" y="30" width="400" height="34" fill="#0891b2"/>
-          <text x="56" y="52" font-family="system-ui" font-size="13" font-weight="600" fill="white">TrakCare → VNA · Document Request</text>
-          <line x1="56" y1="80" x2="424" y2="80" stroke="#e2e8f0"/>
-          <rect x="56" y="92" width="170" height="140" rx="4" fill="#f0fdfa" stroke="#99f6e4"/>
-          <text x="72" y="112" font-family="system-ui" font-size="11" font-weight="600" fill="#0e7490">TrakCare</text>
-          <text x="72" y="132" font-family="system-ui" font-size="10" fill="#334155">Form Record Found</text>
-          <text x="72" y="150" font-family="system-ui" font-size="10" fill="#334155">Doc ID: VNA-20260101-A</text>
-          <text x="72" y="168" font-family="system-ui" font-size="10" fill="#334155">Needs image from VNA</text>
-          <text x="240" y="158" font-family="system-ui" font-size="18" fill="#0891b2">→</text>
-          <rect x="264" y="92" width="160" height="140" rx="4" fill="#ecfdf5" stroke="#86efac"/>
-          <text x="280" y="112" font-family="system-ui" font-size="11" font-weight="600" fill="#065f46">VNA</text>
-          <text x="280" y="132" font-family="system-ui" font-size="10" fill="#334155">Document Archive</text>
-          <rect x="280" y="142" width="128" height="78" rx="2" fill="#d1fae5" stroke="#a7f3d0"/>
-          <text x="320" y="186" text-anchor="middle" font-family="system-ui" font-size="20" fill="#065f46">📄</text>
-          <text x="56" y="274" font-family="system-ui" font-size="10" fill="#94a3b8">TrakCare retrieves scanned image content from VNA storage</text>`)
-      },
-      {
-        title: 'Step 5 · VNA returns the document image',
-        desc: 'VNA returns the document content to TrakCare, which now has both the form metadata and the underlying image ready to serve.',
-        ui: svgWrap(`
-          <rect width="480" height="320" fill="#f0f4f8"/>
-          <rect x="40" y="30" width="400" height="260" rx="6" fill="white" stroke="#cbd5e1"/>
-          <rect x="40" y="30" width="400" height="34" fill="#065f46"/>
-          <text x="56" y="52" font-family="system-ui" font-size="13" font-weight="600" fill="white">VNA → TrakCare · Document Response</text>
-          <line x1="56" y1="80" x2="424" y2="80" stroke="#e2e8f0"/>
-          <rect x="56" y="92" width="368" height="44" rx="4" fill="#ecfdf5" stroke="#86efac"/>
-          <text x="68" y="110" font-family="system-ui" font-size="11" font-weight="600" fill="#065f46">200 OK · Document Retrieved</text>
-          <text x="68" y="126" font-family="ui-monospace,monospace" font-size="10" fill="#64748b">Content-Type: image/tiff  |  Size: 2.4 MB</text>
-          <rect x="56" y="148" width="368" height="100" rx="4" fill="#f8fafc" stroke="#e2e8f0"/>
-          <rect x="72" y="160" width="120" height="76" rx="2" fill="#e2e8f0"/>
-          <text x="132" y="202" text-anchor="middle" font-family="system-ui" font-size="10" fill="#64748b">Scanned Image</text>
-          <text x="210" y="176" font-family="system-ui" font-size="10" fill="#334155">Doc ID: VNA-20260101-A</text>
-          <text x="210" y="194" font-family="system-ui" font-size="10" fill="#334155">Format: TIFF</text>
-          <text x="210" y="212" font-family="system-ui" font-size="10" fill="#334155">Pages: 3</text>
-          <text x="210" y="230" font-family="system-ui" font-size="10" fill="#15803d">Status: Ready to serve</text>
-          <text x="56" y="274" font-family="system-ui" font-size="10" fill="#94a3b8">TrakCare now holds metadata + image for the scanned form</text>`)
-      },
-      {
-        title: 'Step 6 · TrakCare returns form metadata and links',
-        desc: 'TrakCare returns the list of scanned forms to MuleSoft, including Date, Time, Document Name, Document Link (pointing back to TrakCare), Document Category, Care Provider, and Scanned User.',
-        ui: svgWrap(`
-          <rect width="480" height="320" fill="#f0f4f8"/>
-          <rect x="20" y="10" width="440" height="300" rx="6" fill="white" stroke="#cbd5e1"/>
-          <rect x="20" y="10" width="440" height="30" fill="#0891b2"/>
-          <text x="36" y="30" font-family="system-ui" font-size="12" font-weight="600" fill="white">TrakCare → MuleSoft · Scanned Form Metadata</text>
-          <text x="30" y="58" font-family="system-ui" font-size="9" font-weight="700" fill="#475569">Date</text>
-          <text x="80" y="58" font-family="system-ui" font-size="9" font-weight="700" fill="#475569">Time</text>
-          <text x="120" y="58" font-family="system-ui" font-size="9" font-weight="700" fill="#475569">Doc Name</text>
-          <text x="200" y="58" font-family="system-ui" font-size="9" font-weight="700" fill="#475569">Doc Link</text>
-          <text x="270" y="58" font-family="system-ui" font-size="9" font-weight="700" fill="#475569">Category</text>
-          <text x="340" y="58" font-family="system-ui" font-size="9" font-weight="700" fill="#475569">Provider</text>
-          <text x="405" y="58" font-family="system-ui" font-size="9" font-weight="700" fill="#475569">Scanned By</text>
-          <line x1="26" y1="64" x2="454" y2="64" stroke="#e2e8f0"/>
-          <text x="30" y="80" font-family="ui-monospace,monospace" font-size="8" fill="#334155">01-01-26</text>
-          <text x="80" y="80" font-family="ui-monospace,monospace" font-size="8" fill="#334155">09:15</text>
-          <text x="120" y="80" font-family="ui-monospace,monospace" font-size="8" fill="#334155">Consent Form</text>
-          <text x="200" y="80" font-family="ui-monospace,monospace" font-size="8" fill="#0070d2">TC-LNK-001</text>
-          <text x="270" y="80" font-family="ui-monospace,monospace" font-size="8" fill="#334155">Admission</text>
-          <text x="340" y="80" font-family="ui-monospace,monospace" font-size="8" fill="#334155">Dr. Smith</text>
-          <text x="405" y="80" font-family="ui-monospace,monospace" font-size="8" fill="#334155">N. Jaibon</text>
-          <line x1="26" y1="86" x2="454" y2="86" stroke="#f1f5f9"/>
-          <text x="30" y="100" font-family="ui-monospace,monospace" font-size="8" fill="#334155">15-02-26</text>
-          <text x="80" y="100" font-family="ui-monospace,monospace" font-size="8" fill="#334155">14:30</text>
-          <text x="120" y="100" font-family="ui-monospace,monospace" font-size="8" fill="#334155">Lab Request</text>
-          <text x="200" y="100" font-family="ui-monospace,monospace" font-size="8" fill="#0070d2">TC-LNK-002</text>
-          <text x="270" y="100" font-family="ui-monospace,monospace" font-size="8" fill="#334155">Lab</text>
-          <text x="340" y="100" font-family="ui-monospace,monospace" font-size="8" fill="#334155">Dr. Lee</text>
-          <text x="405" y="100" font-family="ui-monospace,monospace" font-size="8" fill="#334155">S. Patel</text>
-          <line x1="26" y1="106" x2="454" y2="106" stroke="#f1f5f9"/>
-          <text x="30" y="120" font-family="ui-monospace,monospace" font-size="8" fill="#334155">10-04-26</text>
-          <text x="80" y="120" font-family="ui-monospace,monospace" font-size="8" fill="#334155">11:00</text>
-          <text x="120" y="120" font-family="ui-monospace,monospace" font-size="8" fill="#334155">Discharge Sum</text>
-          <text x="200" y="120" font-family="ui-monospace,monospace" font-size="8" fill="#0070d2">TC-LNK-003</text>
-          <text x="270" y="120" font-family="ui-monospace,monospace" font-size="8" fill="#334155">Discharge</text>
-          <text x="340" y="120" font-family="ui-monospace,monospace" font-size="8" fill="#334155">Dr. Smith</text>
-          <text x="405" y="120" font-family="ui-monospace,monospace" font-size="8" fill="#334155">N. Jaibon</text>
-          <rect x="26" y="136" width="428" height="24" rx="3" fill="#f0fdfa" stroke="#99f6e4"/>
-          <text x="36" y="152" font-family="system-ui" font-size="9" fill="#0e7490">3 records returned · Doc links point to TrakCare (renders from VNA)</text>
-          <text x="30" y="180" font-family="system-ui" font-size="9" font-weight="600" fill="#475569">Response Fields:</text>
-          <text x="30" y="196" font-family="ui-monospace,monospace" font-size="8" fill="#64748b">Date · Time · Document Name · Document Link (→TC) · Document Category</text>
-          <text x="30" y="210" font-family="ui-monospace,monospace" font-size="8" fill="#64748b">Care Provider · Scanned User</text>`)
-      },
-      {
-        title: 'Step 7 · MuleSoft passes the result to Salesforce',
-        desc: 'MuleSoft forwards the scanned form data to Salesforce without further transformation.',
-        ui: svgWrap(`
-          <rect width="480" height="320" fill="#f0f4f8"/>
-          <rect x="40" y="40" width="400" height="240" rx="6" fill="white" stroke="#cbd5e1"/>
-          <rect x="40" y="40" width="400" height="34" fill="#7c3aed"/>
-          <text x="56" y="62" font-family="system-ui" font-size="13" font-weight="600" fill="white">MuleSoft → Salesforce · Passthrough</text>
-          <line x1="56" y1="92" x2="424" y2="92" stroke="#e2e8f0"/>
-          <rect x="56" y="106" width="368" height="40" rx="4" fill="#f5f3ff" stroke="#ddd6fe"/>
-          <text x="68" y="122" font-family="system-ui" font-size="11" fill="#6d28d9">200 OK</text>
-          <text x="68" y="138" font-family="system-ui" font-size="10" fill="#7c3aed">Scanned form data forwarded without transformation</text>
-          <text x="56" y="172" font-family="system-ui" font-size="11" font-weight="600" fill="#334155">Payload Preview:</text>
-          <text x="56" y="192" font-family="ui-monospace,monospace" font-size="10" fill="#1e293b">{ "scannedForms": [ ... 3 records ... ],</text>
-          <text x="56" y="210" font-family="ui-monospace,monospace" font-size="10" fill="#1e293b">  "totalCount": 3,</text>
-          <text x="56" y="228" font-family="ui-monospace,monospace" font-size="10" fill="#1e293b">  "status": "success" }</text>
-          <rect x="56" y="246" width="80" height="6" rx="3" fill="#a78bfa"/>
-          <text x="56" y="270" font-family="system-ui" font-size="10" fill="#94a3b8">MuleSoft acts as a pass-through for this response</text>`)
-      },
-      {
-        title: 'Step 8 · Salesforce displays the document list',
-        desc: 'The user sees the list of scanned forms in Salesforce. Clicking a document link opens TrakCare, which renders the document from VNA. Salesforce never serves the document directly — it only displays metadata and links.',
-        ui: svgWrap(`
-          <rect width="480" height="320" fill="#f0f4f8"/>
-          <rect x="14" y="8" width="452" height="304" rx="8" fill="white" stroke="#d8dde6"/>
-          <rect x="14" y="8" width="452" height="32" rx="8" fill="#0070d2"/>
-          <rect x="14" y="24" width="452" height="16" fill="#0070d2"/>
-          <text x="30" y="30" font-family="system-ui" font-size="12" font-weight="700" fill="white">Salesforce · Scanned Forms</text>
-          <text x="380" y="30" font-family="system-ui" font-size="10" fill="#bee3f8">3 Results</text>
-          <text x="26" y="56" font-family="system-ui" font-size="8" font-weight="700" fill="#475569">Date</text>
-          <text x="76" y="56" font-family="system-ui" font-size="8" font-weight="700" fill="#475569">Time</text>
-          <text x="114" y="56" font-family="system-ui" font-size="8" font-weight="700" fill="#475569">Document Name</text>
-          <text x="214" y="56" font-family="system-ui" font-size="8" font-weight="700" fill="#475569">Document Link</text>
-          <text x="302" y="56" font-family="system-ui" font-size="8" font-weight="700" fill="#475569">Category</text>
-          <text x="362" y="56" font-family="system-ui" font-size="8" font-weight="700" fill="#475569">Provider</text>
-          <text x="420" y="56" font-family="system-ui" font-size="8" font-weight="700" fill="#475569">Scanned By</text>
-          <line x1="22" y1="62" x2="458" y2="62" stroke="#d8dde6"/>
-          <rect x="22" y="66" width="436" height="22" fill="#f4f6f9"/>
-          <text x="26" y="80" font-family="system-ui" font-size="8" fill="#3e3e3c">01-01-2026</text>
-          <text x="76" y="80" font-family="system-ui" font-size="8" fill="#3e3e3c">09:15</text>
-          <text x="114" y="80" font-family="system-ui" font-size="8" fill="#3e3e3c">Consent Form</text>
-          <text x="214" y="80" font-family="system-ui" font-size="8" fill="#0070d2" text-decoration="underline">Open in TrakCare</text>
-          <text x="302" y="80" font-family="system-ui" font-size="8" fill="#3e3e3c">Admission</text>
-          <text x="362" y="80" font-family="system-ui" font-size="8" fill="#3e3e3c">Dr. Smith</text>
-          <text x="420" y="80" font-family="system-ui" font-size="8" fill="#3e3e3c">N. Jaibon</text>
-          <rect x="22" y="90" width="436" height="22" fill="white"/>
-          <text x="26" y="104" font-family="system-ui" font-size="8" fill="#3e3e3c">15-02-2026</text>
-          <text x="76" y="104" font-family="system-ui" font-size="8" fill="#3e3e3c">14:30</text>
-          <text x="114" y="104" font-family="system-ui" font-size="8" fill="#3e3e3c">Lab Request</text>
-          <text x="214" y="104" font-family="system-ui" font-size="8" fill="#0070d2" text-decoration="underline">Open in TrakCare</text>
-          <text x="302" y="104" font-family="system-ui" font-size="8" fill="#3e3e3c">Lab</text>
-          <text x="362" y="104" font-family="system-ui" font-size="8" fill="#3e3e3c">Dr. Lee</text>
-          <text x="420" y="104" font-family="system-ui" font-size="8" fill="#3e3e3c">S. Patel</text>
-          <rect x="22" y="114" width="436" height="22" fill="#f4f6f9"/>
-          <text x="26" y="128" font-family="system-ui" font-size="8" fill="#3e3e3c">10-04-2026</text>
-          <text x="76" y="128" font-family="system-ui" font-size="8" fill="#3e3e3c">11:00</text>
-          <text x="114" y="128" font-family="system-ui" font-size="8" fill="#3e3e3c">Discharge Summary</text>
-          <text x="214" y="128" font-family="system-ui" font-size="8" fill="#0070d2" text-decoration="underline">Open in TrakCare</text>
-          <text x="302" y="128" font-family="system-ui" font-size="8" fill="#3e3e3c">Discharge</text>
-          <text x="362" y="128" font-family="system-ui" font-size="8" fill="#3e3e3c">Dr. Smith</text>
-          <text x="420" y="128" font-family="system-ui" font-size="8" fill="#3e3e3c">N. Jaibon</text>
-          <line x1="22" y1="140" x2="458" y2="140" stroke="#d8dde6"/>
-          <rect x="22" y="150" width="436" height="28" rx="4" fill="#eef6ff" stroke="#b3d4fc"/>
-          <text x="36" y="168" font-family="system-ui" font-size="9" fill="#0070d2">Clicking "Open in TrakCare" opens TrakCare, which renders the document from VNA</text>
-          <text x="26" y="200" font-family="system-ui" font-size="9" fill="#706e6b">Salesforce displays metadata and links only — documents are never served directly.</text>`)
-      },
-      {
-        title: 'Step 9 · TrakCare returns an error',
-        desc: 'If no documents match the filter or TrakCare encounters an issue, it returns a 404 or error response to MuleSoft.',
-        ui: svgWrap(`
-          <rect width="480" height="320" fill="#f0f4f8"/>
-          <rect x="40" y="40" width="400" height="240" rx="6" fill="white" stroke="#fecaca"/>
-          <rect x="40" y="40" width="400" height="34" fill="#dc2626"/>
-          <text x="56" y="62" font-family="system-ui" font-size="13" font-weight="600" fill="white">TrakCare · Error Response</text>
-          <text x="60" y="96" font-family="ui-monospace,monospace" font-size="14" font-weight="600" fill="#dc2626">404 Not Found</text>
-          <text x="60" y="116" font-family="ui-monospace,monospace" font-size="11" fill="#64748b">Content-Type: application/json</text>
-          <line x1="40" y1="130" x2="440" y2="130" stroke="#fee2e2"/>
-          <text x="60" y="156" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">{</text>
-          <text x="80" y="178" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">"success": false,</text>
-          <text x="80" y="200" font-family="ui-monospace,monospace" font-size="12" fill="#dc2626">"error": "NO_RECORDS_FOUND",</text>
-          <text x="80" y="222" font-family="ui-monospace,monospace" font-size="12" fill="#dc2626">"message": "No scanned forms match</text>
-          <text x="100" y="240" font-family="ui-monospace,monospace" font-size="12" fill="#dc2626">the given filter criteria"</text>
-          <text x="60" y="262" font-family="ui-monospace,monospace" font-size="12" fill="#1e293b">}</text>`)
-      },
-      {
-        title: 'Step 10 · MuleSoft propagates the error to Salesforce',
-        desc: 'MuleSoft passes the error response back to Salesforce.',
-        ui: svgWrap(`
-          <rect width="480" height="320" fill="#f0f4f8"/>
-          <rect x="40" y="40" width="400" height="240" rx="6" fill="white" stroke="#fecaca"/>
-          <rect x="40" y="40" width="400" height="34" fill="#9f1239"/>
-          <text x="56" y="62" font-family="system-ui" font-size="13" font-weight="600" fill="white">MuleSoft → Salesforce · Error Propagation</text>
-          <line x1="56" y1="92" x2="424" y2="92" stroke="#fee2e2"/>
-          <rect x="56" y="106" width="368" height="40" rx="4" fill="#fff1f2" stroke="#fecdd3"/>
-          <text x="68" y="122" font-family="system-ui" font-size="11" fill="#dc2626">404 Not Found</text>
-          <text x="68" y="138" font-family="system-ui" font-size="10" fill="#9f1239">Error forwarded from TrakCare without modification</text>
-          <text x="56" y="172" font-family="ui-monospace,monospace" font-size="11" fill="#1e293b">{ "success": false,</text>
-          <text x="56" y="192" font-family="ui-monospace,monospace" font-size="11" fill="#dc2626">  "error": "NO_RECORDS_FOUND",</text>
-          <text x="56" y="212" font-family="ui-monospace,monospace" font-size="11" fill="#dc2626">  "message": "No scanned forms match</text>
-          <text x="56" y="228" font-family="ui-monospace,monospace" font-size="11" fill="#dc2626">   the given filter criteria" }</text>
-          <rect x="56" y="246" width="80" height="6" rx="3" fill="#fca5a5"/>
-          <text x="56" y="270" font-family="system-ui" font-size="10" fill="#94a3b8">MuleSoft propagates TrakCare error to Salesforce</text>`)
-      },
-      {
-        title: 'Step 11 · Salesforce displays an error message',
-        desc: 'The user sees a "No documents found" message or an appropriate error in the Salesforce UI.',
-        ui: svgWrap(`
-          <rect width="480" height="320" fill="#f0f4f8"/>
-          <rect x="20" y="10" width="440" height="300" rx="8" fill="white" stroke="#d8dde6"/>
-          <rect x="20" y="10" width="440" height="32" rx="8" fill="#0070d2"/>
-          <rect x="20" y="26" width="440" height="16" fill="#0070d2"/>
-          <text x="36" y="30" font-family="system-ui" font-size="12" font-weight="700" fill="white">Salesforce · Scanned Forms</text>
-          <text x="26" y="60" font-family="system-ui" font-size="8" font-weight="700" fill="#475569">Date</text>
-          <text x="76" y="60" font-family="system-ui" font-size="8" font-weight="700" fill="#475569">Time</text>
-          <text x="114" y="60" font-family="system-ui" font-size="8" font-weight="700" fill="#475569">Document Name</text>
-          <text x="214" y="60" font-family="system-ui" font-size="8" font-weight="700" fill="#475569">Document Link</text>
-          <text x="302" y="60" font-family="system-ui" font-size="8" font-weight="700" fill="#475569">Category</text>
-          <text x="362" y="60" font-family="system-ui" font-size="8" font-weight="700" fill="#475569">Provider</text>
-          <line x1="22" y1="66" x2="458" y2="66" stroke="#d8dde6"/>
-          <rect x="40" y="100" width="400" height="120" rx="8" fill="#fff8f8" stroke="#fecaca"/>
-          <rect x="200" y="120" width="80" height="30" rx="15" fill="#fee2e2"/>
-          <text x="240" y="140" text-anchor="middle" font-family="system-ui" font-size="16" fill="#dc2626">!</text>
-          <text x="240" y="172" text-anchor="middle" font-family="system-ui" font-size="13" font-weight="600" fill="#dc2626">No documents found</text>
-          <text x="240" y="196" text-anchor="middle" font-family="system-ui" font-size="10" fill="#706e6b">No scanned forms match the given filter criteria.</text>
-          <text x="240" y="212" text-anchor="middle" font-family="system-ui" font-size="10" fill="#706e6b">Try adjusting your date range or filter options.</text>`)
-      }
-    ],
-    fieldMap: [
-      { no: 1,  trakcare: 'Date From',         sf: 'TBC',  mandatory: true,  sample: 'waiting for field creation' },
-      { no: 2,  trakcare: 'Date To',            sf: 'TBC',  mandatory: false, sample: 'waiting for field creation' },
-      { no: 3,  trakcare: 'Care Provider',      sf: 'TBC',  mandatory: false, sample: 'waiting for field creation' },
-      { no: 4,  trakcare: 'Document Name',      sf: 'TBC',  mandatory: false, sample: 'waiting for field creation' },
-      { no: 5,  trakcare: 'Document Link',      sf: 'TBC',  mandatory: false, sample: 'waiting for field creation' },
-      { no: 6,  trakcare: 'Document Category',  sf: 'TBC',  mandatory: false, sample: 'waiting for field creation' },
-      { no: 7,  trakcare: 'Care Provider',      sf: 'TBC',  mandatory: false, sample: 'waiting for field creation' },
-      { no: 8,  trakcare: 'Scanned User',       sf: 'TBC',  mandatory: false, sample: 'waiting for field creation' }
     ]
   }
 };
@@ -4448,78 +3707,12 @@ diagramEl.addEventListener('wheel', (e) => {
 
 // ─── DIAGRAM RENDER ───────────────────────────────────────────────────────────
 
-function replaceActorIcons(svgEl) {
-  const NS = 'http://www.w3.org/2000/svg';
-  svgEl.querySelectorAll('.actor-man').forEach(g => {
-    const shapes = [...g.children].filter(el =>
-      ['line', 'circle', 'path', 'rect', 'polyline', 'polygon'].includes(el.tagName.toLowerCase())
-    );
-    if (!shapes.length) return;
-
-    let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
-    shapes.forEach(s => {
-      const b = s.getBBox();
-      minX = Math.min(minX, b.x);
-      minY = Math.min(minY, b.y);
-      maxX = Math.max(maxX, b.x + b.width);
-      maxY = Math.max(maxY, b.y + b.height);
-    });
-    const bw = maxX - minX, bh = maxY - minY;
-    if (!bw || !bh) return;
-
-    const sample = shapes[0];
-    const stroke = sample.getAttribute('stroke') || '#9370DB';
-    const fill   = sample.getAttribute('fill')   || '#ECECFF';
-    const sw     = sample.getAttribute('stroke-width') || '2';
-
-    const scale = 0.6;
-    const h = bh * scale;
-    const cx = minX + bw / 2;
-    const top = minY + (bh - h) / 2;
-
-    const headR = h * 0.26;
-    const headCy = top + headR + h * 0.02;
-    const shoulderTop = headCy + headR * 1.0;
-    const bodyW = h * 0.80;
-    const bodyBot = top + h;
-    const r = h * 0.22;
-
-    shapes.forEach(s => s.remove());
-    const anchor = g.firstChild;
-
-    const body = document.createElementNS(NS, 'path');
-    body.setAttribute('d',
-      `M ${cx - bodyW/2} ${bodyBot}` +
-      ` L ${cx - bodyW/2} ${shoulderTop + r}` +
-      ` Q ${cx - bodyW/2} ${shoulderTop} ${cx - bodyW/2 + r} ${shoulderTop}` +
-      ` L ${cx + bodyW/2 - r} ${shoulderTop}` +
-      ` Q ${cx + bodyW/2} ${shoulderTop} ${cx + bodyW/2} ${shoulderTop + r}` +
-      ` L ${cx + bodyW/2} ${bodyBot} Z`
-    );
-    body.setAttribute('fill', fill);
-    body.setAttribute('stroke', stroke);
-    body.setAttribute('stroke-width', sw);
-    body.setAttribute('stroke-linejoin', 'round');
-    g.insertBefore(body, anchor);
-
-    const head = document.createElementNS(NS, 'circle');
-    head.setAttribute('cx', cx);
-    head.setAttribute('cy', headCy);
-    head.setAttribute('r',  headR);
-    head.setAttribute('fill', fill);
-    head.setAttribute('stroke', stroke);
-    head.setAttribute('stroke-width', sw);
-    g.insertBefore(head, anchor);
-  });
-}
-
 async function renderDiagram(src) {
   const id = `seqDiagram_${++diagramCounter}`;
   const { svg } = await mermaid.render(id, src);
   diagramEl.innerHTML = svg;
 
   const svgEl = diagramEl.querySelector('svg');
-  replaceActorIcons(svgEl);
   baseWidth = svgEl.getBoundingClientRect().width || svgEl.viewBox.baseVal.width || 800;
   applyZoom();
 
@@ -4582,11 +3775,6 @@ async function renderDiagram(src) {
     return rect;
   });
 }
-
-// ─── SIDEBAR TOGGLE ───────────────────────────────────────────────────────────
-document.getElementById('sidebar-toggle').addEventListener('click', () => {
-  document.querySelector('.sidebar').classList.toggle('collapsed');
-});
 
 // ─── INIT ─────────────────────────────────────────────────────────────────────
 loadPage('patient-info');
