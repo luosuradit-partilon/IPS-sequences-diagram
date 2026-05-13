@@ -3605,23 +3605,18 @@ sequenceDiagram
     participant MU as MuleSoft API
     participant TC as TrakCare
 
-    Note over TC,MU: Trigger: Event-driven — Task created or updated on TrakCare
-    Note over TC,MU: Interpreter-Arabic: Task = 'ARABIC Interpreter-O' / GR-Non Arabic: Task = TBC
     TC->>MU: New Task Event Triggered
 
     alt Success — Task within 07:00-20:00
         MU->>SF: Sync Task Worklist to Salesforce
         SF->>SF: Auto-create Case Record
-        Note over SF: TBC: SF field mapping and Record Type not yet defined
         SF-->>MU: Case Creation Acknowledged
-        Note over SF,MU: Interpreter-Arabic / GR-Non Arabic review Task in SF
     end
 
     alt Excluded — Task created 20:00-07:00
         MU->>MU: Filter Out Off-Hours Task
         MU->>SF: Compile Excluded Summary List
         SF->>SF: Send Email to Dispatch Manager
-        Note over SF: arabicmanagerandsupervisors@bumrungrad.com<br/>Email sent only if excluded records exist
     end
 
     alt Error
@@ -3831,13 +3826,9 @@ sequenceDiagram
     participant MU as MuleSoft API
     participant TC as TrakCare
 
-    Note over US,TC: Integration 12_Task_Worklist_Update
     US->>SF: Update Case Status
-    Note right of US: Accepted → IPS_Case_Status__c = 'Accepted'<br/>Done → IPS_Case_Status__c = 'Done'
     SF->>MU: Task Status Update Request
-    Note right of SF: Accepted: stamp Assigned Time (IPS_Accepted_Time__c)<br/>Done: stamp Done Time (IPS_Done_Time__c)
     MU->>TC: Update Task Status
-    Note right of MU: Accepted → Task Status = TBC<br/>Done → Task Status = 'Completed'<br/>TBC: Last Modified Date/Time field not confirmed
     alt Success
         TC-->>MU: Task Update Confirmed
         MU-->>SF: Task Sync Acknowledged
@@ -4011,7 +4002,6 @@ sequenceDiagram
     participant TC as TrakCare
     participant VNA as VNA
 
-    Note over U,VNA: Integration 15_Scanned_Form_List
     U->>SF: Open Patient 360 / Case<br/>(or apply Scanned Form filter)
     SF->>MU: GET Scanned Form List
     MU->>TC: Query BIH Scanned Forms List
@@ -4020,10 +4010,8 @@ sequenceDiagram
 
     alt Success
         TC-->>MU: Return form metadata + TC document links
-        Note right of TC: Date, Time, Document Name,<br/>Document Link (→ TrakCare),<br/>Document Category, Care Provider,<br/>Scanned User
         MU-->>SF: Return Scanned Form Result
         SF-->>U: Display document list
-        Note right of SF: link opens TrakCare,<br/>which renders doc from VNA
     else No Records / Error
         TC-->>MU: 404 / Error
         MU-->>SF: Propagate error
